@@ -2,7 +2,7 @@
 /*
 Plugin Name: Basic Google Maps Placemarks
 Description: Adds a custom post type for placemarks and builds an embedded Google Map with them
-Version: 1.0
+Version: 1.1
 Author: Ian Dunn
 Author URI: http://iandunn.name
 */
@@ -47,6 +47,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		const REQUIRED_WP_VERSION	= '2.9';
 		const PREFIX				= 'bgmp_';
 		const DEBUG_MODE			= false;
+		// create constant for post type and switch to using it everywhere you have it manually typed in
 		
 		/**
 		 * Constructor
@@ -65,35 +66,38 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 			$this->options								= array_merge( get_option( self::PREFIX . 'options', array() ), $defaultOptions );
 			$this->updatedOptions						= false;
 			$this->userMessageCount						= array( 'updates' => 0, 'errors' => 0 );
-			$this->settings['map-width']				= get_option( self::PREFIX . 'map-width', 600 );
-			$this->settings['map-height']				= get_option( self::PREFIX . 'map-height', 400 );
-			$this->settings['map-latitude']				= get_option( self::PREFIX . 'map-latitude', 47.600521 );
-			$this->settings['map-longitude']			= get_option( self::PREFIX . 'map-longitude', -122.333252 );
-			$this->settings['map-zoom']					= get_option( self::PREFIX . 'map-zoom', 7 );
-			$this->settings['map-info-window-width']	= get_option( self::PREFIX . 'map-info-window-width', 300 );
-			$this->settings['map-info-window-height']	= get_option( self::PREFIX . 'map-info-window-height', 250 );
-						
+			$this->settings['map-width']				= get_option( self::PREFIX . 'map-width' );
+			$this->settings['map-height']				= get_option( self::PREFIX . 'map-height' );
+			$this->settings['map-address']				= get_option( self::PREFIX . 'map-address' );
+			$this->settings['map-latitude']				= get_option( self::PREFIX . 'map-latitude' );
+			$this->settings['map-longitude']			= get_option( self::PREFIX . 'map-longitude' );
+			$this->settings['map-zoom']					= get_option( self::PREFIX . 'map-zoom' );
+			$this->settings['map-info-window-width']	= get_option( self::PREFIX . 'map-info-window-width' );
+			$this->settings['map-info-window-height']	= get_option( self::PREFIX . 'map-info-window-height' );
+			$this->updateMapCoordinates();
+			
 			// Register remaining actions, filters and shortcodes
 			add_action( 'admin_init', 										array($this, 'addSettings') );
 			add_action( 'init',												array($this, 'createPostType') );
 			add_action( 'admin_init',										array($this, 'registerCustomFields') );
-			add_action( 'save_post',										array($this, 'saveCustomFields') );		// should be save_post instead of post_updated ?
+			add_action( 'save_post',										array($this, 'saveCustomFields') );
 			add_action( 'init', 											array($this, 'loadJavaScript'));
 			add_action( 'wp_ajax_bgmp_get_map_options',						array($this, 'getMapOptions' ) );
 			add_action( 'wp_ajax_nopriv_bgmp_get_map_options',				array($this, 'getMapOptions' ) );
 			add_action( 'wp_ajax_bgmp_get_placemarks',						array($this, 'getPlacemarks' ) );
 			add_action( 'wp_ajax_nopriv_bgmp_get_placemarks',				array($this, 'getPlacemarks' ) );
 			add_action( 'wp_head',											array($this, 'outputHead' ) );
+			add_action( 'admin_head',										array($this, 'outputAdminHead') );
 			add_filter( 'plugin_action_links_'. plugin_basename(__FILE__),	array($this, 'addSettingsLink') );
 			add_shortcode( 'bgmp-map',										array($this, 'mapShortcode') );
 			add_shortcode( 'bgmp-list',										array($this, 'listShortcode') );
+			register_activation_hook( __FILE__,								array($this, 'activate') );
 			
 			if( is_admin() )
 			{
 				add_theme_support( 'post-thumbnails' );	// does this work when called from a plugin? does it interfere with the theme calling it?
 			}
 			// else - registering hooks instead here inside of checking is_admin() in callbacks?
-			
 			// add theme support rquries 2.9
 		}
 		
@@ -118,6 +122,51 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		}
 		
 		/**
+		 * Runs on plugin activation to prepare system for plugin usage
+		 * @author Ian Dunn <ian@iandunn.name>
+		 * @return bool True if system requirements are met, false if not
+		 */
+		public function activate()
+		{
+			// Save default settings
+			if( !get_option( self::PREFIX . 'map-width' ) )
+				add_option( self::PREFIX . 'map-width', 600 );
+			if( !get_option( self::PREFIX . 'map-height' ) )
+				add_option( self::PREFIX . 'map-height', 400 );
+			if( !get_option( self::PREFIX . 'map-address' ) )
+				add_option( self::PREFIX . 'map-address', 'Seattle' );
+			if( !get_option( self::PREFIX . 'map-latitude' ) )
+				add_option( self::PREFIX . 'map-latitude', 47.6062095 );
+			if( !get_option( self::PREFIX . 'map-longitude' ) )
+				add_option( self::PREFIX . 'map-longitude', -122.3320708 );
+			if( !get_option( self::PREFIX . 'map-zoom' ) )
+				add_option( self::PREFIX . 'map-zoom', 7 );
+			if( !get_option( self::PREFIX . 'map-info-window-width' ) )
+				add_option( self::PREFIX . 'map-info-window-width', 300 );
+			if( !get_option( self::PREFIX . 'map-info-window-height' ) )
+				add_option( self::PREFIX . 'map-info-window-height', 250 );
+				
+			// Upgrade 1.0 placemark data
+			$posts = get_posts( array( 'numberposts' => -1, 'post_type' => 'bgmp', 'post_status' => 'publish' ) );
+			if( $posts )
+			{
+				foreach($posts as $p)
+				{
+					$address	= get_post_meta( $p->ID, self::PREFIX . 'address', true );
+					$latitude	= get_post_meta( $p->ID, self::PREFIX . 'latitude', true );
+					$longitude	= get_post_meta( $p->ID, self::PREFIX . 'longitude', true );
+					
+					if( empty($address) && !empty($latitude) && !empty($longitude) )
+					{
+						$address = $this->reverseGeocode($latitude, $longitude);
+						if($address)
+							update_post_meta( $p->ID, self::PREFIX . 'address', $address );
+					}
+				}
+			}
+		}
+		
+		/**
 		 * 
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
@@ -125,24 +174,32 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		{
 			// only run on page where map shortcode is called?
 			
-			if( !is_admin() )
-			{
-				require_once( dirname(__FILE__) . '/front-end-head.php' );
-			}
+			require_once( dirname(__FILE__) . '/views/front-end-head.php' );
+		}
+		
+		/**
+		 * 
+		 * @author Ian Dunn <ian@iandunn.name>
+		 */
+		public function outputAdminHead()
+		{
+			// only run on bgmp pages?
+			
+			require_once( dirname(__FILE__) . '/views/admin-head.php' );
 		}
 		
 		/**
 		 * Adds our custom settings to the admin Settings pages
+		 * We intentionally don't register the map-latitude and map-longitude settings because they're set by updateMapCoordinates()
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function addSettings()
 		{
-			// give this its own page eventually, just don't want to deal w/ it right now
-			
 			add_settings_section(self::PREFIX . 'map-settings', 'Basic Google Maps Placemarks', array($this, 'settingsSectionCallback'), 'writing');
 			
 			add_settings_field(self::PREFIX . 'map-width', 'Map Width', array($this, 'mapWidthCallback'), 'writing', self::PREFIX . 'map-settings');
 			add_settings_field(self::PREFIX . 'map-height', 'Map Height', array($this, 'mapHeightCallback'), 'writing', self::PREFIX . 'map-settings');
+			add_settings_field(self::PREFIX . 'map-address', 'Map Center Address', array($this, 'mapAddressCallback'), 'writing', self::PREFIX . 'map-settings');
 			add_settings_field(self::PREFIX . 'map-latitude', 'Map Center Latitude', array($this, 'mapLatitudeCallback'), 'writing', self::PREFIX . 'map-settings');
 			add_settings_field(self::PREFIX . 'map-longitude', 'Map Center Longitude', array($this, 'mapLongitudeCallback'), 'writing', self::PREFIX . 'map-settings');
 			add_settings_field(self::PREFIX . 'map-zoom', 'Zoom', array($this, 'mapZoomCallback'), 'writing', self::PREFIX . 'map-settings');
@@ -151,8 +208,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 			
 			register_setting('writing', self::PREFIX . 'map-width');
 			register_setting('writing', self::PREFIX . 'map-height');
-			register_setting('writing', self::PREFIX . 'map-latitude');
-			register_setting('writing', self::PREFIX . 'map-longitude');
+			register_setting('writing', self::PREFIX . 'map-address');
 			register_setting('writing', self::PREFIX . 'map-zoom');
 			register_setting('writing', self::PREFIX . 'map-info-window-width');
 			register_setting('writing', self::PREFIX . 'map-info-window-height');
@@ -161,12 +217,48 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		}
 		
 		/**
+		 * Get the map center coordinates from the address and update the database values
+		 * The latitude/longitude need to be updated when the address changes, but there's no way to do that with the settings API
+		 * @author Ian Dunn <ian@iandunn.name>
+		 */
+		protected function updateMapCoordinates()
+		{
+			$haveCoordinates = true;
+			
+			if( isset($_POST) && array_key_exists( self::PREFIX . 'map-address', $_POST ) )
+			{
+				if( empty( $_POST[ self::PREFIX . 'map-address' ] ) )
+					$haveCoordinates = false;
+				else
+				{
+					$coordinates = $this->geocode( $_POST[ self::PREFIX . 'map-address'] );
+				
+					if( !$coordinates )
+						$haveCoordinates = false;
+				}
+				
+				if( $haveCoordinates)
+				{
+					update_option( self::PREFIX . 'map-latitude', $coordinates['latitude'] );
+					update_option( self::PREFIX . 'map-longitude', $coordinates['longitude'] );
+				}
+				else
+				{
+					// add error message for user
+					
+					update_option( self::PREFIX . 'map-latitude', '' );
+					update_option( self::PREFIX . 'map-longitude', '' );
+				}
+			}
+		}
+		
+		/**
 		 * Adds the section introduction text to the Settings page
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function settingsSectionCallback()
 		{
-			echo '<p>Enter the latitude, longitude and zoom level for the map below. The coordinates will determine where the map is centered. You can use <a href="http://www.gpsvisualizer.com/geocode">GPS Visualizer\'s Quick Geocoder</a> to translate an address into coordinates.</p>';
+			echo '<p>These settings determine the size and center of the map, zoom level and popup window size. For the center address, you can type in anything that you would type into a Google Maps search field, from a full address to an intersection, landmark, city or just a zip code.</p>';
 		}
 		
 		/**
@@ -188,12 +280,21 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		}
 		
 		/**
+		 * Adds the address field to the Settings page
+		 * @author Ian Dunn <ian@iandunn.name>
+		 */
+		public function mapAddressCallback()
+		{
+			echo '<input id="'. self::PREFIX .'map-address" name="'. self::PREFIX .'map-address" type="text" value="'. $this->settings['map-address'] .'" class="code" />';
+		}
+		
+		/**
 		 * Adds the latitude field to the Settings page
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function mapLatitudeCallback()
 		{
-			echo '<input id="'. self::PREFIX .'map-latitude" name="'. self::PREFIX .'map-latitude" type="text" value="'. $this->settings['map-latitude'] .'" class="code" />';
+			echo '<input id="'. self::PREFIX .'map-latitude" name="'. self::PREFIX .'map-latitude" type="text" value="'. $this->settings['map-latitude'] .'" class="code" readonly="readonly" />';
 		}
 		
 		/**
@@ -202,7 +303,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		 */
 		public function mapLongitudeCallback()
 		{
-			echo '<input id="'. self::PREFIX .'map-longitude" name="'. self::PREFIX .'map-longitude" type="text" value="'. $this->settings['map-longitude'] .'" class="code" />';
+			echo '<input id="'. self::PREFIX .'map-longitude" name="'. self::PREFIX .'map-longitude" type="text" value="'. $this->settings['map-longitude'] .'" class="code" readonly="readonly" />';
 		}
 		
 		/**
@@ -290,7 +391,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		 */
 		public function registerCustomFields()
 		{
-			add_meta_box( self::PREFIX . 'placemark-coordinates', 'Placemark Coordinates', array($this, 'markupCustomFields'), 'bgmp', 'normal', 'high' );
+			add_meta_box( self::PREFIX . 'placemark-address', 'Placemark Address', array($this, 'markupCustomFields'), 'bgmp', 'normal', 'high' );
 		}
 		
 		/**
@@ -301,10 +402,11 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		{
 			global $post;
 		
+			$address = get_post_meta($post->ID, self::PREFIX . 'address', true);
 			$latitude = get_post_meta($post->ID, self::PREFIX . 'latitude', true);
 			$longitude = get_post_meta($post->ID, self::PREFIX . 'longitude', true);
 			
-			require_once( dirname(__FILE__) . '/add-edit.php' );
+			require_once( dirname(__FILE__) . '/views/add-edit.php' );
 		}
 		
 		/**
@@ -316,16 +418,63 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		{
 			global $post;
 			
-			if($post->post_type == 'bgmp')
+			if( $post && $post->post_type == 'bgmp' )
 			{
-				if( ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) || $post->post_status == 'auto-draft' ) 		/// try this to fix empty fields problem?. doesn't seem to fix. probably leave on after problem fixed anyway, though
+				if( ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) || $post->post_status == 'auto-draft' )
 					return;
+				
+				update_post_meta( $post->ID, self::PREFIX . 'address', $_POST[ self::PREFIX . 'address'] );
+				$coordinates = $this->geocode( $_POST[ self::PREFIX . 'address'] );
+				
+				if( $coordinates )
+				{
+					update_post_meta( $post->ID, self::PREFIX . 'latitude', $coordinates['latitude'] );
+					update_post_meta( $post->ID, self::PREFIX . 'longitude', $coordinates['longitude'] );
+				}
+				else
+				{
+					// add error message for user
 					
-				update_post_meta( $post->ID, self::PREFIX . 'latitude', $_POST[ self::PREFIX . 'latitude'] );
-				update_post_meta( $post->ID, self::PREFIX . 'longitude', $_POST[ self::PREFIX . 'longitude'] );
+					update_post_meta( $post->ID, self::PREFIX . 'latitude', '' );
+					update_post_meta( $post->ID, self::PREFIX . 'longitude', '' );
+				}
 			}
 		}
 		
+		/**
+		 * 
+		 * google's api has daily limit. could cause problems, but probably won't ever reach it. based on IP address, right?
+		 * @param
+		 * @author Ian Dunn <ian@iandunn.name>
+		 */
+		protected function geocode($address)
+		{
+			$geocodeResponse = wp_remote_get( 'http://maps.googleapis.com/maps/api/geocode/json?address='. str_replace( ' ', '+', $address ) .'&sensor=false' );
+			$coordinates = json_decode( $geocodeResponse['body'] );
+				
+			if( is_wp_error($geocodeResponse) || empty($coordinates->results) )
+				return false;
+			else
+				return array( 'latitude' => $coordinates->results[0]->geometry->location->lat, 'longitude' => $coordinates->results[0]->geometry->location->lng );
+		}
+		
+		/**
+		 * 
+		 * google's api has daily limit. could cause problems, but probably won't ever reach it. based on IP address, right?
+		 * @param
+		 * @author Ian Dunn <ian@iandunn.name>
+		 */
+		protected function reverseGeocode($latitude, $longitude)
+		{
+			$geocodeResponse = wp_remote_get( 'http://maps.googleapis.com/maps/api/geocode/json?latlng='. $latitude .','. $longitude .'&sensor=false' );
+			$address = json_decode( $geocodeResponse['body'] );
+			
+			if( is_wp_error($geocodeResponse) || empty($address->results) )
+				return false;
+			else
+				return $address->results[0]->formatted_address;
+		}
+			
 		/**
 		 * Defines the [bgmp-map] shortcode
 		 * @author Ian Dunn <ian@iandunn.name>
@@ -335,11 +484,12 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		public function mapShortcode($attributes) 
 		{
 			$output = sprintf('
-				<div id="bgmp-map-canvas">
+				<div id="%smap-canvas">
 					<p>Loading map...</p>
 					<p><img src="%s" alt="Loading" /></p>
 				</div>',
-				plugins_url( 'loading.gif', __FILE__ )
+				self::PREFIX,
+				plugins_url( 'images/loading.gif', __FILE__ )
 			);
 			
 			return $output;
@@ -353,13 +503,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		 */
 		public function listShortcode($attributes) 
 		{
-			$posts = get_posts( array(
-				'numberposts'	=> -1,
-				'post_type'		=> 'bgmp',
-				'post_status'	=> 'publish'
-			) );	// order by zip code or something meaningful later on?
-			
-			// if this doesn't make it into the initial release, then make sure it gets documented in the readme/faq for 1.1
+			$posts = get_posts( array( 'numberposts' => -1, 'post_type' => 'bgmp', 'post_status' => 'publish' ) );
 			
 			if( $posts )
 			{
@@ -367,20 +511,18 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 				
 				foreach( $posts as $p )
 				{
-					$latitude = get_post_meta($p->ID, self::PREFIX . 'latitude', true);
-					$longitude = get_post_meta($p->ID, self::PREFIX . 'longitude', true);
+					$address = get_post_meta($p->ID, self::PREFIX . 'address', true);
 						
 					$output .= sprintf('
 						<li>
 							<h3>%s</h3>
 							<div>%s</div>
-							<p>Coordinates: <a href="%s">%s,%s</a></p>
+							<p><a href="%s">%s</a></p>
 						</li>',
 						$p->post_title,
 						nl2br($p->post_content),
-						'http://google.com/maps?q='. $latitude .','. $longitude,
-						$latitude,
-						$longitude
+						'http://google.com/maps?q='. $address,
+						$address
 					);
 					
 					// make lat/long into address or city/zip
@@ -443,7 +585,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		{
 			header('Cache-Control: no-cache, must-revalidate');
 			header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-			//header('Content-Type: application/json; charset=utf8');		// probably put this back after fix ie error
+			header('Content-Type: application/json; charset=utf8');
 			header('Content-Type: application/json');
 			header($_SERVER["SERVER_PROTOCOL"]." 200 OK");
 		}
@@ -477,7 +619,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 			check_ajax_referer( self::PREFIX . 'nonce', 'nonce' );
 			
 			$placemarks = array();
-			$posts = get_posts( array( 'numberposts' => -1, 'post_type' => 'bgmp' ) );
+			$posts = get_posts( array( 'numberposts' => -1, 'post_type' => 'bgmp', 'post_status' => 'publish' ) );
 			
 			if( $posts )
 			{
@@ -490,7 +632,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 						'latitude'	=> get_post_meta( $p->ID, self::PREFIX . 'latitude', true ),
 						'longitude'	=> get_post_meta( $p->ID, self::PREFIX . 'longitude', true ),
 						'details'	=> nl2br($p->post_content),
-						'icon'		=> $icon[0]
+						'icon'		=> is_array($icon) ? $icon[0] : plugins_url( 'images/default-marker.png', __FILE__ )
 					);
 				}
 			}

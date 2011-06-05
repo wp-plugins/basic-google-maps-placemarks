@@ -13,7 +13,7 @@ $ = jQuery.noConflict();
  */
 $(document).ready( function()
 {
-	bgmp.canvas = document.getElementById("bgmp-map-canvas");	// bgmp is created inline via wp_localize_script() before this file is included. Also, we have to use getElementById instead of a jQuery selector here in order to pass it to the Maps API.
+	bgmp.canvas = document.getElementById("bgmp_map-canvas");	// bgmp is created inline via wp_localize_script() before this file is included. Also, we have to use getElementById instead of a jQuery selector here in order to pass it to the Maps API.
 		
 	if(bgmp.canvas)
 		bgmp_buildMap(bgmp.canvas);

@@ -1,24 +1,28 @@
-// 1.1
-	// if no featured image set, use google's default marker
-	// uninstall script
-	// ask for address and geocode it
-	// give everything a once over, check comments, etc
-	// double check that everything is sanitized
-	// if ( !current_user_can( 'edit_post', $post_id ) ) return;. where to, though?
-	// maybe have an admin option to choose whether to set width/height inline or in stylehseet. if inline, then have width/height options. probably do this eventually for userfriendlyness
-
-// future
-	// close infobox when click anywhere outside infobox
-	// maybe reorder functions to make more sense
-	// some things may only need to run on the admin side, or only on the front end. check for that and handle appropriatly
-		// keep in mind http://codex.wordpress.org/AJAX_in_Plugins note 3 about being inside is_admin()
-	// just realized maps didn't need ajax at all. too late to change now. oh well, at least it's good learning experience
-	// add column on View page for lat/long, whether or not it has icon set?
-	// add option to select map type, disable type selector for user, select zoom control -- http://www.svennerberg.com/examples/google_maps_3/properties.php
-	// clean these up, put into @todo somewhere. either at top, or inline in functions. maybe one or the other depending on type of comment
-	// try to get info windows to be auto height relative to content inside
-	// add settings functions into their own file?
-	// maybe put views in their own folder
-	// make default options process more intuitive. if they don't set options, they get error that they're not set, but then they go there and they look like they're filled in even though they're not in db. 
-		// maybe save default options in db upon install instead. would have to make sure nothing there already
-	// add hooks and document their usage in readme. (do this for other plugins too)
+1.2
+	uninstall script
+	give everything a once over, check comments, empty phpdoc lines, etc
+	double check that everything is sanitized
+	if ( !current_user_can( 'edit_post', $post_id ) ) return;. where to, though?
+	maybe have an admin option to choose whether to set width/height inline or in stylehseet. if inline, then have width/height options. probably do this eventually for userfriendlyness	
+	
+future
+	create own settings page, instead of on writing. its own page eventually, just don't want to deal w/ it right now
+	option to override style. wrap front-end-head.php in if( option= true ) statement
+	close infobox when click anywhere outside infobox
+	maybe reorder functions to make more sense
+	some things may only need to run on the admin side, or only on the front end. check for that and handle appropriatly
+		keep in mind http:codex.wordpress.org/AJAX_in_Plugins note 3 about being inside is_admin()
+	just realized maps didn't need ajax at all. too late to change now. oh well, at least it's good learning experience
+	add column on View page for address, icon
+	add option to select map type, disable type selector for user, select zoom control -- http:www.svennerberg.com/examples/google_maps_3/properties.php
+	try to get info windows to be auto height relative to content inside
+	add settings functions into their own file?
+	maybe put views and images in their own folder
+	add hooks and document their usage in readme. (do this for other plugins too)
+	custom icon for placemarks menu. maybe a pinpoint? (similar to default google maps icon, but not exact same b/c of copyright)
+	some kind of internal help screen to let people know about the shortcodes, etc?
+	log to console by default, so you can easily troubleshoot other websites? or maybe only if a ?bgmp_debug parameter is passed in, so you don't clutter the console 
+	break address field up into street/city/state/zip on the add/edit form
+	make sure works in multisite
+	map won't load if theme doesn't call wp_footer(). add check to make sure theme is doing that. display error if it isn't.
+	in list shortcode, order posts by latitude, zip code or something meaningful. api does return city/county/etc data
