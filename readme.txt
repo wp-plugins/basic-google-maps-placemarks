@@ -3,7 +3,7 @@ Contributors: iandunn
 Donate link: http://www.doctorswithoutborders.org/
 Tags: google maps, map, markers, placemarks
 Requires at least: 2.9
-Tested up to: 3.1.2
+Tested up to: 3.1.3
 Stable tag: 1.1
 
 Embeds a Google Map into your site and lets you add markers with custom icons.
@@ -45,7 +45,7 @@ If you're having a problem with the plugin, please use [the support forum](http:
 If you just have a general comment or suggestion, you can use the [contact form](http://iandunn.name/contact) on my website, although I don't always have time to respond.
 
 == Screenshots ==
-1. This is how the map looks once it's been embeded into a page.
+1. This is an example of how the map looks once it's been embeded into a page.
 2. The Placemarks page, where you can add/edit/delete map markers.
 3. A example placemark. 
 4. The map settings on the Writing Settings page.
