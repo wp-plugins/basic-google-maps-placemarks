@@ -2,7 +2,7 @@
 /*
 Plugin Name: Basic Google Maps Placemarks
 Description: Adds a custom post type for placemarks and builds an embedded Google Map with them
-Version: 1.1
+Version: 1.1.1
 Author: Ian Dunn
 Author URI: http://iandunn.name
 */
@@ -43,7 +43,8 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 	class BasicGoogleMapsPlacemarks
 	{
 		// Declare variables and constants
-		protected $settings, $options, $updatedOptions, $userMessageCount, $environmentOK;
+		protected $settings, $options, $updatedOptions, $userMessageCount, $environmentOK, $mapShortcodeCalled;
+		const BGMP_VERSION			= '1.1.1';
 		const REQUIRED_WP_VERSION	= '2.9';
 		const PREFIX				= 'bgmp_';
 		const DEBUG_MODE			= false;
@@ -66,6 +67,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 			$this->options								= array_merge( get_option( self::PREFIX . 'options', array() ), $defaultOptions );
 			$this->updatedOptions						= false;
 			$this->userMessageCount						= array( 'updates' => 0, 'errors' => 0 );
+			$this->mapShortcodeCalled					= false;
 			$this->settings['map-width']				= get_option( self::PREFIX . 'map-width' );
 			$this->settings['map-height']				= get_option( self::PREFIX . 'map-height' );
 			$this->settings['map-address']				= get_option( self::PREFIX . 'map-address' );
@@ -81,13 +83,13 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 			add_action( 'init',												array($this, 'createPostType') );
 			add_action( 'admin_init',										array($this, 'registerCustomFields') );
 			add_action( 'save_post',										array($this, 'saveCustomFields') );
-			add_action( 'init', 											array($this, 'loadJavaScript'));
+			add_action( 'init', 											array($this, 'loadStyle') );
+			add_action( 'wp_footer',										array($this, 'loadScripts' ) );
 			add_action( 'wp_ajax_bgmp_get_map_options',						array($this, 'getMapOptions' ) );
 			add_action( 'wp_ajax_nopriv_bgmp_get_map_options',				array($this, 'getMapOptions' ) );
 			add_action( 'wp_ajax_bgmp_get_placemarks',						array($this, 'getPlacemarks' ) );
 			add_action( 'wp_ajax_nopriv_bgmp_get_placemarks',				array($this, 'getPlacemarks' ) );
 			add_action( 'wp_head',											array($this, 'outputHead' ) );
-			add_action( 'admin_head',										array($this, 'outputAdminHead') );
 			add_filter( 'plugin_action_links_'. plugin_basename(__FILE__),	array($this, 'addSettingsLink') );
 			add_shortcode( 'bgmp-map',										array($this, 'mapShortcode') );
 			add_shortcode( 'bgmp-list',										array($this, 'listShortcode') );
@@ -176,18 +178,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 			
 			require_once( dirname(__FILE__) . '/views/front-end-head.php' );
 		}
-		
-		/**
-		 * 
-		 * @author Ian Dunn <ian@iandunn.name>
-		 */
-		public function outputAdminHead()
-		{
-			// only run on bgmp pages?
-			
-			require_once( dirname(__FILE__) . '/views/admin-head.php' );
-		}
-		
+				
 		/**
 		 * Adds our custom settings to the admin Settings pages
 		 * We intentionally don't register the map-latitude and map-longitude settings because they're set by updateMapCoordinates()
@@ -418,7 +409,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		{
 			global $post;
 			
-			if( $post && $post->post_type == 'bgmp' )
+			if( $post && $post->post_type == 'bgmp' && current_user_can( 'edit_posts' ) )
 			{
 				if( ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) || $post->post_status == 'auto-draft' )
 					return;
@@ -483,6 +474,8 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		 */
 		public function mapShortcode($attributes) 
 		{
+			$this->mapShortcodeCalled = true;
+			
 			$output = sprintf('
 				<div id="%smap-canvas">
 					<p>Loading map...</p>
@@ -537,43 +530,65 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		}
 		
 		/**
-		 * Loads JavaScript files
+		 * Load CSS on front and back end
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
-		public function loadJavaScript()
+		public function loadStyle()
 		{
-			// setup to only call this on pages where teh shortcode was called?
-			// maybe insead of shortcode only setup optoin to select a page, and auto insert into that page here? b/c can check is_page(). more flexible for user to have shortcode though
+			// setup to only call this on pages where teh shortcode was called? can't use same method as js b/c <style> has to be inside <head>
 			
-			if( !is_admin() )
+			wp_register_style(
+				self::PREFIX .'style',
+				plugins_url( 'style.css', __FILE__ ),
+				false,
+				self::BGMP_VERSION,
+				false
+			);
+			wp_enqueue_style( self::PREFIX . 'style' );
+		}
+		
+		/**
+		 * Loads Javascript files on map shortcode pages
+		 * @author Ian Dunn <ian@iandunn.name>
+		 */
+		public function loadScripts()
+		{
+			if( $this->mapShortcodeCalled )
 			{
+				echo "<!-- BEGIN Basic Google Maps Placemarks scripts -->\n";
+				
 				wp_register_script(
 					'googleMapsAPI',
-					'http://maps.google.com/maps/api/js?sensor=false',
+					'http'. ( is_ssl() ? 's' : '' ) .'://maps.google.com/maps/api/js?sensor=false',
 					false,
 					false,
 					true
 				);
-				wp_enqueue_script('googleMapsAPI');
-
+				wp_print_scripts('googleMapsAPI');
+				
+				echo sprintf('
+					<form>
+						<p>
+							<input id="%s" type="hidden" value="%s" />
+							<input id="%s" type="hidden" value="%s" />
+						</p>
+					</form>',
+					self::PREFIX .'postURL',
+					admin_url('admin-ajax.php'),
+					self::PREFIX . 'nonce',
+					wp_create_nonce( self::PREFIX . 'nonce')							
+				);
+				
 				wp_register_script(
 					'bgmp',
-					WP_PLUGIN_URL . '/basic-google-maps-placemarks/functions.js',
+					plugins_url( 'functions.js', __FILE__ ),
 					array('googleMapsAPI', 'jquery'),
-					false,
+					self::BGMP_VERSION,
 					true
 				);
-				wp_enqueue_script('bgmp');
+				wp_print_scripts('bgmp');
 				
-				wp_localize_script(
-					'bgmp',
-					'bgmp',
-					array(
-						'postURL' => admin_url('admin-ajax.php'),
-						'previousInfoWindow' => '',
-						'nonce' => wp_create_nonce( self::PREFIX . 'nonce')
-					) 
-				);
+				echo "<!-- END Basic Google Maps Placemarks scripts -->\n";
 			}
 		}
 		
@@ -595,14 +610,17 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function getMapOptions()
-		{			
-			// note that json_encode requires php5
+		{
 			check_ajax_referer( self::PREFIX . 'nonce', 'nonce' );
 	
 			$options = array(
+				'width'				=> $this->settings['map-width'],
+				'height'			=> $this->settings['map-height'],
 				'latitude'			=> $this->settings['map-latitude'],
 				'longitude'			=> $this->settings['map-longitude'],
-				'zoom'				=> $this->settings['map-zoom']
+				'zoom'				=> $this->settings['map-zoom'],
+				'infoWindowWidth'	=> $this->settings['map-info-window-width'],
+				'infoWindowHeight'	=> $this->settings['map-info-window-height']
 			);
 		
 			$this->getHeaders();

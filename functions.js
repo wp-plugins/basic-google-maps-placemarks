@@ -13,10 +13,15 @@ $ = jQuery.noConflict();
  */
 $(document).ready( function()
 {
-	bgmp.canvas = document.getElementById("bgmp_map-canvas");	// bgmp is created inline via wp_localize_script() before this file is included. Also, we have to use getElementById instead of a jQuery selector here in order to pass it to the Maps API.
+	$.bgmp = {
+		canvas : document.getElementById("bgmp_map-canvas"),	// We have to use getElementById instead of a jQuery selector here in order to pass it to the Maps API.
+		postURL : $('#bgmp_postURL').val(),
+		nonce : $('#bgmp_nonce').val(),
+		previousInfoWindow : ''
+	}
 		
-	if(bgmp.canvas)
-		bgmp_buildMap(bgmp.canvas);
+	if( $.bgmp.canvas )
+		bgmp_buildMap( $.bgmp.canvas );
 } );
 
 
@@ -28,7 +33,7 @@ $(document).ajaxError( function(event, jqxhr, settings, exception)
 {
 	if( window.console )
 		console.log(".ajaxError():\nreadyState: " + jqxhr.readyState + "\nstatus: " + jqxhr.status + "\nresponseText: " + jqxhr.responseText + "\nexception: "+ exception);
-	$(bgmp.canvas).html('Error: Generic AJAX failure.');
+	$( $.bgmp.canvas ).html('Error: Generic AJAX failure.');
 } );
 
 
@@ -44,20 +49,20 @@ function bgmp_buildMap()
 	
 	$.post
 	(
-		bgmp.postURL,
+		$.bgmp.postURL,
 		{
 			action: 'bgmp_get_map_options',
-			nonce: bgmp.nonce
+			nonce: $.bgmp.nonce
 		},
 		function( response ) 
 		{
 			if( response == -1 )
-				$(bgmp.canvas).html("Error: couldn't load map options.");
+				$( $.bgmp.canvas ).html("Error: couldn't load map options.");
 			else
 			{
-				if( response.zoom == '' || response.latitude == '' || response.longitude == '' )
+				if( response.width == '' || response.height == ''|| response.latitude == '' || response.longitude == '' || response.zoom == '' || response.infoWindowWidth == '' || response.infoWindowHeight == '' )
 				{
-					$(bgmp.canvas).html("Error: map options not set.");
+					$( $.bgmp.canvas ).html("Error: map options not set.");
 					return;
 				}
 				
@@ -69,17 +74,21 @@ function bgmp_buildMap()
 					mapTypeControl: false
 				};
 				
-				bgmp.infoWindowWidth = response.infoWindowWidth;
-				bgmp.infoWindowHeight = response.infoWindowHeight;
+				// Override default width/heights from settings
+				$('#bgmp_map-canvas').css('width', response.width );
+				$('#bgmp_map-canvas').css('height', response.height );
+				$('.bgmp_placemark').css('width', response.infoWindowWidth );
+				$('.bgmp_placemark').css('height', response.infoWindowHeight );
 				
+				// Create map
 				try
 				{
-					map = new google.maps.Map(bgmp.canvas, mapOptions);
+					map = new google.maps.Map( $.bgmp.canvas, mapOptions );
 					bgmp_addPlacemarks(map);
 				}
 				catch(e)
 				{
-					$(bgmp.canvas).html("Error: couln't build map.");
+					$( $.bgmp.canvas ).html("Error: couln't build map.");
 					if(window.console)
 						console.log('bgmp_buildMap: '+ e);
 				}
@@ -99,15 +108,15 @@ function bgmp_addPlacemarks(map)
 	var placemarks;
 	
 	$.post(
-		bgmp.postURL,
+		$.bgmp.postURL,
 		{
 			action: 'bgmp_get_placemarks',
-			nonce: bgmp.nonce
+			nonce: $.bgmp.nonce
 		},
 		function( placemarks ) 
 		{
 			if(placemarks == -1)
-				$(bgmp.canvas).html("Error: couldn't load map placemarks.");
+				$( $.bgmp.canvas ).html("Error: couldn't load map placemarks.");
 			else
 			{
 				if( placemarks.length > 0 )
@@ -157,17 +166,17 @@ function bgmp_createMarker( map, title, latitude, longitude, details, icon)
 		
 		google.maps.event.addListener( marker, 'click', function()
 		{
-			if( bgmp.previousInfoWindow != '')
-				bgmp.previousInfoWindow.close();
+			if( $.bgmp.previousInfoWindow != '')
+				$.bgmp.previousInfoWindow.close();
 			infowindow.open(map, marker);
-			bgmp.previousInfoWindow = infowindow;
+			$.bgmp.previousInfoWindow = infowindow;
 		} );
 		
 		return true;
 	}
 	catch(e)
 	{
-		//$(bgmp.canvas).append("<p>Error: couldn't add map placemarks.</p>");		// add class for making red? other places need this too?	// @todo - need to figure out a good way to alert user that placemarks couldn't be added
+		//$( $.bgmp.canvas ).append("<p>Error: couldn't add map placemarks.</p>");		// add class for making red? other places need this too?	// @todo - need to figure out a good way to alert user that placemarks couldn't be added
 		if( window.console )
 			console.log('bgmp_createMarker: '+ e);
 	}

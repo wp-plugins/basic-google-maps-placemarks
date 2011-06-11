@@ -1,0 +1,53 @@
+/**
+ * A Wordpress plugin that adds a custom post type for placemarks and builds a Google Map with them
+ * @package BasicGoogleMapsPlacemarks
+ * @author Ian Dunn <ian@iandunn.name>
+ * @link http://wordpress.org/extend/plugins/basic-google-maps-placemarks/
+ */
+
+
+/*
+ * Front end
+ */
+#bgmp_map-canvas
+{
+	width: 600px;	/* The width and height here are just defaults in case the JavaScript can't load. They're overridding with the ones on the Settings page when the map is created */
+	height: 400px;
+}
+
+	.bgmp_placemark
+	{
+		width: 300px;	/* The width and height here are just defaults in case the JavaScript can't load. They're overridding with the ones on the Settings page when the map is created */
+		height: 250px;
+	}
+	
+		.bgmp_placemark h1
+		{
+			padding: 5px 0;
+		}
+	
+	/* Override theme styles that will interfere with the map */
+	#bgmp_map-canvas img
+	{
+		background: none !important;
+		padding: 0;
+		-webkit-box-shadow: none;
+		-moz-box-shadow: none;
+		box-shadow: none;
+	}
+	
+	#bgmp_map-canvas #content
+	{
+		width: auto;
+		height: auto;
+		overflow: auto;
+	}
+
+
+/*
+ * Admin
+ */
+input#bgmp_address, input#bgmp_map-address
+{
+	width: 400px;
+}
