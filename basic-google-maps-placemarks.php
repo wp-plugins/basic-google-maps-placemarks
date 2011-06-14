@@ -1,8 +1,8 @@
 <?php
 /*
 Plugin Name: Basic Google Maps Placemarks
-Description: Adds a custom post type for placemarks and builds an embedded Google Map with them
-Version: 1.1.1
+Description: Embeds a Google Map into your site and lets you add markers with custom icons
+Version: 1.1.2
 Author: Ian Dunn
 Author URI: http://iandunn.name
 */
@@ -34,21 +34,22 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 {
 	/**
 	 * A Wordpress plugin that adds a custom post type for placemarks and builds a Google Map with them
-	 * Requires PHP5+ because of various json_encode(), OOP features, pass by reference, etc
-	 * Requires Wordpress 2.9 because of add_theme_support()
+	 * Requires PHP5+ because of various OOP features, json_encode(), pass by reference, etc
+	 * Requires Wordpress 3.0 because of custom post type support
 	 *
 	 * @package BasicGoogleMapsPlacemarks
 	 * @author Ian Dunn <ian@iandunn.name>
+	 * @link http://wordpress.org/extend/plugins/basic-google-maps-placemarks/
 	 */
 	class BasicGoogleMapsPlacemarks
 	{
 		// Declare variables and constants
 		protected $settings, $options, $updatedOptions, $userMessageCount, $environmentOK, $mapShortcodeCalled;
-		const BGMP_VERSION			= '1.1.1';
-		const REQUIRED_WP_VERSION	= '2.9';
+		const BGMP_VERSION			= '1.1.2';
+		const REQUIRED_WP_VERSION	= '3.0';
 		const PREFIX				= 'bgmp_';
+		const POST_TYPE				= 'bgmp';
 		const DEBUG_MODE			= false;
-		// create constant for post type and switch to using it everywhere you have it manually typed in
 		
 		/**
 		 * Constructor
@@ -56,51 +57,38 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		 */
 		public function __construct()
 		{
-			// Register action for error messages and updates, then check the environment
+			// Register action for error messages and updates
 			add_action( 'admin_notices', array($this, 'printMessages') );
 			$this->environmentOK = $this->checkEnvironment();
 			if( !$this->environmentOK )
 				return;
 			
 			// Initialize variables
+			require_once('settings.php');
 			$defaultOptions								= array( 'updates' => array(), 'errors' => array() );
 			$this->options								= array_merge( get_option( self::PREFIX . 'options', array() ), $defaultOptions );
 			$this->updatedOptions						= false;
 			$this->userMessageCount						= array( 'updates' => 0, 'errors' => 0 );
 			$this->mapShortcodeCalled					= false;
-			$this->settings['map-width']				= get_option( self::PREFIX . 'map-width' );
-			$this->settings['map-height']				= get_option( self::PREFIX . 'map-height' );
-			$this->settings['map-address']				= get_option( self::PREFIX . 'map-address' );
-			$this->settings['map-latitude']				= get_option( self::PREFIX . 'map-latitude' );
-			$this->settings['map-longitude']			= get_option( self::PREFIX . 'map-longitude' );
-			$this->settings['map-zoom']					= get_option( self::PREFIX . 'map-zoom' );
-			$this->settings['map-info-window-width']	= get_option( self::PREFIX . 'map-info-window-width' );
-			$this->settings['map-info-window-height']	= get_option( self::PREFIX . 'map-info-window-height' );
-			$this->updateMapCoordinates();
+			$this->settings								= new BGMPSettings( $this );
 			
 			// Register remaining actions, filters and shortcodes
-			add_action( 'admin_init', 										array($this, 'addSettings') );
 			add_action( 'init',												array($this, 'createPostType') );
-			add_action( 'admin_init',										array($this, 'registerCustomFields') );
-			add_action( 'save_post',										array($this, 'saveCustomFields') );
 			add_action( 'init', 											array($this, 'loadStyle') );
+			add_action( 'admin_init',										array($this, 'registerCustomFields') );
+			add_action( 'wp_head',											array($this, 'outputHead' ) );
+			add_action( 'save_post',										array($this, 'saveCustomFields') );
 			add_action( 'wp_footer',										array($this, 'loadScripts' ) );
 			add_action( 'wp_ajax_bgmp_get_map_options',						array($this, 'getMapOptions' ) );
 			add_action( 'wp_ajax_nopriv_bgmp_get_map_options',				array($this, 'getMapOptions' ) );
 			add_action( 'wp_ajax_bgmp_get_placemarks',						array($this, 'getPlacemarks' ) );
 			add_action( 'wp_ajax_nopriv_bgmp_get_placemarks',				array($this, 'getPlacemarks' ) );
-			add_action( 'wp_head',											array($this, 'outputHead' ) );
-			add_filter( 'plugin_action_links_'. plugin_basename(__FILE__),	array($this, 'addSettingsLink') );
 			add_shortcode( 'bgmp-map',										array($this, 'mapShortcode') );
 			add_shortcode( 'bgmp-list',										array($this, 'listShortcode') );
 			register_activation_hook( __FILE__,								array($this, 'activate') );
 			
 			if( is_admin() )
-			{
-				add_theme_support( 'post-thumbnails' );	// does this work when called from a plugin? does it interfere with the theme calling it?
-			}
-			// else - registering hooks instead here inside of checking is_admin() in callbacks?
-			// add theme support rquries 2.9
+				add_theme_support( 'post-thumbnails' );
 		}
 		
 		/**
@@ -126,7 +114,6 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		/**
 		 * Runs on plugin activation to prepare system for plugin usage
 		 * @author Ian Dunn <ian@iandunn.name>
-		 * @return bool True if system requirements are met, false if not
 		 */
 		public function activate()
 		{
@@ -149,7 +136,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 				add_option( self::PREFIX . 'map-info-window-height', 250 );
 				
 			// Upgrade 1.0 placemark data
-			$posts = get_posts( array( 'numberposts' => -1, 'post_type' => 'bgmp', 'post_status' => 'publish' ) );
+			$posts = get_posts( array( 'numberposts' => -1, 'post_type' => self::POST_TYPE, 'post_status' => 'publish' ) );
 			if( $posts )
 			{
 				foreach($posts as $p)
@@ -169,171 +156,32 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		}
 		
 		/**
-		 * 
+		 * Outputs elements in the <head> section of the front-end
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function outputHead()
 		{
-			// only run on page where map shortcode is called?
+			// ideally should only run on page where map shortcode is called
 			
 			require_once( dirname(__FILE__) . '/views/front-end-head.php' );
 		}
-				
+		
 		/**
-		 * Adds our custom settings to the admin Settings pages
-		 * We intentionally don't register the map-latitude and map-longitude settings because they're set by updateMapCoordinates()
+		 * Load CSS on front and back end
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
-		public function addSettings()
+		public function loadStyle()
 		{
-			add_settings_section(self::PREFIX . 'map-settings', 'Basic Google Maps Placemarks', array($this, 'settingsSectionCallback'), 'writing');
+			// setup to only call this on pages where teh shortcode was called? can't use same method as js b/c <style> has to be inside <head>
 			
-			add_settings_field(self::PREFIX . 'map-width', 'Map Width', array($this, 'mapWidthCallback'), 'writing', self::PREFIX . 'map-settings');
-			add_settings_field(self::PREFIX . 'map-height', 'Map Height', array($this, 'mapHeightCallback'), 'writing', self::PREFIX . 'map-settings');
-			add_settings_field(self::PREFIX . 'map-address', 'Map Center Address', array($this, 'mapAddressCallback'), 'writing', self::PREFIX . 'map-settings');
-			add_settings_field(self::PREFIX . 'map-latitude', 'Map Center Latitude', array($this, 'mapLatitudeCallback'), 'writing', self::PREFIX . 'map-settings');
-			add_settings_field(self::PREFIX . 'map-longitude', 'Map Center Longitude', array($this, 'mapLongitudeCallback'), 'writing', self::PREFIX . 'map-settings');
-			add_settings_field(self::PREFIX . 'map-zoom', 'Zoom', array($this, 'mapZoomCallback'), 'writing', self::PREFIX . 'map-settings');
-			add_settings_field(self::PREFIX . 'map-info-window-width', 'Info Window Width', array($this, 'mapInfoWindowWidthCallback'), 'writing', self::PREFIX . 'map-settings');
-			add_settings_field(self::PREFIX . 'map-info-window-height', 'Info Window Height', array($this, 'mapInfoWindowHeightCallback'), 'writing', self::PREFIX . 'map-settings');
-			
-			register_setting('writing', self::PREFIX . 'map-width');
-			register_setting('writing', self::PREFIX . 'map-height');
-			register_setting('writing', self::PREFIX . 'map-address');
-			register_setting('writing', self::PREFIX . 'map-zoom');
-			register_setting('writing', self::PREFIX . 'map-info-window-width');
-			register_setting('writing', self::PREFIX . 'map-info-window-height');
-			
-			// need to add labels to the names so they can click on name?
-		}
-		
-		/**
-		 * Get the map center coordinates from the address and update the database values
-		 * The latitude/longitude need to be updated when the address changes, but there's no way to do that with the settings API
-		 * @author Ian Dunn <ian@iandunn.name>
-		 */
-		protected function updateMapCoordinates()
-		{
-			$haveCoordinates = true;
-			
-			if( isset($_POST) && array_key_exists( self::PREFIX . 'map-address', $_POST ) )
-			{
-				if( empty( $_POST[ self::PREFIX . 'map-address' ] ) )
-					$haveCoordinates = false;
-				else
-				{
-					$coordinates = $this->geocode( $_POST[ self::PREFIX . 'map-address'] );
-				
-					if( !$coordinates )
-						$haveCoordinates = false;
-				}
-				
-				if( $haveCoordinates)
-				{
-					update_option( self::PREFIX . 'map-latitude', $coordinates['latitude'] );
-					update_option( self::PREFIX . 'map-longitude', $coordinates['longitude'] );
-				}
-				else
-				{
-					// add error message for user
-					
-					update_option( self::PREFIX . 'map-latitude', '' );
-					update_option( self::PREFIX . 'map-longitude', '' );
-				}
-			}
-		}
-		
-		/**
-		 * Adds the section introduction text to the Settings page
-		 * @author Ian Dunn <ian@iandunn.name>
-		 */
-		public function settingsSectionCallback()
-		{
-			echo '<p>These settings determine the size and center of the map, zoom level and popup window size. For the center address, you can type in anything that you would type into a Google Maps search field, from a full address to an intersection, landmark, city or just a zip code.</p>';
-		}
-		
-		/**
-		 * Adds the map-width field to the Settings page
-		 * @author Ian Dunn <ian@iandunn.name>
-		 */
-		public function mapWidthCallback()
-		{
-			echo '<input id="'. self::PREFIX .'map-width" name="'. self::PREFIX .'map-width" type="text" value="'. $this->settings['map-width'] .'" class="code" /> pixels';
-		}
-		
-		/**
-		 * Adds the map-height field to the Settings page
-		 * @author Ian Dunn <ian@iandunn.name>
-		 */
-		public function mapHeightCallback()
-		{
-			echo '<input id="'. self::PREFIX .'map-height" name="'. self::PREFIX .'map-height" type="text" value="'. $this->settings['map-height'] .'" class="code" /> pixels';
-		}
-		
-		/**
-		 * Adds the address field to the Settings page
-		 * @author Ian Dunn <ian@iandunn.name>
-		 */
-		public function mapAddressCallback()
-		{
-			echo '<input id="'. self::PREFIX .'map-address" name="'. self::PREFIX .'map-address" type="text" value="'. $this->settings['map-address'] .'" class="code" />';
-		}
-		
-		/**
-		 * Adds the latitude field to the Settings page
-		 * @author Ian Dunn <ian@iandunn.name>
-		 */
-		public function mapLatitudeCallback()
-		{
-			echo '<input id="'. self::PREFIX .'map-latitude" name="'. self::PREFIX .'map-latitude" type="text" value="'. $this->settings['map-latitude'] .'" class="code" readonly="readonly" />';
-		}
-		
-		/**
-		 * Adds the longitude field to the Settings page
-		 * @author Ian Dunn <ian@iandunn.name>
-		 */
-		public function mapLongitudeCallback()
-		{
-			echo '<input id="'. self::PREFIX .'map-longitude" name="'. self::PREFIX .'map-longitude" type="text" value="'. $this->settings['map-longitude'] .'" class="code" readonly="readonly" />';
-		}
-		
-		/**
-		 * Adds the zoom field to the Settings page
-		 * @author Ian Dunn <ian@iandunn.name>
-		 */
-		public function mapZoomCallback()
-		{
-			echo '<input id="'. self::PREFIX .'map-zoom" name="'. self::PREFIX .'map-zoom" type="text" value="'. $this->settings['map-zoom'] .'" class="code" />';
-		}
-		
-		/**
-		 * Adds the info-window-width field to the Settings page
-		 * @author Ian Dunn <ian@iandunn.name>
-		 */
-		public function mapInfoWindowWidthCallback()
-		{
-			echo '<input id="'. self::PREFIX .'map-info-window-width" name="'. self::PREFIX .'map-info-window-width" type="text" value="'. $this->settings['map-info-window-width'] .'" class="code" /> pixels';
-		}
-		
-		/**
-		 * Adds the info-window-height field to the Settings page
-		 * @author Ian Dunn <ian@iandunn.name>
-		 */
-		public function mapInfoWindowHeightCallback()
-		{
-			echo '<input id="'. self::PREFIX .'map-info-window-height" name="'. self::PREFIX .'map-info-window-height" type="text" value="'. $this->settings['map-info-window-height'] .'" class="code" /> pixels';
-		}
-		
-		/**
-		 * Adds a 'Settings' link to the Plugins page
-		 * @author Ian Dunn <ian@iandunn.name>
-		 * @param array $links The links currently mapped to the plugin
-		 * @return array
-		 */
-		public function addSettingsLink($links)
-		{
-			array_unshift($links, '<a href="options-writing.php">Settings</a>');
-			return $links; 
+			wp_register_style(
+				self::PREFIX .'style',
+				plugins_url( 'style.css', __FILE__ ),
+				false,
+				self::BGMP_VERSION,
+				false
+			);
+			wp_enqueue_style( self::PREFIX . 'style' );
 		}
 		
 		/**
@@ -342,7 +190,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		 */
 		public function createPostType()
 		{
-			if( !post_type_exists('bgmp') )
+			if( !post_type_exists( self::POST_TYPE ) )
 			{
 				$labels = array
 				(
@@ -361,18 +209,21 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 					'parent' => __( 'Parent Placemark' ),
 				);
 				
-				register_post_type('bgmp', array
-				(
-					'labels' => $labels,
-					'singular_label' => __('Placemarks'),
-					'public' => true,
-					'menu_position' => 20,
-					'hierarchical' => false,
-					'capability_type' => 'post',
-					'rewrite' => array( 'slug' => 'placemarks', 'with_front' => false ),
-					'query_var' => true,
-					'supports' => array('title', 'editor', 'author', 'thumbnail')
-				) );
+				register_post_type(
+					self::POST_TYPE,
+					array
+					(
+						'labels' => $labels,
+						'singular_label' => __('Placemarks'),
+						'public' => true,
+						'menu_position' => 20,
+						'hierarchical' => false,
+						'capability_type' => 'post',
+						'rewrite' => array( 'slug' => 'placemarks', 'with_front' => false ),
+						'query_var' => true,
+						'supports' => array('title', 'editor', 'author', 'thumbnail')
+					)
+				);
 			}
 		}
 		
@@ -382,7 +233,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		 */
 		public function registerCustomFields()
 		{
-			add_meta_box( self::PREFIX . 'placemark-address', 'Placemark Address', array($this, 'markupCustomFields'), 'bgmp', 'normal', 'high' );
+			add_meta_box( self::PREFIX . 'placemark-address', 'Placemark Address', array($this, 'markupCustomFields'), self::POST_TYPE, 'normal', 'high' );
 		}
 		
 		/**
@@ -393,9 +244,9 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		{
 			global $post;
 		
-			$address = get_post_meta($post->ID, self::PREFIX . 'address', true);
-			$latitude = get_post_meta($post->ID, self::PREFIX . 'latitude', true);
-			$longitude = get_post_meta($post->ID, self::PREFIX . 'longitude', true);
+			$address	= get_post_meta($post->ID, self::PREFIX . 'address', true);
+			$latitude	= get_post_meta($post->ID, self::PREFIX . 'latitude', true);
+			$longitude	= get_post_meta($post->ID, self::PREFIX . 'longitude', true);
 			
 			require_once( dirname(__FILE__) . '/views/add-edit.php' );
 		}
@@ -409,7 +260,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		{
 			global $post;
 			
-			if( $post && $post->post_type == 'bgmp' && current_user_can( 'edit_posts' ) )
+			if( $post && $post->post_type == self::POST_TYPE && current_user_can( 'edit_posts' ) )
 			{
 				if( ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) || $post->post_status == 'auto-draft' )
 					return;
@@ -435,10 +286,11 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		/**
 		 * 
 		 * google's api has daily limit. could cause problems, but probably won't ever reach it. based on IP address, right?
+		 * public b/c called from settings object. maybe it'd be better to make it a static method instead?
 		 * @param
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
-		protected function geocode($address)
+		public function geocode($address)
 		{
 			$geocodeResponse = wp_remote_get( 'http://maps.googleapis.com/maps/api/geocode/json?address='. str_replace( ' ', '+', $address ) .'&sensor=false' );
 			$coordinates = json_decode( $geocodeResponse['body'] );
@@ -496,7 +348,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		 */
 		public function listShortcode($attributes) 
 		{
-			$posts = get_posts( array( 'numberposts' => -1, 'post_type' => 'bgmp', 'post_status' => 'publish' ) );
+			$posts = get_posts( array( 'numberposts' => -1, 'post_type' => self::POST_TYPE, 'post_status' => 'publish' ) );
 			
 			if( $posts )
 			{
@@ -517,8 +369,6 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 						'http://google.com/maps?q='. $address,
 						$address
 					);
-					
-					// make lat/long into address or city/zip
 				}
 				
 				$output .= '</ul>';
@@ -527,24 +377,6 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 			}
 			else
 				return "There aren't currently any placemarks in the system";
-		}
-		
-		/**
-		 * Load CSS on front and back end
-		 * @author Ian Dunn <ian@iandunn.name>
-		 */
-		public function loadStyle()
-		{
-			// setup to only call this on pages where teh shortcode was called? can't use same method as js b/c <style> has to be inside <head>
-			
-			wp_register_style(
-				self::PREFIX .'style',
-				plugins_url( 'style.css', __FILE__ ),
-				false,
-				self::BGMP_VERSION,
-				false
-			);
-			wp_enqueue_style( self::PREFIX . 'style' );
 		}
 		
 		/**
@@ -593,19 +425,6 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		}
 		
 		/**
-		 * Outputs GET headers for JSON requests
-		 * @author Ian Dunn <ian@iandunn.name>
-		 */
-		protected function getHeaders()
-		{
-			header('Cache-Control: no-cache, must-revalidate');
-			header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-			header('Content-Type: application/json; charset=utf8');
-			header('Content-Type: application/json');
-			header($_SERVER["SERVER_PROTOCOL"]." 200 OK");
-		}
-		
-		/**
 		 * 
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
@@ -614,13 +433,13 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 			check_ajax_referer( self::PREFIX . 'nonce', 'nonce' );
 	
 			$options = array(
-				'width'				=> $this->settings['map-width'],
-				'height'			=> $this->settings['map-height'],
-				'latitude'			=> $this->settings['map-latitude'],
-				'longitude'			=> $this->settings['map-longitude'],
-				'zoom'				=> $this->settings['map-zoom'],
-				'infoWindowWidth'	=> $this->settings['map-info-window-width'],
-				'infoWindowHeight'	=> $this->settings['map-info-window-height']
+				'width'				=> $this->settings->mapWidth,
+				'height'			=> $this->settings->mapHeight,
+				'latitude'			=> $this->settings->mapLatitude,
+				'longitude'			=> $this->settings->mapLongitude,
+				'zoom'				=> $this->settings->mapZoom,
+				'infoWindowWidth'	=> $this->settings->mapInfoWindowWidth,
+				'infoWindowHeight'	=> $this->settings->mapInfoWindowHeight
 			);
 		
 			$this->getHeaders();
@@ -637,7 +456,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 			check_ajax_referer( self::PREFIX . 'nonce', 'nonce' );
 			
 			$placemarks = array();
-			$posts = get_posts( array( 'numberposts' => -1, 'post_type' => 'bgmp', 'post_status' => 'publish' ) );
+			$posts = get_posts( array( 'numberposts' => -1, 'post_type' => self::POST_TYPE, 'post_status' => 'publish' ) );
 			
 			if( $posts )
 			{
@@ -657,6 +476,19 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 			
 			$this->getHeaders();
 			die( json_encode($placemarks) );
+		}
+		
+		/**
+		 * Outputs GET headers for JSON requests
+		 * @author Ian Dunn <ian@iandunn.name>
+		 */
+		protected function getHeaders()
+		{
+			header('Cache-Control: no-cache, must-revalidate');
+			header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+			header('Content-Type: application/json; charset=utf8');
+			header('Content-Type: application/json');
+			header($_SERVER["SERVER_PROTOCOL"]." 200 OK");
 		}
 		
 		/**
