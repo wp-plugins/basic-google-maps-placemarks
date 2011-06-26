@@ -29,6 +29,8 @@
 	/* Override theme styles that will interfere with the map */
 	#bgmp_map-canvas img
 	{
+		width: auto;
+		max-width: none;
 		background: none !important;
 		padding: 0;
 		-webkit-box-shadow: none;
