@@ -1,12 +1,16 @@
 1.1.4
+	test against 3.2, update readme
 	make sure works in multisite. 
 		setup new wpms install at playground to test
 		add answer to faq
-	uninstall script
-		uninstall settings but not data. note that on the installation page under an 'uninstall' section
 	double check that everything is sanitized
 	give everything a once over, check comments, empty phpdoc lines, etc
-		
+
+1.1.5
+	uninstall script
+		uninstall settings but not data. note that on the installation page under an 'uninstall' section
+	add error to long/lat fields (or somewhere) when geocode doesn't result correct coordinates
+	
 1.2
 	add hooks/filters
 		document their usage in readme.
@@ -44,5 +48,8 @@ future
 	log to console by default, so you can easily troubleshoot other websites? or maybe only if a ?bgmp_debug parameter is passed in, so you don't clutter the console 
 	map won't load if theme doesn't call wp_footer(). add check to make sure theme is doing that. display error if it isn't.
 	look into having a capability so users can control what other users can add them?
-	maybe add ability to create multiple maps w/ distinct sets of markers, but only if more people ask for it
-		would create a post type for maps, then have a field on markers which define which map it's associated w/
+	
+	if enough people ask
+		add ability to create multiple maps w/ distinct sets of markers, but only if more people ask for it
+			would create a post type for maps, then have a field on markers which define which map it's associated w/
+		define z-index for each marker

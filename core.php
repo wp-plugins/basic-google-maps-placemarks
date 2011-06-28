@@ -33,27 +33,28 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 			
 			// Initialize variables
 			$defaultOptions				= array( 'updates' => array(), 'errors' => array() );
-			$this->options				= array_merge( get_option( self::PREFIX . 'options', array() ), $defaultOptions );
+			$this->options				= array_merge( $defaultOptions, get_option( self::PREFIX . 'options', array() ) );
+			$this->userMessageCount		= array( 'updates' => count( $this->options['updates'] ), 'errors' => count( $this->options['errors'] )	);
 			$this->updatedOptions		= false;
-			$this->userMessageCount		= array( 'updates' => 0, 'errors' => 0 );
 			$this->mapShortcodeCalled	= false;
 			$this->settings				= new BGMPSettings( $this );
 			
 			// Register actions, filters and shortcodes
-			add_action( 'admin_notices',						array($this, 'printMessages') );
-			add_action( 'init',									array($this, 'createPostType') );
-			add_action( 'admin_init',							array($this, 'registerCustomFields') );
-			add_action( 'save_post',							array($this, 'saveCustomFields') );
-			add_action( 'wp_head',								array($this, 'outputHead' ) );
-			add_action( 'wp_footer',							array($this, 'outputFooter' ) );
-			add_action( 'wp_ajax_bgmp_get_map_options',			array($this, 'getMapOptions' ) );
-			add_action( 'wp_ajax_nopriv_bgmp_get_map_options',	array($this, 'getMapOptions' ) );
-			add_action( 'wp_ajax_bgmp_get_placemarks',			array($this, 'getPlacemarks' ) );
-			add_action( 'wp_ajax_nopriv_bgmp_get_placemarks',	array($this, 'getPlacemarks' ) );
-			add_filter( 'the_posts', 							array($this, 'loadResources'), 11 );
-			add_shortcode( 'bgmp-map',							array($this, 'mapShortcode') );
-			add_shortcode( 'bgmp-list',							array($this, 'listShortcode') );
-			register_activation_hook( __FILE__,					array($this, 'activate') );
+			add_action( 'admin_notices',						array( $this, 'printMessages') );
+			add_action( 'init',									array( $this, 'createPostType') );
+			add_action( 'admin_init',							array( $this, 'registerCustomFields') );
+			add_action( 'save_post',							array( $this, 'saveCustomFields') );
+			add_action( 'wp_head',								array( $this, 'outputHead' ) );
+			add_action( 'wp_footer',							array( $this, 'outputFooter' ) );
+			add_action( 'wp_ajax_bgmp_get_map_options',			array( $this, 'getMapOptions' ) );
+			add_action( 'wp_ajax_nopriv_bgmp_get_map_options',	array( $this, 'getMapOptions' ) );
+			add_action( 'wp_ajax_bgmp_get_placemarks',			array( $this, 'getPlacemarks' ) );
+			add_action( 'wp_ajax_nopriv_bgmp_get_placemarks',	array( $this, 'getPlacemarks' ) );
+			add_action( 'shutdown',								array( $this, 'shutdown' ) );
+			add_filter( 'the_posts', 							array( $this, 'loadResources'), 11 );
+			add_shortcode( 'bgmp-map',							array( $this, 'mapShortcode') );
+			add_shortcode( 'bgmp-list',							array( $this, 'listShortcode') );
+			register_activation_hook( __FILE__,					array( $this, 'activate') );
 			
 			if( is_admin() )
 				add_theme_support( 'post-thumbnails' );
@@ -132,8 +133,6 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		public function loadResources($posts)
 		{
 			// @todo - maybe find an action that gets run at the same time. would be better to hook there than to a filter. update faq for do_shortcode if do
-			
-			//wp_die(' plugin' );
 			
 			wp_register_script(
 				'googleMapsAPI',
@@ -287,7 +286,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 				}
 				else
 				{
-					// add error message for user
+					$this->enqueueMessage('That address couldn\'t be geocoded, please make sure that it\'s correct.', 'error' );
 					
 					update_post_meta( $post->ID, self::PREFIX . 'latitude', '' );
 					update_post_meta( $post->ID, self::PREFIX . 'longitude', '' );
@@ -554,14 +553,14 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		}
 		
 		/**
-		 * Destructor
 		 * Writes options to the database
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
-		public function __destruct()
+		public function shutdown()
 		{
-			if($this->updatedOptions)
-				update_option(self::PREFIX . 'options', $this->options);
+			if( is_admin() )
+				if( $this->updatedOptions )
+					update_option( self::PREFIX . 'options', $this->options );
 		}
 	} // end BasicGoogleMapsPlacemarks
 }

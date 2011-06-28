@@ -1,10 +1,12 @@
 <?php
 /*
 Plugin Name: Basic Google Maps Placemarks
-Description: Embeds a Google Map into your site and lets you add markers with custom icons
+Plugin URI: http://wordpress.org/extend/plugins/basic-google-maps-placemarks/
+Description: Embeds a Google Map into your site and lets you add markers with custom icons and information windows
 Version: 1.1.3
 Author: Ian Dunn
 Author URI: http://iandunn.name
+License: GPL2
 */
 
 /*  

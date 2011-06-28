@@ -1,7 +1,7 @@
 === Basic Google Maps Placemarks ===
 Contributors: iandunn
 Donate link: http://www.doctorswithoutborders.org
-Tags: google maps, map, markers, placemarks
+Tags: google map, map, embed, marker, placemark, icon
 Requires at least: 3.0
 Tested up to: 3.2-RC2
 Stable tag: 1.1.3
@@ -64,7 +64,7 @@ function my_theme_name_bgmp_style()
 }
 `
 
-Then create a bgmp-style.css file inside your theme directory and put your styles there. If you'd prefer, you could also just make it an empty file and put the styles in your main style.css, but either way you need to register and enqueue a style with the `bgmp_style,` because the plugin checks to make sure the CSS and JavaScript files are loaded before embedding the map.
+Then create a bgmp-style.css file inside your theme directory and put your styles there. If you'd prefer, you could also just make it an empty file and put the styles in your main style.css, but either way you need to register and enqueue a style with the `bgmp_style` handle, because the plugin checks to make sure the CSS and JavaScript files are loaded before embedding the map.
 
 = I upgraded to the latest version and now the map isn't working. =
 If you're running a caching plugin like WP Super Cache, make sure you delete the cache contents so that the latest files are loaded, and then refresh your browser.
@@ -72,8 +72,11 @@ If you're running a caching plugin like WP Super Cache, make sure you delete the
 = How do I add the shortcode to a page? =
 Just type *[bgmp-map]* on any post of page, and then view that page.
 
+= Can I have multiple maps with different sets of placemarks for each? =
+No. You can add embed the map on multiple pages, but it will always pull all of the placemarks onto it.
+
 = I get an error when using do_shortcode() to call the map shortcode =
-The plugin only loads the CSS and JavaScript files on pages where it detects the map shortcode is being called. It's not possible to detect when [do_shortcode()](http://codex.wordpress.org/Function_Reference/do_shortcode) is used, so you need to manually let the plugin know to load the files by adding this code to your theme:
+For efficiency, the plugin only loads the required JavaScript, CSS and markup files on pages where it detects the map shortcode is being called. It's not possible to detect when [do_shortcode()](http://codex.wordpress.org/Function_Reference/do_shortcode) is used, so you need to manually let the plugin know to load the files by adding this code to your theme:
 
 `
 add_filter( 'the_posts', 'my_theme_name_bgmp_shortcode_check' );
