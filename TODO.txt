@@ -1,17 +1,28 @@
-1.1.4
-	test against 3.2, update readme
-	make sure works in multisite. 
-		setup new wpms install at playground to test
-		add answer to faq
+1.2.1
+	admin_notices
+		target
+			http://core.trac.wordpress.org/ticket/14696
+			have to go through each message and deterine who it should go to
+			this will bump required version up to 3.1
+			might want to use is_user_admin() when setting or displaying
+		error in addFeaturedImageSupport being added multiple times
+			maybe b/c sitting on page and auto-save adds one?
+			could not call enqueue if auto-save inside addFeaturedImageSupport, but probably better to check if message already enqueues inside enqueueMessage()
+			might be fixed by 'target' task, but probably not
+	test against 3.2 official release, update readme
+	add option to disable the 'image media button disabled' warning. would have to be site-wide option?
+		update error message to let them know they can disable it
+	organize FAQ page into sections?
+
+1.2.2
 	double check that everything is sanitized
 	give everything a once over, check comments, empty phpdoc lines, etc
-
-1.1.5
 	uninstall script
+		take wpms into account
 		uninstall settings but not data. note that on the installation page under an 'uninstall' section
-	add error to long/lat fields (or somewhere) when geocode doesn't result correct coordinates
+	look into http://docs.jquery.com/Plugins/Authoring to see if you should do things that way
 	
-1.2
+1.3
 	add hooks/filters
 		document their usage in readme.
 	internatinoalization
@@ -29,13 +40,13 @@
 		} );
 	add option to select map type, disable type selector for user, select zoom control -- http:www.svennerberg.com/examples/google_maps_3/properties.php
 	
-1.3
+1.4
 	add column on View page for address, icon
 	try to get info windows to be auto height relative to content inside
 	in list shortcode, order posts by latitude, zip code or something meaningful. api does return city/county/etc data
 	add ? icon next to address field and move the 'you can type in blah blah' bit there
 	
-1.4
+1.5
 	realized too late that it didn't need ajax at all. oh well, at least it was good learning experience. take it out to improve loading speed and just reference older versions when needed
 	
 

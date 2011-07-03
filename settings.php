@@ -1,6 +1,6 @@
 <?php
 
-if( basename($_SERVER['SCRIPT_FILENAME']) == basename(__FILE__) )
+if( $_SERVER['SCRIPT_FILENAME'] == __FILE__ )
 	die("Access denied.");
 
 if( !class_exists('BGMPSettings') )
@@ -68,7 +68,7 @@ if( !class_exists('BGMPSettings') )
 				}
 				else
 				{
-					// add error message for user
+					$this->bgmp->enqueueMessage('That address couldn\'t be geocoded, please make sure that it\'s correct.', 'error' );
 					
 					update_option( self::PREFIX . 'map-latitude', '' );
 					update_option( self::PREFIX . 'map-longitude', '' );

@@ -1,7 +1,7 @@
 <?php
 
-if( basename( $_SERVER['SCRIPT_FILENAME'] ) == basename(__FILE__) )
-	die( 'Access denied.' );
+if( $_SERVER['SCRIPT_FILENAME'] == __FILE__ )
+	die("Access denied.");
 
 if( !class_exists('BasicGoogleMapsPlacemarks') )
 {
@@ -18,7 +18,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 	{
 		// Declare variables and constants
 		protected $settings, $options, $updatedOptions, $userMessageCount, $environmentOK, $mapShortcodeCalled;
-		const BGMP_VERSION			= '1.1.3';
+		const BGMP_VERSION			= '1.2';
 		const PREFIX				= 'bgmp_';
 		const POST_TYPE				= 'bgmp';
 		const DEBUG_MODE			= false;
@@ -29,7 +29,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		 */
 		public function __construct()
 		{
-			require_once('settings.php');
+			require_once( dirname(__FILE__) . '/settings.php');
 			
 			// Initialize variables
 			$defaultOptions				= array( 'updates' => array(), 'errors' => array() );
@@ -42,6 +42,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 			// Register actions, filters and shortcodes
 			add_action( 'admin_notices',						array( $this, 'printMessages') );
 			add_action( 'init',									array( $this, 'createPostType') );
+			add_action( 'init', 								array( $this, 'addFeaturedImageSupport' ) );
 			add_action( 'admin_init',							array( $this, 'registerCustomFields') );
 			add_action( 'save_post',							array( $this, 'saveCustomFields') );
 			add_action( 'wp_head',								array( $this, 'outputHead' ) );
@@ -50,21 +51,59 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 			add_action( 'wp_ajax_nopriv_bgmp_get_map_options',	array( $this, 'getMapOptions' ) );
 			add_action( 'wp_ajax_bgmp_get_placemarks',			array( $this, 'getPlacemarks' ) );
 			add_action( 'wp_ajax_nopriv_bgmp_get_placemarks',	array( $this, 'getPlacemarks' ) );
+			add_action( 'wpmu_new_blog', 						array( $this, 'activateNewSite' ) );
 			add_action( 'shutdown',								array( $this, 'shutdown' ) );
 			add_filter( 'the_posts', 							array( $this, 'loadResources'), 11 );
 			add_shortcode( 'bgmp-map',							array( $this, 'mapShortcode') );
 			add_shortcode( 'bgmp-list',							array( $this, 'listShortcode') );
-			register_activation_hook( __FILE__,					array( $this, 'activate') );
 			
-			if( is_admin() )
-				add_theme_support( 'post-thumbnails' );
+			register_activation_hook( dirname(__FILE__) . '/basic-google-maps-placemarks.php', array( $this, 'networkActivate') );
 		}
 		
 		/**
-		 * Runs on plugin activation to prepare system for plugin usage
+		 * Handles extra activation tasks for MultiSite installations
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
-		public function activate()
+		public function networkActivate()
+		{
+			global $wpdb;
+			
+			if( function_exists('is_multisite') && is_multisite() )
+			{
+				// Enable image uploads so the 'Set Featured Image' meta box will be available
+				$mediaButtons = get_site_option( 'mu_media_buttons' );
+				
+				if( !array_key_exists( 'image', $mediaButtons ) || !$mediaButtons['image'] )
+				{
+					$mediaButtons['image'] = 1;
+					update_site_option( 'mu_media_buttons', $mediaButtons );
+				}
+				
+				// Activate the plugin across the network if requested
+				if( array_key_exists( 'networkwide', $_GET ) && ( $_GET['networkwide'] == 1) )
+				{
+					$blogs = $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs" );
+					
+					foreach( $blogs as $b ) 
+					{
+						switch_to_blog( $b );
+						$this->singleActivate();
+					}
+					
+					restore_current_blog();
+				}
+				else
+					$this->singleActivate();
+			}
+			else
+				$this->singleActivate();
+		}
+		
+		/**
+		 * Prepares a single blog to use the plugin
+		 * @author Ian Dunn <ian@iandunn.name>
+		 */
+		protected function singleActivate()
 		{
 			// Save default settings
 			if( !get_option( self::PREFIX . 'map-width' ) )
@@ -88,7 +127,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 			$posts = get_posts( array( 'numberposts' => -1, 'post_type' => self::POST_TYPE, 'post_status' => 'publish' ) );
 			if( $posts )
 			{
-				foreach($posts as $p)
+				foreach( $posts as $p )
 				{
 					$address	= get_post_meta( $p->ID, self::PREFIX . 'address', true );
 					$latitude	= get_post_meta( $p->ID, self::PREFIX . 'latitude', true );
@@ -96,11 +135,50 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 					
 					if( empty($address) && !empty($latitude) && !empty($longitude) )
 					{
-						$address = $this->reverseGeocode($latitude, $longitude);
+						$address = $this->reverseGeocode( $latitude, $longitude );
 						if( $address )
 							update_post_meta( $p->ID, self::PREFIX . 'address', $address );
 					}
 				}
+			}
+		}
+		
+		/**
+		 * Runs activation code on a new WPMS site when it's created
+		 * @author Ian Dunn <ian@iandunn.name>
+		 * @param int $blogID
+		 */
+		public function activateNewSite( $blogID )
+		{
+			switch_to_blog( $blogID );
+			$this->singleActivate();
+			restore_current_blog();
+		}
+		
+		/**
+		 * Adds featured image support
+		 * @author Ian Dunn <ian@iandunn.name>
+		 */
+		public function addFeaturedImageSupport()
+		{
+			if( is_admin() )
+			{
+				// We enabled image media buttons for MultiSite on activation, but the admin may have turned it back off
+				if( function_exists('is_multisite') && is_multisite() )
+				{
+					$mediaButtons = get_site_option( 'mu_media_buttons' );
+					
+					if( !array_key_exists( 'image', $mediaButtons ) || !$mediaButtons['image'] )
+					{
+						$this->enqueueMessage( sprintf(
+							"%s requires the Images media button setting to be enabled in order to use custom icons on markers, but it's currently turned off. If you'd like to use custom icons you can enable it on the <a href=\"%ssettings.php\">Network Settings</a> page, in the Upload Settings section.",
+							BGMP_NAME,
+							network_admin_url()
+						), 'error' );
+					}
+				}
+				
+				add_theme_support( 'post-thumbnails' );
 			}
 		}
 		
@@ -110,7 +188,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		 * @param array $posts
 		 * @return bool
 		 */
-		function mapShortcodeCalled($posts)
+		function mapShortcodeCalled( $posts )
 		{
 			$this->mapShortcodeCalled = apply_filters( self::PREFIX .'mapShortcodeCalled', $this->mapShortcodeCalled );
 			if( $this->mapShortcodeCalled )
@@ -130,7 +208,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		 * Load CSS and JavaScript files
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
-		public function loadResources($posts)
+		public function loadResources( $posts )
 		{
 			// @todo - maybe find an action that gets run at the same time. would be better to hook there than to a filter. update faq for do_shortcode if do
 			
@@ -255,9 +333,9 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		{
 			global $post;
 		
-			$address	= get_post_meta($post->ID, self::PREFIX . 'address', true);
-			$latitude	= get_post_meta($post->ID, self::PREFIX . 'latitude', true);
-			$longitude	= get_post_meta($post->ID, self::PREFIX . 'longitude', true);
+			$address	= get_post_meta( $post->ID, self::PREFIX . 'address', true );
+			$latitude	= get_post_meta( $post->ID, self::PREFIX . 'latitude', true );
+			$longitude	= get_post_meta( $post->ID, self::PREFIX . 'longitude', true );
 			
 			require_once( dirname(__FILE__) . '/views/add-edit.php' );
 		}
@@ -267,11 +345,11 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		 * @param
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
-		public function saveCustomFields($postID)
+		public function saveCustomFields( $postID )
 		{
 			global $post;
 			
-			if( $post && $post->post_type == self::POST_TYPE && current_user_can( 'edit_posts' ) )
+			if(	$post && $post->post_type == self::POST_TYPE && current_user_can( 'edit_posts' ) && $_GET['action'] != 'trash' && $_GET['action'] != 'untrash' )
 			{
 				if( ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) || $post->post_status == 'auto-draft' )
 					return;
@@ -300,7 +378,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		 * @param
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
-		public function geocode($address)
+		public function geocode( $address )
 		{
 			$geocodeResponse = wp_remote_get( 'http://maps.googleapis.com/maps/api/geocode/json?address='. str_replace( ' ', '+', $address ) .'&sensor=false' );
 			$coordinates = json_decode( $geocodeResponse['body'] );
@@ -318,7 +396,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		 * @param string $longitude
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
-		protected function reverseGeocode($latitude, $longitude)
+		protected function reverseGeocode( $latitude, $longitude )
 		{
 			$geocodeResponse = wp_remote_get( 'http://maps.googleapis.com/maps/api/geocode/json?latlng='. $latitude .','. $longitude .'&sensor=false' );
 			$address = json_decode( $geocodeResponse['body'] );
@@ -335,7 +413,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		 * @param array $attributes Array of parameters automatically passed in by Wordpress
 		 * return string The output of the shortcode
 		 */
-		public function mapShortcode($attributes) 
+		public function mapShortcode( $attributes ) 
 		{
 			if( !wp_script_is( 'googleMapsAPI', 'queue' ) || !wp_script_is( 'bgmp', 'queue' ) || !wp_style_is( self::PREFIX .'style', 'queue' ) )
 				return '<p class="error">'. BGMP_NAME .' error: JavaScript and/or CSS files aren\'t loaded. If you\'re using do_shortcode() you need to add a filter to your theme first. See <a href="http://wordpress.org/extend/plugins/basic-google-maps-placemarks/faq/">the FAQ</a> for details.</p>';
@@ -358,7 +436,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		 * @param array $attributes Array of parameters automatically passed in by Wordpress
 		 * return string The output of the shortcode
 		 */
-		public function listShortcode($attributes) 
+		public function listShortcode( $attributes ) 
 		{
 			$posts = get_posts( array( 'numberposts' => -1, 'post_type' => self::POST_TYPE, 'post_status' => 'publish' ) );
 			
@@ -368,7 +446,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 				
 				foreach( $posts as $p )
 				{
-					$address = get_post_meta($p->ID, self::PREFIX . 'address', true);
+					$address = get_post_meta( $p->ID, self::PREFIX . 'address', true );
 						
 					$output .= sprintf('
 						<li>
@@ -377,7 +455,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 							<p><a href="%s">%s</a></p>
 						</li>',
 						$p->post_title,
-						nl2br($p->post_content),
+						nl2br( $p->post_content ),
 						'http://google.com/maps?q='. $address,
 						$address
 					);
@@ -428,7 +506,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 			
 			if( $posts )
 			{
-				foreach($posts as $p)
+				foreach( $posts as $p )
 				{
 					$icon = wp_get_attachment_image_src( get_post_thumbnail_id($p->ID) );
  
@@ -436,7 +514,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 						'title'		=> $p->post_title,
 						'latitude'	=> get_post_meta( $p->ID, self::PREFIX . 'latitude', true ),
 						'longitude'	=> get_post_meta( $p->ID, self::PREFIX . 'longitude', true ),
-						'details'	=> nl2br($p->post_content),
+						'details'	=> nl2br( $p->post_content ),
 						'icon'		=> is_array($icon) ? $icon[0] : plugins_url( 'images/default-marker.png', __FILE__ )
 					);
 				}
@@ -452,11 +530,11 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		 */
 		protected function getHeaders()
 		{
-			header('Cache-Control: no-cache, must-revalidate');
-			header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-			header('Content-Type: application/json; charset=utf8');
-			header('Content-Type: application/json');
-			header($_SERVER["SERVER_PROTOCOL"]." 200 OK");
+			header( 'Cache-Control: no-cache, must-revalidate' );
+			header( 'Expires: Mon, 26 Jul 1997 05:00:00 GMT' );
+			header( 'Content-Type: application/json; charset=utf8' );
+			header( 'Content-Type: application/json' );
+			header( $_SERVER["SERVER_PROTOCOL"]." 200 OK" );
 		}
 		
 		/**
@@ -470,7 +548,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 				if( $this->options[$type] && ( self::DEBUG_MODE || $this->userMessageCount[$type] ) )
 				{
 					echo '<div id="message" class="'. ( $type == 'updates' ? 'updated' : 'error' ) .'">';
-					foreach($this->options[$type] as $message)
+					foreach( $this->options[$type] as $message )
 						if( $message['mode'] == 'user' || self::DEBUG_MODE )
 							echo '<p>'. $message['message'] .'</p>';
 					echo '</div>';
@@ -489,15 +567,15 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		 * @param string $type 'update' for a success or notification message, or 'error' for an error message
 		 * @param string $mode 'user' if it's intended for the user, or 'debug' if it's intended for the developer
 		 */
-		protected function enqueueMessage($message, $type = 'update', $mode = 'user')
+		public function enqueueMessage( $message, $type = 'update', $mode = 'user' )
 		{
-			array_push($this->options[$type .'s'], array(
+			array_push( $this->options[$type .'s'], array(
 				'message' => $message,
 				'type' => $type,
 				'mode' => $mode
 			) );
 			
-			if($mode == 'user')
+			if( $mode == 'user' )
 				$this->userMessageCount[$type . 's']++;
 			
 			$this->updatedOptions = true;
@@ -507,11 +585,12 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		 * Stops execution and prints the input. Used for debugging.
 		 * @author Ian Dunn <ian@iandunn.name>
 		 * @param mixed $data
+		 * @param string $output 'message' will be sent to an admin notice; 'die' will be output inside wp_die(); 'return' will be returned;
 		 * @param string $message Optionally message to output before description
 		 */
-		protected function describe( $data, $message = '' )
+		protected function describe( $data, $output = 'return', $message = '' )
 		{
-			$type = gettype($data);
+			$type = gettype( $data );
 
 			switch( $type)
 			{
@@ -533,12 +612,12 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 					$data = ob_get_contents();
 					ob_end_clean();
 					
-					$data = print_r($data, true);
+					$data = print_r( $data, true );
 					
 					break;
 			}
 			
-			wp_die( sprintf('
+			$description = sprintf('
 				<p>
 					%s
 					Type: %s<br />
@@ -549,7 +628,14 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 				$type,
 				$length,
 				$data
-			) );
+			);
+			
+			if( $output == 'message' )
+				$this->enqueueMessage( $description, 'error' );
+			elseif( $output == 'die' )
+				wp_die( $description );
+			else
+				return $description;
 		}
 		
 		/**

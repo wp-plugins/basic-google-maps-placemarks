@@ -4,7 +4,7 @@ Donate link: http://www.doctorswithoutborders.org
 Tags: google map, map, embed, marker, placemark, icon
 Requires at least: 3.0
 Tested up to: 3.2-RC2
-Stable tag: 1.1.3
+Stable tag: 1.2
 
 Embeds a Google Map into your site and lets you add markers with custom icons and information windows.
 
@@ -47,6 +47,9 @@ Go to the Settings page and increase the width/height of the info window.
 
 = Can registered users create their own placemarks? =
 Yes. The plugin creates a [custom post type](http://codex.wordpress.org/Post_Types), so it has the same [permission structure](http://codex.wordpress.org/Roles_and_Capabilities) as regular posts/pages.
+
+= Will the plugin work in WordPress MultiSite? =
+Yes. Version 1.2 added support for MultiSite installations.
 
 = How can I override the styles the plugin applies to the map? =
 The width/height of the map and marker information windows are always defined in the Settings, but you can override everything else by putting this code in your theme's functions.php file:
@@ -104,11 +107,11 @@ function your_theme_name_bgmp_shortcode_called( $mapShortcodeCalled )
 
 Copy and paste that into your theme's *functions.php* file, update the function names and filter arguments, and then add the slugs of any pages/posts containing the map to $shortcodePageSlugs. If you're using it on the home page, the slug will be 'home'.
 
-= I need help or have a problem that isn't listed here. =
-Check [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10), because there's half a chance your problem has already been answered there. If you can't find anything, then start a new thread with a detailed description of your problem and the URL to your site. I monitor the forums and will respond as my schedule permits.
+= How can I get help when I'm having a problem? =
+Check [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10), because there's half a chance your problem has already been answered there, and the answer you get will help others in the future. If you can't find anything, then start a new thread with a detailed description of your problem and the URL to your site. I monitor the forums and will respond as my schedule permits.
 
-= How can I send you feedback/comments/suggestions? =
-You can send me feedback using the [contact form](http://iandunn.name/contact) on my website, and I'll respond as my schedule permits. *Please don't use this if you're having trouble using the plugin;* use the support forums instead (see above question for details).
+= How can I send feedback that isn't of a support nature? =
+You can send me feedback/comments/suggestions using the [contact form](http://iandunn.name/contact) on my website, and I'll respond as my schedule permits. *Please **don't** use this if you're having trouble using the plugin;* use the support forums instead (see above question for details). **I only provide support using the forums, not over e-mail.**
 
 
 == Screenshots ==
@@ -119,6 +122,15 @@ You can send me feedback using the [contact form](http://iandunn.name/contact) o
 
 
 == Changelog ==
+
+= 1.2 =
+* Fixes bug from 1.1.3 where the default options weren't set on activation
+* MultiSite - Fixed [activation error](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-call-to-undefined-function-wp_get_current_user) from relative require paths
+* MultiSite - Added support for network activation, new site activation
+* MultiSite - Enabled image upload button at activation
+* Fixed [bugs](http://wordpress.stackexchange.com/questions/20130/custom-admin-notices-messages-ignored-during-redirects) in message handling functions
+* Fixed ['active version' stats bug](http://wordpress.stackexchange.com/questions/21132/repository-reporting-incorrect-plugin-active-version-stat)
+* Added notification when geocode couldn't resolve correct coordinates
 
 = 1.1.3 = 
 * CSS and JavaScript files are only loaded on pages where the map shortcode is called
@@ -146,6 +158,9 @@ You can send me feedback using the [contact form](http://iandunn.name/contact) o
 
 
 == Upgrade Notice ==
+
+= 1.2 = 
+BGMP 1.2 adds support for WordPress MultiSite and fixes several minor bugs
 
 = 1.1.3 = 
 BGMP 1.1.3 contains bug fixes, performance improvements and updates for WordPress 3.2 compatibility.
