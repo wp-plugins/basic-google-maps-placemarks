@@ -3,8 +3,8 @@ Contributors: iandunn
 Donate link: http://www.doctorswithoutborders.org
 Tags: google map, map, embed, marker, placemark, icon
 Requires at least: 3.0
-Tested up to: 3.2-RC2
-Stable tag: 1.2
+Tested up to: 3.2.1
+Stable tag: 1.2.1
 
 Embeds a Google Map into your site and lets you add markers with custom icons and information windows.
 
@@ -42,8 +42,16 @@ This is probably because some rules from your theme's stylesheet are being appli
 
 Also, make sure your theme is calling *[wp_footer()](http://codex.wordpress.org/Function_Reference/wp_footer)* right before the closing *body* tag in footer.php. 
 
-= How do I get rid of the scrollbars on the marker popup? =
-Go to the Settings page and increase the width/height of the info window.
+= How can I force the info. window width and height to always be the same size? =
+Add the following styles to your theme's style.css file:
+
+`
+.bgmp_placemark
+{
+	width: 450px;
+	height: 350px;
+}
+`
 
 = Can registered users create their own placemarks? =
 Yes. The plugin creates a [custom post type](http://codex.wordpress.org/Post_Types), so it has the same [permission structure](http://codex.wordpress.org/Roles_and_Capabilities) as regular posts/pages.
@@ -107,8 +115,13 @@ function your_theme_name_bgmp_shortcode_called( $mapShortcodeCalled )
 
 Copy and paste that into your theme's *functions.php* file, update the function names and filter arguments, and then add the slugs of any pages/posts containing the map to $shortcodePageSlugs. If you're using it on the home page, the slug will be 'home'.
 
+= Can I use coordinates to set the marker, instead of an address? =
+Yes. You can type anything into the Address field that you would type into a standard Google Maps search field, which includes coordinates. For example: 48.61322,-123.3465.
+
 = How can I get help when I'm having a problem? =
 Check [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10), because there's half a chance your problem has already been answered there, and the answer you get will help others in the future. If you can't find anything, then start a new thread with a detailed description of your problem and the URL to your site. I monitor the forums and will respond as my schedule permits.
+
+If you create a post, make sure it's tagged with `basic-google-maps-placemarks` so that I get a notification. If you use the link above it'll automatically tag it for you.
 
 = How can I send feedback that isn't of a support nature? =
 You can send me feedback/comments/suggestions using the [contact form](http://iandunn.name/contact) on my website, and I'll respond as my schedule permits. *Please **don't** use this if you're having trouble using the plugin;* use the support forums instead (see above question for details). **I only provide support using the forums, not over e-mail.**
@@ -122,6 +135,9 @@ You can send me feedback/comments/suggestions using the [contact form](http://ia
 
 
 == Changelog ==
+
+= 1.2.1 = 
+* Fixes the [info window height bug](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-info-window-width-height)
 
 = 1.2 =
 * Fixes bug from 1.1.3 where the default options weren't set on activation
@@ -158,6 +174,9 @@ You can send me feedback/comments/suggestions using the [contact form](http://ia
 
 
 == Upgrade Notice ==
+
+= 1.2.1 =
+BGMP 1.2.1 fixes a bug related to the marker's info window width and height
 
 = 1.2 = 
 BGMP 1.2 adds support for WordPress MultiSite and fixes several minor bugs

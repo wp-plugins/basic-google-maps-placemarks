@@ -26,7 +26,8 @@ function bgmp_wrapper($)
 			bgmp.postURL			= $('#bgmp_postURL').val();
 			bgmp.nonce				= $('#bgmp_nonce').val();
 			bgmp.previousInfoWindow	= '';
-		
+			bgmp.infoWindowWidth	= bgmp.infoWindowHeight = 0;
+			
 			if( bgmp.canvas && bgmp.postURL && bgmp.nonce )
 				bgmp.buildMap( bgmp.canvas );
 			else
@@ -55,7 +56,7 @@ function bgmp_wrapper($)
 						$( bgmp.canvas ).html( bgmp.name + " error: couldn't load map options.");
 					else
 					{
-						if( response.width == '' || response.height == ''|| response.latitude == '' || response.longitude == '' || response.zoom == '' || response.infoWindowWidth == '' || response.infoWindowHeight == '' )
+						if( response.mapWidth == '' || response.mapHeight == ''|| response.latitude == '' || response.longitude == '' || response.zoom == '' || response.infoWindowWidth == '' || response.infoWindowHeight == '' )
 						{
 							$( bgmp.canvas ).html( bgmp.name + " error: map options not set.");
 							return;
@@ -70,10 +71,9 @@ function bgmp_wrapper($)
 						};
 						
 						// Override default width/heights from settings
-						$('#bgmp_map-canvas').css('width', response.width );
-						$('#bgmp_map-canvas').css('height', response.height );
-						$('.bgmp_placemark').css('width', response.infoWindowWidth );
-						$('.bgmp_placemark').css('height', response.infoWindowHeight );
+						$('#bgmp_map-canvas').css('width', response.mapWidth );
+						$('#bgmp_map-canvas').css('height', response.mapHeight );
+						bgmp.infoWindowMaxWidth = response.infoWindowMaxWidth;
 						
 						// Create map
 						try
@@ -134,7 +134,7 @@ function bgmp_wrapper($)
 		 * @param string icon URL of the icon
 		 * @return bool True on success, false on failure
 		 */
-		createMarker : function( map, title, latitude, longitude, details, icon)
+		createMarker : function( map, title, latitude, longitude, details, icon )
 		{
 			// @todo - clean up variable names
 			
@@ -151,7 +151,11 @@ function bgmp_wrapper($)
 			
 			try
 			{
-				infowindow = new google.maps.InfoWindow( { content: infowindowcontent } );
+				infowindow = new google.maps.InfoWindow( {
+					content:	infowindowcontent,
+					maxWidth:	bgmp.infoWindowMaxWidth
+				} );
+				
 				marker = new google.maps.Marker(
 				{
 					position: new google.maps.LatLng(latitude, longitude),
@@ -163,6 +167,7 @@ function bgmp_wrapper($)
 				{
 					if( bgmp.previousInfoWindow != '')
 						bgmp.previousInfoWindow.close();
+					
 					infowindow.open(map, marker);
 					bgmp.previousInfoWindow = infowindow;
 				} );

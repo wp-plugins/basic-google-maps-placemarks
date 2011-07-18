@@ -15,8 +15,8 @@ if( !class_exists('BGMPSettings') )
 	class BGMPSettings
 	{
 		protected $bgmp;
-		public $mapWidth, $mapHeight, $mapAddress, $mapLatitude, $mapLongitude, $mapZoom, $mapInfoWindowWidth, $mapInfoWindowHeight;
-		const PREFIX = 'bgmp_';
+		public $mapWidth, $mapHeight, $mapAddress, $mapLatitude, $mapLongitude, $mapZoom, $mapInfoWindowMaxWidth;
+		const PREFIX = 'bgmp_';		// @todo - can't you just acceess $bgmp's instead ?
 		
 		/**
 		 * Constructor
@@ -24,15 +24,14 @@ if( !class_exists('BGMPSettings') )
 		 */
 		public function __construct( $bgmp )
 		{
-			$this->bgmp					= $bgmp;
-			$this->mapWidth				= get_option( self::PREFIX . 'map-width' );
-			$this->mapHeight			= get_option( self::PREFIX . 'map-height' );
-			$this->mapAddress			= get_option( self::PREFIX . 'map-address' );
-			$this->mapLatitude			= get_option( self::PREFIX . 'map-latitude' );
-			$this->mapLongitude			= get_option( self::PREFIX . 'map-longitude' );
-			$this->mapZoom				= get_option( self::PREFIX . 'map-zoom' );
-			$this->mapInfoWindowWidth	= get_option( self::PREFIX . 'map-info-window-width' );
-			$this->mapInfoWindowHeight	= get_option( self::PREFIX . 'map-info-window-height' );
+			$this->bgmp						= $bgmp;
+			$this->mapWidth					= get_option( self::PREFIX . 'map-width' );
+			$this->mapHeight				= get_option( self::PREFIX . 'map-height' );
+			$this->mapAddress				= get_option( self::PREFIX . 'map-address' );
+			$this->mapLatitude				= get_option( self::PREFIX . 'map-latitude' );
+			$this->mapLongitude				= get_option( self::PREFIX . 'map-longitude' );
+			$this->mapZoom					= get_option( self::PREFIX . 'map-zoom' );
+			$this->mapInfoWindowMaxWidth	= get_option( self::PREFIX . 'map-info-window-width' );
 			
 			add_action( 'admin_init', array($this, 'addSettings') );
 			add_filter( 'plugin_action_links_basic-google-maps-placemarks/basic-google-maps-placemarks.php', array($this, 'addSettingsLink') );
@@ -97,23 +96,21 @@ if( !class_exists('BGMPSettings') )
 		{
 			add_settings_section(self::PREFIX . 'map-settings', 'Basic Google Maps Placemarks', array($this, 'settingsSectionCallback'), 'writing');
 			
-			add_settings_field(self::PREFIX . 'map-width',				'Map Width',			array($this, 'mapWidthCallback'),				'writing', self::PREFIX . 'map-settings');
-			add_settings_field(self::PREFIX . 'map-height',				'Map Height',			array($this, 'mapHeightCallback'),				'writing', self::PREFIX . 'map-settings');
-			add_settings_field(self::PREFIX . 'map-address',			'Map Center Address',	array($this, 'mapAddressCallback'),				'writing', self::PREFIX . 'map-settings');
-			add_settings_field(self::PREFIX . 'map-latitude',			'Map Center Latitude',	array($this, 'mapLatitudeCallback'),			'writing', self::PREFIX . 'map-settings');
-			add_settings_field(self::PREFIX . 'map-longitude',			'Map Center Longitude',	array($this, 'mapLongitudeCallback'),			'writing', self::PREFIX . 'map-settings');
-			add_settings_field(self::PREFIX . 'map-zoom',				'Zoom',					array($this, 'mapZoomCallback'),				'writing', self::PREFIX . 'map-settings');
-			add_settings_field(self::PREFIX . 'map-info-window-width',	'Info Window Width',	array($this, 'mapInfoWindowWidthCallback'),		'writing', self::PREFIX . 'map-settings');
-			add_settings_field(self::PREFIX . 'map-info-window-height',	'Info Window Height',	array($this, 'mapInfoWindowHeightCallback'),	'writing', self::PREFIX . 'map-settings');
+			add_settings_field(self::PREFIX . 'map-width',				'Map Width',					array($this, 'mapWidthCallback'),					'writing', self::PREFIX . 'map-settings');
+			add_settings_field(self::PREFIX . 'map-height',				'Map Height',					array($this, 'mapHeightCallback'),					'writing', self::PREFIX . 'map-settings');
+			add_settings_field(self::PREFIX . 'map-address',			'Map Center Address',			array($this, 'mapAddressCallback'),					'writing', self::PREFIX . 'map-settings');
+			add_settings_field(self::PREFIX . 'map-latitude',			'Map Center Latitude',			array($this, 'mapLatitudeCallback'),				'writing', self::PREFIX . 'map-settings');
+			add_settings_field(self::PREFIX . 'map-longitude',			'Map Center Longitude',			array($this, 'mapLongitudeCallback'),				'writing', self::PREFIX . 'map-settings');
+			add_settings_field(self::PREFIX . 'map-zoom',				'Zoom',							array($this, 'mapZoomCallback'),					'writing', self::PREFIX . 'map-settings');
+			add_settings_field(self::PREFIX . 'map-info-window-width',	'Info. Window Maximum Width',	array($this, 'mapInfoWindowMaxWidthCallback'),		'writing', self::PREFIX . 'map-settings');
 			
 			register_setting('writing', self::PREFIX . 'map-width');
 			register_setting('writing', self::PREFIX . 'map-height');
 			register_setting('writing', self::PREFIX . 'map-address');
 			register_setting('writing', self::PREFIX . 'map-zoom');
 			register_setting('writing', self::PREFIX . 'map-info-window-width');
-			register_setting('writing', self::PREFIX . 'map-info-window-height');
 			
-			// need to add labels to the names so they can click on name?
+			// @todo - need to add labels to the names so they can click on name?
 		}
 		
 		/**
@@ -183,18 +180,9 @@ if( !class_exists('BGMPSettings') )
 		 * Adds the info-window-width field to the Settings page
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
-		public function mapInfoWindowWidthCallback()
+		public function mapInfoWindowMaxWidthCallback()
 		{
-			echo '<input id="'. self::PREFIX .'map-info-window-width" name="'. self::PREFIX .'map-info-window-width" type="text" value="'. $this->mapInfoWindowWidth .'" class="code" /> pixels';
-		}
-		
-		/**
-		 * Adds the info-window-height field to the Settings page
-		 * @author Ian Dunn <ian@iandunn.name>
-		 */
-		public function mapInfoWindowHeightCallback()
-		{
-			echo '<input id="'. self::PREFIX .'map-info-window-height" name="'. self::PREFIX .'map-info-window-height" type="text" value="'. $this->mapInfoWindowHeight .'" class="code" /> pixels';
+			echo '<input id="'. self::PREFIX .'map-info-window-width" name="'. self::PREFIX .'map-info-window-width" type="text" value="'. $this->mapInfoWindowMaxWidth .'" class="code" /> pixels';
 		}
 	} // end BGMPSettings
 }

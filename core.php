@@ -18,7 +18,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 	{
 		// Declare variables and constants
 		protected $settings, $options, $updatedOptions, $userMessageCount, $environmentOK, $mapShortcodeCalled;
-		const BGMP_VERSION			= '1.2';
+		const BGMP_VERSION			= '1.2.1';
 		const PREFIX				= 'bgmp_';
 		const POST_TYPE				= 'bgmp';
 		const DEBUG_MODE			= false;
@@ -119,12 +119,10 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 			if( !get_option( self::PREFIX . 'map-zoom' ) )
 				add_option( self::PREFIX . 'map-zoom', 7 );
 			if( !get_option( self::PREFIX . 'map-info-window-width' ) )
-				add_option( self::PREFIX . 'map-info-window-width', 300 );
-			if( !get_option( self::PREFIX . 'map-info-window-height' ) )
-				add_option( self::PREFIX . 'map-info-window-height', 250 );
+				add_option( self::PREFIX . 'map-info-window-width', 500 );
 				
 			// Upgrade 1.0 placemark data
-			$posts = get_posts( array( 'numberposts' => -1, 'post_type' => self::POST_TYPE, 'post_status' => 'publish' ) );
+			$posts = get_posts( array( 'numberposts' => -1, 'post_type' => self::POST_TYPE ) );
 			if( $posts )
 			{
 				foreach( $posts as $p )
@@ -478,13 +476,12 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 			check_ajax_referer( self::PREFIX . 'nonce', 'nonce' );
 	
 			$options = array(
-				'width'				=> $this->settings->mapWidth,
-				'height'			=> $this->settings->mapHeight,
-				'latitude'			=> $this->settings->mapLatitude,
-				'longitude'			=> $this->settings->mapLongitude,
-				'zoom'				=> $this->settings->mapZoom,
-				'infoWindowWidth'	=> $this->settings->mapInfoWindowWidth,
-				'infoWindowHeight'	=> $this->settings->mapInfoWindowHeight
+				'mapWidth'				=> $this->settings->mapWidth,
+				'mapHeight'				=> $this->settings->mapHeight,
+				'latitude'				=> $this->settings->mapLatitude,
+				'longitude'				=> $this->settings->mapLongitude,
+				'zoom'					=> $this->settings->mapZoom,
+				'infoWindowMaxWidth'	=> $this->settings->mapInfoWindowMaxWidth
 			);
 		
 			$this->getHeaders();

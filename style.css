@@ -11,19 +11,25 @@
  */
 #bgmp_map-canvas
 {
-	width: 600px;	/* The width and height here are just defaults in case the JavaScript can't load. They're overridding with the ones on the Settings page when the map is created */
+	width: 600px;	/* The width and height here are just defaults in case the JavaScript can't load. They're overridden with the ones on the Settings page when the map is created */
 	height: 400px;
 }
 
+
 	.bgmp_placemark
 	{
-		width: 300px;	/* The width and height here are just defaults in case the JavaScript can't load. They're overridding with the ones on the Settings page when the map is created */
-		height: 250px;
 	}
-	
+		
+		/* Maps API doesn't take the infowindow's child element margins into account when calculating container size -- http://stackoverflow.com/questions/1554893/google-maps-api-v3-infowindow-not-sizing-correctly/5690251#5690251 */
 		.bgmp_placemark h1
 		{
+			margin: 0;
 			padding: 5px 0;
+		}
+		
+		.bgmp_placemark div
+		{
+			margin: 0;
 		}
 	
 	/* Override theme styles that will interfere with the map */
