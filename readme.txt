@@ -4,7 +4,7 @@ Donate link: http://www.doctorswithoutborders.org
 Tags: google map, map, embed, marker, placemark, icon
 Requires at least: 3.0
 Tested up to: 3.2.1
-Stable tag: 1.3
+Stable tag: 1.3.1
 
 Embeds a Google Map into your site and lets you add markers with custom icons and information windows.
 
@@ -138,6 +138,9 @@ You can send me feedback/comments/suggestions using the [contact form](http://ia
 
 == Changelog ==
 
+= 1.3.1 =
+* Fixes bug where [standard posts and pages would lose the 'Set Featured Image' meta box](http://wordpress.org/support/topic/featured-image-option-not-showing).
+
 = 1.3 =
 * Removed AJAX because unnecessary, slow and causing several bugs
 * Removed now-unnecessary front-end-footer.php
@@ -185,6 +188,9 @@ You can send me feedback/comments/suggestions using the [contact form](http://ia
 
 
 == Upgrade Notice ==
+
+= 1.3.1 =
+BGMP 1.3.1 fixes a bug where standard posts and pages would lose the 'Set Featured Image' meta box.
 
 = 1.3 =
 BGMP 1.3 loads the map/placemarks faster and contains several bug fixes.

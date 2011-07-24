@@ -14,7 +14,7 @@ Before each new release
 	Respond to any relevant open forum posts, mark as resolved where appropriate
 
 	
-1.3.1
+1.3.2
 	errors shouldn't overwrite the map unless the map can't be loaded anyway
 		map may load fine, but then error with placemarks. don't want to kill map just b/c placemark didn't load.
 		log to console instead
@@ -26,8 +26,10 @@ Before each new release
 	if 1.3 didn't fix 'not all passed in' bug, then check it out more.
 		also, why is this looping forever?
 	other support forum bugs
+	width px and % -- http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-how-to-tweak-the-code-to-get-width-instead-of-fixed-px?replies=4#post-2242249
+		test to make sure it can work as he described across browsers. if so, probalby just leave as is and update docs to let people know
 		
-1.3.2
+1.3.3
 	test in bizco, raindrop and vanilla themes
 	other open wp forums bugs
 	3.2 back end screenshots on wahc (have to move to hc6l first)

@@ -18,7 +18,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 	{
 		// Declare variables and constants
 		protected $settings, $options, $updatedOptions, $userMessageCount, $mapShortcodeCalled;
-		const BGMP_VERSION			= '1.3';
+		const BGMP_VERSION			= '1.3.1';
 		const PREFIX				= 'bgmp_';
 		const POST_TYPE				= 'bgmp';
 		const DEBUG_MODE			= false;
@@ -171,13 +171,13 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 			
 			$supportedTypes = get_theme_support( 'post-thumbnails' );
 			
-			if( is_array( $supportedTypes ) )
+			if( $supportedTypes === false )
+				add_theme_support( 'post-thumbnails', array( self::POST_TYPE ) );				
+			elseif( is_array( $supportedTypes ) )
 			{
 				$supportedTypes[0][] = self::POST_TYPE;
-				add_theme_support( 'post-thumbnails', $supportedTypes );
+				add_theme_support( 'post-thumbnails', $supportedTypes[0] );
 			}
-			else
-				add_theme_support( 'post-thumbnails', array( self::POST_TYPE ) );
 		}
 		
 		/**
