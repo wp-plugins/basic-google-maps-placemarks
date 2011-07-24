@@ -4,7 +4,7 @@ Donate link: http://www.doctorswithoutborders.org
 Tags: google map, map, embed, marker, placemark, icon
 Requires at least: 3.0
 Tested up to: 3.2.1
-Stable tag: 1.2.1
+Stable tag: 1.3
 
 Embeds a Google Map into your site and lets you add markers with custom icons and information windows.
 
@@ -59,6 +59,9 @@ Yes. The plugin creates a [custom post type](http://codex.wordpress.org/Post_Typ
 = Will the plugin work in WordPress MultiSite? =
 Yes. Version 1.2 added support for MultiSite installations.
 
+= Placemarks aren't showing up the map =
+If your theme is calling `add_theme_support( 'post-thumbnails' )` and passing in a specific list of post types -- rather than enabling support for all post types -- then it should check if some post types are already registered and include those as well. This only applies if it's hooking into `after_theme_setup` with a priority higher than 10. Contact your theme developer and ask them to fix their code.
+
 = How can I override the styles the plugin applies to the map? =
 The width/height of the map and marker information windows are always defined in the Settings, but you can override everything else by putting this code in your theme's functions.php file:
 
@@ -90,22 +93,21 @@ No. You can add embed the map on multiple pages, but it will always pull all of 
 For efficiency, the plugin only loads the required JavaScript, CSS and markup files on pages where it detects the map shortcode is being called. It's not possible to detect when [do_shortcode()](http://codex.wordpress.org/Function_Reference/do_shortcode) is used, so you need to manually let the plugin know to load the files by adding this code to your theme:
 
 `
-add_filter( 'the_posts', 'my_theme_name_bgmp_shortcode_check' );
-function my_theme_name_bgmp_shortcode_check( $posts )
+function my_theme_name_bgmp_shortcode_check()
 {
+	global $post;
+	
 	$shortcodePageSlugs = array(
 		'first-page-slug',
 		'second-page-slug',
 		'hello-world'
 	);
 	
-	if( $posts )
-		foreach( $posts as $p )
-			if( in_array( $p->post_name, $shortcodePageSlugs ) )
-				add_filter( 'bgmp_mapShortcodeCalled', 'your_theme_name_bgmp_shortcode_called' );
-	
-	return $posts;
+	if( $post )
+		if( in_array( $post->post_name, $shortcodePageSlugs ) )
+			add_filter( 'bgmp_mapShortcodeCalled', 'your_theme_name_bgmp_shortcode_called' );
 }
+add_action( 'wp', 'my_theme_name_bgmp_shortcode_check' );
 
 function your_theme_name_bgmp_shortcode_called( $mapShortcodeCalled )
 {
@@ -136,6 +138,15 @@ You can send me feedback/comments/suggestions using the [contact form](http://ia
 
 == Changelog ==
 
+= 1.3 =
+* Removed AJAX because unnecessary, slow and causing several bugs
+* Removed now-unnecessary front-end-footer.php
+* Fixed bug where [placemarks weren't showing up when theme didn't support post-thumbnails](http://wordpress.org/support/topic/no-placemarks-on-theme-raindrops)
+* Fixed bug where non-string value passed to enqueueMessage() would cause an error
+* Set loadResources() to fire on 'wp' action instead of 'the_posts' filter
+* [Added title to markers](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-add-mouseover-title-to-marker)
+* Enabled support for BGMP post type revisions
+
 = 1.2.1 = 
 * Fixes the [info window height bug](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-info-window-width-height)
 
@@ -150,7 +161,7 @@ You can send me feedback/comments/suggestions using the [contact form](http://ia
 
 = 1.1.3 = 
 * CSS and JavaScript files are only loaded on pages where the map shortcode is called
-* Fixed fatal error when trying to activate on PHP 4 servers
+* Fixed [fatal error when trying to activate on PHP 4 servers](http://wordpress.org/support/topic/fatal-error-when-activating-basic-google-maps-placemarks)
 * Styles updated for twentyeleven based themes
 * Switched to wrapper function for $ instead of *$ = jQuery.noConflict();*
 * JavaScript functions moved inside an object literal
@@ -161,7 +172,7 @@ You can send me feedback/comments/suggestions using the [contact form](http://ia
 
 = 1.1.1 =
 * JavaScript files only loaded when needed
-* JavaScript files loaded via HTTPS when the page is -- see http://iandunn.name/basic-google-maps-placemarks-plugin/#comment-4574
+* Fixed bug where [JavaScript files were loaded over HTTP when they should have been over HTTPS](http://iandunn.name/basic-google-maps-placemarks-plugin/)
 * A few minor back-end changes
 
 = 1.1 = 
@@ -175,11 +186,14 @@ You can send me feedback/comments/suggestions using the [contact form](http://ia
 
 == Upgrade Notice ==
 
+= 1.3 =
+BGMP 1.3 loads the map/placemarks faster and contains several bug fixes.
+
 = 1.2.1 =
-BGMP 1.2.1 fixes a bug related to the marker's info window width and height
+BGMP 1.2.1 fixes a bug related to the marker's info window width and height.
 
 = 1.2 = 
-BGMP 1.2 adds support for WordPress MultiSite and fixes several minor bugs
+BGMP 1.2 adds support for WordPress MultiSite and fixes several minor bugs.
 
 = 1.1.3 = 
 BGMP 1.1.3 contains bug fixes, performance improvements and updates for WordPress 3.2 compatibility.
@@ -194,4 +208,4 @@ BGMP 1.1.1 only loads the JavaScript files when needed, making the rest of the p
 BGMP 1.1 will automatically geocode addresses for you, so you no longer have to manually lookup marker coordinates. After uploading the new files, deactivate and reactivate the plugin to populate the new address field on each Placemark based on the existing coordinates.
 
 = 1.0 =
-Initial release
+Initial release.

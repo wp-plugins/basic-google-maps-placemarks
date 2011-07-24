@@ -9,9 +9,10 @@
  * Wrapper function to safely use $
  * @author Ian Dunn <ian@iandunn.name>
  */
-function bgmp_wrapper($) 
+function bgmp_wrapper( $ )
 {
 	// @todo - figure out if wrapper bad for memory consumption (https://developer.mozilla.org/en/JavaScript/Reference/Functions_and_function_scope#Efficiency_considerations)
+		// ask on stackoverflow
 	
 	var bgmp = 
 	{
@@ -23,13 +24,10 @@ function bgmp_wrapper($)
 		{
 			bgmp.name				= 'Basic Google Maps Placemarks';
 			bgmp.canvas				= document.getElementById("bgmp_map-canvas");	// We have to use getElementById instead of a jQuery selector here in order to pass it to the Maps API.
-			bgmp.postURL			= $('#bgmp_postURL').val();
-			bgmp.nonce				= $('#bgmp_nonce').val();
-			bgmp.previousInfoWindow	= '';
-			bgmp.infoWindowWidth	= bgmp.infoWindowHeight = 0;
+			bgmp.previousInfoWindow	= undefined;
 			
-			if( bgmp.canvas && bgmp.postURL && bgmp.nonce )
-				bgmp.buildMap( bgmp.canvas );
+			if( bgmp.canvas )
+				bgmp.buildMap();
 			else
 				$( bgmp.canvas ).html( bgmp.name + " error: couldn't retrieve DOM elements.");
 		},
@@ -42,54 +40,36 @@ function bgmp_wrapper($)
 		{
 			var mapOptions;
 			
-			$.post
-			(
-				bgmp.postURL,
-				{
-					action: 'bgmp_get_map_options',
-					nonce: bgmp.nonce
-				},
-				
-				function( response ) 
-				{
-					if( response == -1 )
-						$( bgmp.canvas ).html( bgmp.name + " error: couldn't load map options.");
-					else
-					{
-						if( response.mapWidth == '' || response.mapHeight == ''|| response.latitude == '' || response.longitude == '' || response.zoom == '' || response.infoWindowWidth == '' || response.infoWindowHeight == '' )
-						{
-							$( bgmp.canvas ).html( bgmp.name + " error: map options not set.");
-							return;
-						}
-						
-						mapOptions = 
-						{
-							zoom			: parseInt(response.zoom),
-							center			: new google.maps.LatLng( parseFloat(response.latitude), parseFloat(response.longitude) ),
-							mapTypeId		: google.maps.MapTypeId.ROADMAP,
-							mapTypeControl	: false
-						};
-						
-						// Override default width/heights from settings
-						$('#bgmp_map-canvas').css('width', response.mapWidth );
-						$('#bgmp_map-canvas').css('height', response.mapHeight );
-						bgmp.infoWindowMaxWidth = response.infoWindowMaxWidth;
-						
-						// Create map
-						try
-						{
-							map = new google.maps.Map( bgmp.canvas, mapOptions );
-							bgmp.addPlacemarks(map);
-						}
-						catch(e)
-						{
-							$( bgmp.canvas ).html( bgmp.name + " error: couln't build map.");
-							if(window.console)
-								console.log('bgmp_buildMap: '+ e);
-						}
-					}
-				}
-			);
+			if( bgmpData.options.mapWidth == '' || bgmpData.options.mapHeight == '' || bgmpData.options.latitude == '' || bgmpData.options.longitude == '' || bgmpData.options.zoom == '' || bgmpData.options.infoWindowMaxWidth == '' )
+			{
+				$( bgmp.canvas ).html( bgmp.name + " error: map options not set.");
+				return;
+			}
+			
+			mapOptions = 
+			{
+				'zoom'				: parseInt( bgmpData.options.zoom ),
+				'center'			: new google.maps.LatLng( parseFloat(bgmpData.options.latitude), parseFloat(bgmpData.options.longitude) ),
+				'mapTypeId'			: google.maps.MapTypeId.ROADMAP,
+				'mapTypeControl'	: false
+			};
+			
+			// Override default width/heights from settings
+			$('#bgmp_map-canvas').css('width', bgmpData.options.mapWidth );
+			$('#bgmp_map-canvas').css('height', bgmpData.options.mapHeight );
+			
+			// Create the map
+			try
+			{
+				map = new google.maps.Map( bgmp.canvas, mapOptions );
+				bgmp.addPlacemarks(map);
+			}
+			catch( e )
+			{
+				$( bgmp.canvas ).html( bgmp.name + " error: couln't build map." );
+				if( window.console )
+					console.log( 'bgmp_buildMap: '+ e );
+			}
 		},
 
 		/**
@@ -97,30 +77,11 @@ function bgmp_wrapper($)
 		 * @author Ian Dunn <ian@iandunn.name>
 		 * @param object map Google Maps map
 		 */
-		addPlacemarks : function(map)
+		addPlacemarks : function( map )
 		{
-			var placemarks;
-			
-			$.post
-			(
-				bgmp.postURL,
-				{
-					action	: 'bgmp_get_placemarks',
-					nonce	: bgmp.nonce
-				},
-				
-				function( placemarks ) 
-				{
-					if( placemarks == -1 )
-						$( bgmp.canvas ).html( bgmp.name + " error: couldn't load map placemarks." );
-					else
-					{
-						if( placemarks.length > 0 )
-							for(var p in placemarks)
-								bgmp.createMarker( map, placemarks[p]['title'], parseFloat(placemarks[p]['latitude']), parseFloat(placemarks[p]['longitude']), placemarks[p]['details'], placemarks[p]['icon'] );
-					}
-				}
-			);
+			if( bgmpData.markers.length > 0 )
+				for(var m in bgmpData.markers)
+					bgmp.createMarker( map, bgmpData.markers[m]['title'], parseFloat(bgmpData.markers[m]['latitude']), parseFloat(bgmpData.markers[m]['longitude']), bgmpData.markers[m]['details'], bgmpData.markers[m]['icon'] );
 		},
 
 		/**
@@ -140,10 +101,17 @@ function bgmp_wrapper($)
 			
 			var infowindowcontent, infowindow, marker;
 			
-			if( latitude == '' || longitude == '' || icon == null )
+			if( latitude == '' || longitude == '' )
 			{
 				if( window.console )
-					console.log('bgmp_createMarker(): Not all of the required data was passed in.');
+					console.log( "bgmp_createMarker(): Latitude and longitude weren't passed in." );
+				return false;
+			}
+			
+			if( icon == null )
+			{
+				if( window.console )
+					console.log( "bgmp_createMarker(): The icon wasn't passed in." );
 				return false;
 			}
 			
@@ -153,19 +121,19 @@ function bgmp_wrapper($)
 			{
 				infowindow = new google.maps.InfoWindow( {
 					content:	infowindowcontent,
-					maxWidth:	bgmp.infoWindowMaxWidth
+					maxWidth:	bgmpData.options.infoWindowMaxWidth
 				} );
 				
-				marker = new google.maps.Marker(
-				{
-					position: new google.maps.LatLng(latitude, longitude),
-					map: map,
-					icon: icon
+				marker = new google.maps.Marker( {
+					'position':	new google.maps.LatLng( latitude, longitude ),
+					'map':		map,
+					'icon':		icon,
+					'title':	title
 				} );
 				
 				google.maps.event.addListener( marker, 'click', function()
 				{
-					if( bgmp.previousInfoWindow != '')
+					if( bgmp.previousInfoWindow != undefined)
 						bgmp.previousInfoWindow.close();
 					
 					infowindow.open(map, marker);
@@ -174,7 +142,7 @@ function bgmp_wrapper($)
 				
 				return true;
 			}
-			catch(e)
+			catch( e )
 			{
 				//$( bgmp.canvas ).append( '<p>' + bgmp.name + " error: couldn't add map placemarks.</p>");		// add class for making red? other places need this too?	// @todo - need to figure out a good way to alert user that placemarks couldn't be added
 				if( window.console )
@@ -182,23 +150,6 @@ function bgmp_wrapper($)
 			}
 		}
 	} // end bgmp
-	
-	/**
-	 * jQuery AJAX error handler
-	 * @author Ian Dunn <ian@iandunn.name>
-	 * @param ? event
-	 * @param ? jqxhr jQuery XML HTTP request object
-	 * @param ? settings
-	 * @param ? exception
-	 */
-	$(document).ajaxError( function(event, jqxhr, settings, exception)
-	{
-		// @todo - update docs w/ object types
-		
-		if( window.console )
-			console.log(".ajaxError():\nreadyState: " + jqxhr.readyState + "\nstatus: " + jqxhr.status + "\nresponseText: " + jqxhr.responseText + "\nexception: "+ exception);
-		$( bgmp.canvas ).html( bgmp.name + ' error: Generic AJAX failure.');
-	} );
 	
 	// Kick things off...
 	$(document).ready( bgmp.init );

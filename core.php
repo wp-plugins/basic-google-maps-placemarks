@@ -17,8 +17,8 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 	class BasicGoogleMapsPlacemarks
 	{
 		// Declare variables and constants
-		protected $settings, $options, $updatedOptions, $userMessageCount, $environmentOK, $mapShortcodeCalled;
-		const BGMP_VERSION			= '1.2.1';
+		protected $settings, $options, $updatedOptions, $userMessageCount, $mapShortcodeCalled;
+		const BGMP_VERSION			= '1.3';
 		const PREFIX				= 'bgmp_';
 		const POST_TYPE				= 'bgmp';
 		const DEBUG_MODE			= false;
@@ -42,18 +42,13 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 			// Register actions, filters and shortcodes
 			add_action( 'admin_notices',						array( $this, 'printMessages') );
 			add_action( 'init',									array( $this, 'createPostType') );
-			add_action( 'init', 								array( $this, 'addFeaturedImageSupport' ) );
+			add_action( 'after_setup_theme', 					array( $this, 'addFeaturedImageSupport' ), 11 );
 			add_action( 'admin_init',							array( $this, 'registerCustomFields') );
-			add_action( 'save_post',							array( $this, 'saveCustomFields') );
+			add_action( 'wp',									array( $this, 'loadResources' ), 11 );
 			add_action( 'wp_head',								array( $this, 'outputHead' ) );
-			add_action( 'wp_footer',							array( $this, 'outputFooter' ) );
-			add_action( 'wp_ajax_bgmp_get_map_options',			array( $this, 'getMapOptions' ) );
-			add_action( 'wp_ajax_nopriv_bgmp_get_map_options',	array( $this, 'getMapOptions' ) );
-			add_action( 'wp_ajax_bgmp_get_placemarks',			array( $this, 'getPlacemarks' ) );
-			add_action( 'wp_ajax_nopriv_bgmp_get_placemarks',	array( $this, 'getPlacemarks' ) );
+			add_action( 'save_post',							array( $this, 'saveCustomFields') );
 			add_action( 'wpmu_new_blog', 						array( $this, 'activateNewSite' ) );
 			add_action( 'shutdown',								array( $this, 'shutdown' ) );
-			add_filter( 'the_posts', 							array( $this, 'loadResources'), 11 );
 			add_shortcode( 'bgmp-map',							array( $this, 'mapShortcode') );
 			add_shortcode( 'bgmp-list',							array( $this, 'listShortcode') );
 			
@@ -159,45 +154,49 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		 */
 		public function addFeaturedImageSupport()
 		{
-			if( is_admin() )
+			// We enabled image media buttons for MultiSite on activation, but the admin may have turned it back off
+			if( is_admin() && function_exists('is_multisite') && is_multisite() )
 			{
-				// We enabled image media buttons for MultiSite on activation, but the admin may have turned it back off
-				if( function_exists('is_multisite') && is_multisite() )
-				{
-					$mediaButtons = get_site_option( 'mu_media_buttons' );
-					
-					if( !array_key_exists( 'image', $mediaButtons ) || !$mediaButtons['image'] )
-					{
-						$this->enqueueMessage( sprintf(
-							"%s requires the Images media button setting to be enabled in order to use custom icons on markers, but it's currently turned off. If you'd like to use custom icons you can enable it on the <a href=\"%ssettings.php\">Network Settings</a> page, in the Upload Settings section.",
-							BGMP_NAME,
-							network_admin_url()
-						), 'error' );
-					}
-				}
+				$mediaButtons = get_site_option( 'mu_media_buttons' );
 				
-				add_theme_support( 'post-thumbnails' );
+				if( !array_key_exists( 'image', $mediaButtons ) || !$mediaButtons['image'] )
+				{
+					$this->enqueueMessage( sprintf(
+						"%s requires the Images media button setting to be enabled in order to use custom icons on markers, but it's currently turned off. If you'd like to use custom icons you can enable it on the <a href=\"%ssettings.php\">Network Settings</a> page, in the Upload Settings section.",
+						BGMP_NAME,
+						network_admin_url()
+					), 'error' );
+				}
 			}
+			
+			$supportedTypes = get_theme_support( 'post-thumbnails' );
+			
+			if( is_array( $supportedTypes ) )
+			{
+				$supportedTypes[0][] = self::POST_TYPE;
+				add_theme_support( 'post-thumbnails', $supportedTypes );
+			}
+			else
+				add_theme_support( 'post-thumbnails', array( self::POST_TYPE ) );
 		}
 		
 		/**
-		 * Checks the current post(s) to see if they contain the map shortcode
+		 * Checks the current posts to see if they contain the map shortcode
 		 * @author Ian Dunn <ian@iandunn.name>
 		 * @param array $posts
 		 * @return bool
 		 */
-		function mapShortcodeCalled( $posts )
+		function mapShortcodeCalled()
 		{
+			global $post;
+			
 			$this->mapShortcodeCalled = apply_filters( self::PREFIX .'mapShortcodeCalled', $this->mapShortcodeCalled );
 			if( $this->mapShortcodeCalled )
 				return true;
 				
-			foreach( $posts as $p )
-			{
-				preg_match( '/'. get_shortcode_regex() .'/s', $p->post_content, $matches );
-				if( is_array($matches) && array_key_exists(2, $matches) && $matches[2] == 'bgmp-map' )
-					return true;
-			}
+			preg_match( '/'. get_shortcode_regex() .'/s', $post->post_content, $matches );
+			if( is_array($matches) && array_key_exists(2, $matches) && $matches[2] == 'bgmp-map' )
+				return true;
 			
 			return false;
 		}
@@ -206,10 +205,8 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		 * Load CSS and JavaScript files
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
-		public function loadResources( $posts )
+		public function loadResources()
 		{
-			// @todo - maybe find an action that gets run at the same time. would be better to hook there than to a filter. update faq for do_shortcode if do
-			
 			wp_register_script(
 				'googleMapsAPI',
 				'http'. ( is_ssl() ? 's' : '' ) .'://maps.google.com/maps/api/js?sensor=false',
@@ -234,21 +231,24 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 				false
 			);
 			
-			if( $posts )
+			$this->mapShortcodeCalled = $this->mapShortcodeCalled();
+			
+			if( !is_admin() && $this->mapShortcodeCalled )
 			{
-				$this->mapShortcodeCalled = $this->mapShortcodeCalled( $posts );
+				wp_enqueue_script('googleMapsAPI');
+				wp_enqueue_script('bgmp');
 				
-				if( !is_admin() && $this->mapShortcodeCalled )
-				{
-					wp_enqueue_script('googleMapsAPI');
-					wp_enqueue_script('bgmp');
-				}
+				$bgmpData = sprintf(
+					"bgmpData.options = %s;\r\nbgmpData.markers = %s",
+					json_encode( $this->getMapOptions() ),
+					json_encode( $this->getPlacemarks() )
+				);
 				
-				if( is_admin() || $this->mapShortcodeCalled )
-					wp_enqueue_style( self::PREFIX . 'style' );
+				wp_localize_script( 'bgmp', 'bgmpData', array( 'l10n_print_after' => $bgmpData ) );
 			}
 			
-			return $posts;
+			if( is_admin() || $this->mapShortcodeCalled )
+				wp_enqueue_style( self::PREFIX . 'style' );
 		}
 		
 		/**
@@ -262,16 +262,6 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		}
 		
 		/**
-		 * Outputs some initial values for the JavaScript file to use
-		 * @author Ian Dunn <ian@iandunn.name>
-		 */
-		public function outputFooter()
-		{
-			if( $this->mapShortcodeCalled )
-				require_once( dirname(__FILE__) . '/views/front-end-footer.php' );
-		}
-		
-		/**
 		 * Registers the custom post type
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
@@ -281,34 +271,34 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 			{
 				$labels = array
 				(
-					'name' => __( 'Placemarks' ),
-					'singular_name' => __( 'Placemark' ),
-					'add_new' => __( 'Add New' ),
-					'add_new_item' => __( 'Add New Placemark' ),
-					'edit' => __( 'Edit' ),
-					'edit_item' => __( 'Edit Placemark' ),
-					'new_item' => __( 'New Placemark' ),
-					'view' => __( 'View Placemark' ),
-					'view_item' => __( 'View Placemark' ),
-					'search_items' => __( 'Search Placemarks' ),
-					'not_found' => __( 'No Placemarks found' ),
-					'not_found_in_trash' => __( 'No Placemarks found in Trash' ),
-					'parent' => __( 'Parent Placemark' ),
+					'name'					=> __( 'Placemarks' ),
+					'singular_name'			=> __( 'Placemark' ),
+					'add_new'				=> __( 'Add New' ),
+					'add_new_item'			=> __( 'Add New Placemark' ),
+					'edit'					=> __( 'Edit' ),
+					'edit_item'				=> __( 'Edit Placemark' ),
+					'new_item'				=> __( 'New Placemark' ),
+					'view'					=> __( 'View Placemark' ),
+					'view_item'				=> __( 'View Placemark' ),
+					'search_items'			=> __( 'Search Placemarks' ),
+					'not_found'				=> __( 'No Placemarks found' ),
+					'not_found_in_trash'	=> __( 'No Placemarks found in Trash' ),
+					'parent'				=> __( 'Parent Placemark' )
 				);
 				
 				register_post_type(
 					self::POST_TYPE,
 					array
 					(
-						'labels' => $labels,
-						'singular_label' => __('Placemarks'),
-						'public' => true,
-						'menu_position' => 20,
-						'hierarchical' => false,
-						'capability_type' => 'post',
-						'rewrite' => array( 'slug' => 'placemarks', 'with_front' => false ),
-						'query_var' => true,
-						'supports' => array('title', 'editor', 'author', 'thumbnail')
+						'labels'			=> $labels,
+						'singular_label'	=> 'Placemarks',
+						'public'			=> true,
+						'menu_position'		=> 20,
+						'hierarchical'		=> false,
+						'capability_type'	=> 'post',
+						'rewrite'			=> array( 'slug' => 'placemarks', 'with_front' => false ),
+						'query_var'			=> true,
+						'supports'			=> array( 'title', 'editor', 'author', 'thumbnail', 'revisions' )
 					)
 				);
 			}
@@ -464,17 +454,17 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 				return $output;
 			}
 			else
-				return "There aren't currently any placemarks in the system";
+				return "There aren't any published placemarks right now";
 		}
 		
 		/**
-		 * 
+		 * Gets map options
+		 * json_encode() requires PHP 5.
 		 * @author Ian Dunn <ian@iandunn.name>
+		 * @return string JSON-encoded array
 		 */
 		public function getMapOptions()
 		{
-			check_ajax_referer( self::PREFIX . 'nonce', 'nonce' );
-	
 			$options = array(
 				'mapWidth'				=> $this->settings->mapWidth,
 				'mapHeight'				=> $this->settings->mapHeight,
@@ -484,54 +474,37 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 				'infoWindowMaxWidth'	=> $this->settings->mapInfoWindowMaxWidth
 			);
 		
-			$this->getHeaders();
-			die( json_encode($options) );
+			return $options;
 		}
 		
 		/**
 		 * Gets the published placemarks from the database, formats and outputs them.
-		 * Called via AJAX. json_encode() requires PHP 5.
+		 * json_encode() requires PHP 5.
 		 * @author Ian Dunn <ian@iandunn.name>
-		 * @return string JSON formatted string of the placemarks
+		 * @return string JSON-encoded array
 		 */
 		public function getPlacemarks()
 		{
-			check_ajax_referer( self::PREFIX . 'nonce', 'nonce' );
-			
 			$placemarks = array();
-			$posts = get_posts( array( 'numberposts' => -1, 'post_type' => self::POST_TYPE, 'post_status' => 'publish' ) );
+			$publishedPlacemarks = get_posts( array( 'numberposts' => -1, 'post_type' => self::POST_TYPE, 'post_status' => 'publish' ) );
 			
-			if( $posts )
+			if( $publishedPlacemarks )
 			{
-				foreach( $posts as $p )
+				foreach( $publishedPlacemarks as $pp )
 				{
-					$icon = wp_get_attachment_image_src( get_post_thumbnail_id($p->ID) );
+					$icon = wp_get_attachment_image_src( get_post_thumbnail_id( $pp->ID ) );
  
 					$placemarks[] = array(
-						'title'		=> $p->post_title,
-						'latitude'	=> get_post_meta( $p->ID, self::PREFIX . 'latitude', true ),
-						'longitude'	=> get_post_meta( $p->ID, self::PREFIX . 'longitude', true ),
-						'details'	=> nl2br( $p->post_content ),
+						'title'		=> $pp->post_title,
+						'latitude'	=> get_post_meta( $pp->ID, self::PREFIX . 'latitude', true ),
+						'longitude'	=> get_post_meta( $pp->ID, self::PREFIX . 'longitude', true ),
+						'details'	=> nl2br( $pp->post_content ),
 						'icon'		=> is_array($icon) ? $icon[0] : plugins_url( 'images/default-marker.png', __FILE__ )
 					);
 				}
 			}
 			
-			$this->getHeaders();
-			die( json_encode($placemarks) );
-		}
-		
-		/**
-		 * Outputs GET headers for JSON requests
-		 * @author Ian Dunn <ian@iandunn.name>
-		 */
-		protected function getHeaders()
-		{
-			header( 'Cache-Control: no-cache, must-revalidate' );
-			header( 'Expires: Mon, 26 Jul 1997 05:00:00 GMT' );
-			header( 'Content-Type: application/json; charset=utf8' );
-			header( 'Content-Type: application/json' );
-			header( $_SERVER["SERVER_PROTOCOL"]." 200 OK" );
+			return $placemarks;
 		}
 		
 		/**
@@ -566,6 +539,9 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		 */
 		public function enqueueMessage( $message, $type = 'update', $mode = 'user' )
 		{
+			if( !is_string( $message ) )
+				return false;
+			
 			array_push( $this->options[$type .'s'], array(
 				'message' => $message,
 				'type' => $type,
@@ -576,6 +552,8 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 				$this->userMessageCount[$type . 's']++;
 			
 			$this->updatedOptions = true;
+			
+			return true;
 		}
 		
 		/**
