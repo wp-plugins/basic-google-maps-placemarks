@@ -80,7 +80,7 @@ function bgmp_wrapper( $ )
 		addPlacemarks : function( map )
 		{
 			if( bgmpData.markers.length > 0 )
-				for(var m in bgmpData.markers)
+				for( var m in bgmpData.markers )
 					bgmp.createMarker( map, bgmpData.markers[m]['title'], parseFloat(bgmpData.markers[m]['latitude']), parseFloat(bgmpData.markers[m]['longitude']), bgmpData.markers[m]['details'], bgmpData.markers[m]['icon'] );
 		},
 
@@ -139,6 +139,7 @@ function bgmp_wrapper( $ )
 					infowindow.open(map, marker);
 					bgmp.previousInfoWindow = infowindow;
 				} );
+				
 				
 				return true;
 			}

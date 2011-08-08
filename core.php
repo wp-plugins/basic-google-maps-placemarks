@@ -18,10 +18,10 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 	{
 		// Declare variables and constants
 		protected $settings, $options, $updatedOptions, $userMessageCount, $mapShortcodeCalled;
-		const BGMP_VERSION			= '1.3.1';
-		const PREFIX				= 'bgmp_';
-		const POST_TYPE				= 'bgmp';
-		const DEBUG_MODE			= false;
+		const VERSION		= '1.3.2';
+		const PREFIX		= 'bgmp_';
+		const POST_TYPE		= 'bgmp';
+		const DEBUG_MODE	= false;
 		
 		/**
 		 * Constructor
@@ -49,6 +49,9 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 			add_action( 'save_post',							array( $this, 'saveCustomFields') );
 			add_action( 'wpmu_new_blog', 						array( $this, 'activateNewSite' ) );
 			add_action( 'shutdown',								array( $this, 'shutdown' ) );
+			
+			add_filter( 'parse_query',							array($this, 'sortAdminView' ) );
+			
 			add_shortcode( 'bgmp-map',							array( $this, 'mapShortcode') );
 			add_shortcode( 'bgmp-list',							array( $this, 'listShortcode') );
 			
@@ -219,7 +222,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 				'bgmp',
 				plugins_url( 'functions.js', __FILE__ ),
 				array( 'googleMapsAPI', 'jquery' ),
-				self::BGMP_VERSION,
+				self::VERSION,
 				true
 			);
 			
@@ -227,7 +230,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 				self::PREFIX .'style',
 				plugins_url( 'style.css', __FILE__ ),
 				false,
-				self::BGMP_VERSION,
+				self::VERSION,
 				false
 			);
 			
@@ -301,6 +304,21 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 						'supports'			=> array( 'title', 'editor', 'author', 'thumbnail', 'revisions' )
 					)
 				);
+			}
+		}
+		
+		/**
+		 * Sorts the posts by the title in the admin view posts screen
+		 * @author Ian Dunn <ian@iandunn.name>
+		 */
+		function sortAdminView( $query )
+		{
+			global $pagenow;
+			
+			if( is_admin() && $pagenow == 'edit.php' && array_key_exists('post_type', $_GET) && $_GET['post_type'] == self::POST_TYPE )
+			{
+				$query->query_vars['order'] = 'ASC';
+				$query->query_vars['orderby'] = 'title';
 			}
 		}
 		
@@ -426,7 +444,13 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		 */
 		public function listShortcode( $attributes ) 
 		{
-			$posts = get_posts( array( 'numberposts' => -1, 'post_type' => self::POST_TYPE, 'post_status' => 'publish' ) );
+			$posts = get_posts( array(
+				'numberposts'	=> -1,
+				'post_type'		=> self::POST_TYPE,
+				'post_status'	=> 'publish',
+				'orderby'		=> 'title',
+				'order'			=> 'ASC'
+			) );
 			
 			if( $posts )
 			{
@@ -537,7 +561,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		 * @param string $type 'update' for a success or notification message, or 'error' for an error message
 		 * @param string $mode 'user' if it's intended for the user, or 'debug' if it's intended for the developer
 		 */
-		public function enqueueMessage( $message, $type = 'update', $mode = 'user' )
+		protected function enqueueMessage( $message, $type = 'update', $mode = 'user' )
 		{
 			if( !is_string( $message ) )
 				return false;
@@ -560,10 +584,10 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		 * Stops execution and prints the input. Used for debugging.
 		 * @author Ian Dunn <ian@iandunn.name>
 		 * @param mixed $data
-		 * @param string $output 'message' will be sent to an admin notice; 'die' will be output inside wp_die(); 'return' will be returned;
+		 * @param string $output 'echo' | 'notice' (will create admin_notice ) | 'die' (will wp_die() | 'return'
 		 * @param string $message Optionally message to output before description
 		 */
-		protected function describe( $data, $output = 'return', $message = '' )
+		protected function describe( $data, $output = 'echo', $message = '' )
 		{
 			$type = gettype( $data );
 
@@ -605,12 +629,21 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 				$data
 			);
 			
-			if( $output == 'message' )
-				$this->enqueueMessage( $description, 'error' );
-			elseif( $output == 'die' )
-				wp_die( $description );
-			else
-				return $description;
+			switch( $output )
+			{
+				case 'notice':
+					$this->enqueueMessage( $description, 'error' );
+					break;
+				case 'die':
+					wp_die( $description );
+					break;
+				case 'output':
+					return $description;
+					break;
+				case 'echo':
+				default:
+					echo $description;
+			}
 		}
 		
 		/**

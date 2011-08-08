@@ -17,6 +17,7 @@ if( !class_exists('BGMPSettings') )
 		protected $bgmp;
 		public $mapWidth, $mapHeight, $mapAddress, $mapLatitude, $mapLongitude, $mapZoom, $mapInfoWindowMaxWidth;
 		const PREFIX = 'bgmp_';		// @todo - can't you just acceess $bgmp's instead ?
+		// @todo - setup constant for settings page instead of typeing 'writing' all the time
 		
 		/**
 		 * Constructor
@@ -94,7 +95,7 @@ if( !class_exists('BGMPSettings') )
 		 */
 		public function addSettings()
 		{
-			add_settings_section(self::PREFIX . 'map-settings', 'Basic Google Maps Placemarks', array($this, 'settingsSectionCallback'), 'writing');
+			add_settings_section(self::PREFIX . 'map-settings', BGMP_NAME, array($this, 'settingsSectionCallback'), 'writing');
 			
 			add_settings_field(self::PREFIX . 'map-width',				'Map Width',					array($this, 'mapWidthCallback'),					'writing', self::PREFIX . 'map-settings');
 			add_settings_field(self::PREFIX . 'map-height',				'Map Height',					array($this, 'mapHeightCallback'),					'writing', self::PREFIX . 'map-settings');

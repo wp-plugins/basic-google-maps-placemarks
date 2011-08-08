@@ -4,13 +4,15 @@ Donate link: http://www.doctorswithoutborders.org
 Tags: google map, map, embed, marker, placemark, icon
 Requires at least: 3.0
 Tested up to: 3.2.1
-Stable tag: 1.3.1
+Stable tag: 1.3.2
 
 Embeds a Google Map into your site and lets you add markers with custom icons and information windows.
 
 
 == Description ==
-BGMP creates a [custom post type](http://codex.wordpress.org/Post_Types) for placemarks (markers) on a Google Map. The map is added to a page or post using a shortcode, and there are settings which define it's size, center and zoom level. Then you can create markers that will show up on the map using the featured image as the map icon. When a marker is clicked on, a box will appear showing its title and description. There's also a shortcode that will output a text listing of all of the markers.
+BGMP creates a [custom post type](http://codex.wordpress.org/Post_Types) for placemarks (markers) on a Google Map. The map is added to a page or post using a shortcode, and there are settings which define it's size, center and zoom level.
+
+Then you can create markers that will show up on the map using the featured image as the map icon. When a marker is clicked on, a box will appear showing its title and description. There's also a shortcode that will output a text listing of all of the markers.
 
 You can see a live example of the map it creates at [washingtonhousechurches.net](http://washingtonhousechurches.net).
 
@@ -123,7 +125,7 @@ Yes. You can type anything into the Address field that you would type into a sta
 = How can I get help when I'm having a problem? =
 Check [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10), because there's half a chance your problem has already been answered there, and the answer you get will help others in the future. If you can't find anything, then start a new thread with a detailed description of your problem and the URL to your site. I monitor the forums and will respond as my schedule permits.
 
-If you create a post, make sure it's tagged with `basic-google-maps-placemarks` so that I get a notification. If you use the link above it'll automatically tag it for you.
+If you create a post, make sure it's tagged with `basic-google-maps-placemarks` so that I get a notification. If you use the link above it'll automatically tag it for you. Also make sure you check the 'Notify me of follow-up posts via email' box so you won't miss any replies.
 
 = How can I send feedback that isn't of a support nature? =
 You can send me feedback/comments/suggestions using the [contact form](http://iandunn.name/contact) on my website, and I'll respond as my schedule permits. *Please **don't** use this if you're having trouble using the plugin;* use the support forums instead (see above question for details). **I only provide support using the forums, not over e-mail.**
@@ -138,8 +140,14 @@ You can send me feedback/comments/suggestions using the [contact form](http://ia
 
 == Changelog ==
 
+= 1.3.2 =
+* The markers are now sorted alphabetically in the [bgmp-list] shortcode
+* More theme styles are overriden to prevent the Maps API infowindow scroller bug
+* The View screen in the Administration Panels is now sorted alphabetically
+* enqueuemessage() is now declared protected instead of public
+
 = 1.3.1 =
-* Fixes bug where [standard posts and pages would lose the 'Set Featured Image' meta box](http://wordpress.org/support/topic/featured-image-option-not-showing).
+* Fixes bug where [standard posts and pages would lose the 'Set Featured Image' meta box](http://wordpress.org/support/topic/featured-image-option-not-showing)
 
 = 1.3 =
 * Removed AJAX because unnecessary, slow and causing several bugs
@@ -188,6 +196,9 @@ You can send me feedback/comments/suggestions using the [contact form](http://ia
 
 
 == Upgrade Notice ==
+
+= 1.3.2 =
+BGMP 1.3.2 sorts the markers in the [bgmp-list] shortcode alphabetically, and prevents the information window scrollbar bug in more cases.
 
 = 1.3.1 =
 BGMP 1.3.1 fixes a bug where standard posts and pages would lose the 'Set Featured Image' meta box.
