@@ -17,9 +17,27 @@ version x.y.z
 	x = Major, fundamental changes, possibly breaking backwards compatability. Will probably never do a 2.0 unless WP makes some fundamental change to custom post types or google releases v4 of the api
 	y = New features or other significant changes. Things that average users would want enough to upgrade.
 	z = Bug fixes, minor tweaks, small feature additions
+
 	
-	
-1.3.3
+
+minor
+	enqueuemessage() bug - adds it twice for coordinates error, probably for everything else too
+	do shortcode bit only works with 'front page setting', not straight home.php template
+		Home.php would have to setup a custom $post variable with query_posts() or WP_Query() in order to access the content, but there's no way to pass that version of $post to the shortcode check function.
+		maybe add a second array where you can defined template file names (e.g., home.php, map.php, etc) instead-of/in-addition-to post slugs
+			http://wordpress.stackexchange.com/questions/10537/get-name-of-the-current-template-file
+		maybe make a static function they can call that will just pass a single array w/ slugs? instead of them having to setup shit in the theme's functions.php?
+		is_home() helpful?
+	maybe look at encoding the content w/ some reversible algorithm so that email addresses aren't exposed in $bgmpData
+		would have to add an option to turn on/off?
+	wp 3.3 could affect js handling
+		http://core.trac.wordpress.org/ticket/11520
+	rename all functions from camelcase to underscore?
+	maybe break messages and describe into Toolbelt class
+		give it it's own name not related to bgmp, a version number toos
+
+		
+minor
 	http://code.google.com/p/gmaps-api-issues/issues/detail?id=1724 workaround
 		didn't work. file a new bug report for the issue. setup a test page
 		when fixed, remove the override styles.
@@ -40,7 +58,7 @@ version x.y.z
 		make 'die' the default
 		make it a switch instead of if else ifelse
 		
-1.3.4
+minor
 	loadresources isn't specifiying a version number for the maps api. if they switch to v4 i don't want to plugin to automatically do it
 		see if you can specify v3
 	enqueuemessage should let it can be converted to string
@@ -51,15 +69,6 @@ version x.y.z
 	test to make sure wp action actually is working for essages. i don't think it runs on edit-page, so wouldn't get notice of geocode error
 		check out wp_enqueue_scripts
 		if works, update wpse question. also add it and admin_enqueue_scripts to codex list in the appropriate order
-	
-	
-
-1.4
-	look at jesper's zindex mods and see if they can be integrated
-	maybe look at encoding the content w/ some reversible algorithm so that email addresses aren't exposed in $bgmpData
-		would have to add an option to turn on/off?
-	
-
 	
 minor
 	double check that everything is sanitized
@@ -79,11 +88,10 @@ minor
 	add option to disable the 'image media button disabled' warning. would have to be site-wide option?
 		update error message to let them know they can disable it
 	organize FAQ page into sections?
-	3.2 back end screenshots on wahc (have to move to hc6l first)
 	
 	
 minor
-	add description to zoom setting on writing page. 
+	add description to zoom setting on settings page. 
 		what's the allowed range? 
 			add error check for that
 		is the lower number more zoomed in or less?
@@ -99,21 +107,18 @@ minor
 		removed the infowindow height and renamed the infowindow width (to maxwidth) option in v1.2.1 or 1.3. remember that you still need to remove from db here
 
 major
+	remove the 'upgrade to 1.0 addresses' activation bit - no longer needed for most users
 	mobile support
 	mobile placemark bug
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-i-cant-see-the-placemark-on-my-mobile-phone?replies=1#post-2201681
 		read through code, try to think of what may cause it
 		try googling for answer	
 		
-major
+minor
 	look into http://docs.jquery.com/Plugins/Authoring to see if you should do things that way
 		
 
 minor
-	create own settings page, instead of on writing.
-		check cimcool 1.1 plugins
-		update the settings link on plugins page
-		setup constant for settings page instead of typeing 'writing' all the time
 	close infobox when click anywhere outside infobox
 		$(map).click( function()
 		{
@@ -149,10 +154,8 @@ major
 	
 	
 user requests. implement if enough people ask
-	2 - list shortcode sorting
 	2 - add ability to create multiple maps w/ distinct sets of markers, but only if more people ask for it
 		would create a post type for maps, then have a field on markers which define which map it's associated w/
-	2 - define z-index for each marker
 	1 - set width as % in addition to px
 			check that google api allows that
 			this may be working in 1.3 already, check notes for 1.3.2 or 1.3.3 for testing info

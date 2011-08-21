@@ -4,7 +4,7 @@ Donate link: http://www.doctorswithoutborders.org
 Tags: google map, map, embed, marker, placemark, icon
 Requires at least: 3.0
 Tested up to: 3.2.1
-Stable tag: 1.3.2
+Stable tag: 1.4
 
 Embeds a Google Map into your site and lets you add markers with custom icons and information windows.
 
@@ -23,7 +23,7 @@ You can see a live example of the map it creates at [washingtonhousechurches.net
 
 1. Upload the *basic-google-maps-placemarks* directory to your *wp-content/plugins/* directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to the 'Writing' page under the 'Settings' menu, then enter the width, height, zoom, etc and click the save button.
+3. Go to the 'Basic Google Maps Placemarks' page under the 'Settings' menu, then enter the width, height, zoom, etc and click the save button.
 4. Type the *[bgmp-map]* [shortcode](http://coding.smashingmagazine.com/2009/02/02/mastering-wordpress-shortcodes/) in a page or post to embed the map on that page/post.
 5. Go to the Placemarks menu and add your markers.
 6. (optional) You can also add the *[bgmp-list]* shortcode to a page for a text listing of all of the placemarks.
@@ -63,6 +63,9 @@ Yes. Version 1.2 added support for MultiSite installations.
 
 = Placemarks aren't showing up the map =
 If your theme is calling `add_theme_support( 'post-thumbnails' )` and passing in a specific list of post types -- rather than enabling support for all post types -- then it should check if some post types are already registered and include those as well. This only applies if it's hooking into `after_theme_setup` with a priority higher than 10. Contact your theme developer and ask them to fix their code.
+
+= Two markers are overlapping. How can I set which one is on top? =
+Edit the placemark and give it a higher stacking order in the Stacking Order meta box in the right column.
 
 = How can I override the styles the plugin applies to the map? =
 The width/height of the map and marker information windows are always defined in the Settings, but you can override everything else by putting this code in your theme's functions.php file:
@@ -119,6 +122,8 @@ function your_theme_name_bgmp_shortcode_called( $mapShortcodeCalled )
 
 Copy and paste that into your theme's *functions.php* file, update the function names and filter arguments, and then add the slugs of any pages/posts containing the map to $shortcodePageSlugs. If you're using it on the home page, the slug will be 'home'.
 
+This only works if the file that calls do_shortcode() is [registered as a page template](http://codex.wordpress.org/Pages#Creating_Your_Own_Page_Templates) and assigned to a page.
+
 = Can I use coordinates to set the marker, instead of an address? =
 Yes. You can type anything into the Address field that you would type into a standard Google Maps search field, which includes coordinates. For example: 48.61322,-123.3465.
 
@@ -135,10 +140,18 @@ You can send me feedback/comments/suggestions using the [contact form](http://ia
 1. This is an example of how the map looks once it's been embedded into a page.
 2. The Placemarks page, where you can add/edit/delete map markers.
 3. A example placemark. 
-4. The map settings on the Writing Settings page.
+4. The map settings.
 
 
 == Changelog ==
+
+= 1.4 =
+* Added meta box for placemark stacking order.
+* Moved settings from the Writing page to their own page
+* Fixed bug where [multiple shortcodes on a page would prevent detection of map shortcode when called from do_shortcode()](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-javascript-andor-css-files-arent-loaded#post-2280215).
+* Fixed bug where [empty address would sometimes prevent placemarks from appearing](http://wordpress.org/support/topic/basic-google-maps-placemark-firefox-not-rendering-all-placemarks).
+* Stopped trying to geocode empty addresses.
+* Updated the FAQ to mention that [do_shortcode() has to be called from a registered page template that's been assiged to a page](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-javascript-andor-css-files-arent-loaded?replies=14#post-2287781).
 
 = 1.3.2 =
 * The markers are now sorted alphabetically in the [bgmp-list] shortcode
@@ -196,6 +209,9 @@ You can send me feedback/comments/suggestions using the [contact form](http://ia
 
 
 == Upgrade Notice ==
+
+= 1.4 =
+BGMP 1.4 adds the ability to set a stacking order for placemarks that overlap, and fixes several minor bugs.
 
 = 1.3.2 =
 BGMP 1.3.2 sorts the markers in the [bgmp-list] shortcode alphabetically, and prevents the information window scrollbar bug in more cases.

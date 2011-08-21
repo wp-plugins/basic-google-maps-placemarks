@@ -17,7 +17,6 @@ if( !class_exists('BGMPSettings') )
 		protected $bgmp;
 		public $mapWidth, $mapHeight, $mapAddress, $mapLatitude, $mapLongitude, $mapZoom, $mapInfoWindowMaxWidth;
 		const PREFIX = 'bgmp_';		// @todo - can't you just acceess $bgmp's instead ?
-		// @todo - setup constant for settings page instead of typeing 'writing' all the time
 		
 		/**
 		 * Constructor
@@ -34,10 +33,11 @@ if( !class_exists('BGMPSettings') )
 			$this->mapZoom					= get_option( self::PREFIX . 'map-zoom' );
 			$this->mapInfoWindowMaxWidth	= get_option( self::PREFIX . 'map-info-window-width' );
 			
-			add_action( 'admin_init', array($this, 'addSettings') );
+			add_action( 'admin_menu',	array( $this, 'addSettingsPage' ) );
+			add_action( 'admin_init',	array( $this, 'addSettings') );			// @todo - this may need to fire after admin_menu
 			add_filter( 'plugin_action_links_basic-google-maps-placemarks/basic-google-maps-placemarks.php', array($this, 'addSettingsLink') );
 			
-			$this->updateMapCoordinates();
+			$this->updateMapCoordinates();	// @todo - set this to fire on a hook
 		}
 		
 		/**
@@ -77,6 +77,27 @@ if( !class_exists('BGMPSettings') )
 		}
 		
 		/**
+		 * Adds a page to Settings menu
+		 * @author Ian Dunn <ian@iandunn.name>
+		 */
+		public function addSettingsPage()
+		{
+			add_options_page( BGMP_NAME .' Settings', BGMP_NAME, 'manage_options', self::PREFIX . 'settings', array( $this, 'markupSettingsPage' ) );
+		}
+		
+		/**
+		 * Creates the markup for the settings page
+		 * @author Ian Dunn <ian@iandunn.name>
+		 */
+		public function markupSettingsPage()
+		{
+			if( current_user_can( 'manage_options' ) )
+				require_once( dirname(__FILE__) . '/views/settings.php' );
+			else
+				wp_die( 'Access denied.' );
+		}
+		
+		/**
 		 * Adds a 'Settings' link to the Plugins page
 		 * @author Ian Dunn <ian@iandunn.name>
 		 * @param array $links The links currently mapped to the plugin
@@ -84,7 +105,7 @@ if( !class_exists('BGMPSettings') )
 		 */
 		public function addSettingsLink($links)
 		{
-			array_unshift($links, '<a href="options-writing.php">Settings</a>');
+			array_unshift( $links, '<a href="options-general.php?page='. self::PREFIX . 'settings">Settings</a>' );
 			return $links; 
 		}
 		
@@ -95,23 +116,24 @@ if( !class_exists('BGMPSettings') )
 		 */
 		public function addSettings()
 		{
-			add_settings_section(self::PREFIX . 'map-settings', BGMP_NAME, array($this, 'settingsSectionCallback'), 'writing');
+			add_settings_section(self::PREFIX . 'map-settings', '', array($this, 'settingsSectionCallback'), self::PREFIX . 'settings' );
 			
-			add_settings_field(self::PREFIX . 'map-width',				'Map Width',					array($this, 'mapWidthCallback'),					'writing', self::PREFIX . 'map-settings');
-			add_settings_field(self::PREFIX . 'map-height',				'Map Height',					array($this, 'mapHeightCallback'),					'writing', self::PREFIX . 'map-settings');
-			add_settings_field(self::PREFIX . 'map-address',			'Map Center Address',			array($this, 'mapAddressCallback'),					'writing', self::PREFIX . 'map-settings');
-			add_settings_field(self::PREFIX . 'map-latitude',			'Map Center Latitude',			array($this, 'mapLatitudeCallback'),				'writing', self::PREFIX . 'map-settings');
-			add_settings_field(self::PREFIX . 'map-longitude',			'Map Center Longitude',			array($this, 'mapLongitudeCallback'),				'writing', self::PREFIX . 'map-settings');
-			add_settings_field(self::PREFIX . 'map-zoom',				'Zoom',							array($this, 'mapZoomCallback'),					'writing', self::PREFIX . 'map-settings');
-			add_settings_field(self::PREFIX . 'map-info-window-width',	'Info. Window Maximum Width',	array($this, 'mapInfoWindowMaxWidthCallback'),		'writing', self::PREFIX . 'map-settings');
+			add_settings_field(self::PREFIX . 'map-width',				'Map Width',					array($this, 'mapWidthCallback'),					self::PREFIX . 'settings', self::PREFIX . 'map-settings');
+			add_settings_field(self::PREFIX . 'map-height',				'Map Height',					array($this, 'mapHeightCallback'),					self::PREFIX . 'settings', self::PREFIX . 'map-settings');
+			add_settings_field(self::PREFIX . 'map-address',			'Map Center Address',			array($this, 'mapAddressCallback'),					self::PREFIX . 'settings', self::PREFIX . 'map-settings');
+			add_settings_field(self::PREFIX . 'map-latitude',			'Map Center Latitude',			array($this, 'mapLatitudeCallback'),				self::PREFIX . 'settings', self::PREFIX . 'map-settings');
+			add_settings_field(self::PREFIX . 'map-longitude',			'Map Center Longitude',			array($this, 'mapLongitudeCallback'),				self::PREFIX . 'settings', self::PREFIX . 'map-settings');
+			add_settings_field(self::PREFIX . 'map-zoom',				'Zoom',							array($this, 'mapZoomCallback'),					self::PREFIX . 'settings', self::PREFIX . 'map-settings');
+			add_settings_field(self::PREFIX . 'map-info-window-width',	'Info. Window Maximum Width',	array($this, 'mapInfoWindowMaxWidthCallback'),		self::PREFIX . 'settings', self::PREFIX . 'map-settings');
 			
-			register_setting('writing', self::PREFIX . 'map-width');
-			register_setting('writing', self::PREFIX . 'map-height');
-			register_setting('writing', self::PREFIX . 'map-address');
-			register_setting('writing', self::PREFIX . 'map-zoom');
-			register_setting('writing', self::PREFIX . 'map-info-window-width');
+			register_setting( self::PREFIX . 'settings', self::PREFIX . 'map-width' );
+			register_setting( self::PREFIX . 'settings', self::PREFIX . 'map-height' );
+			register_setting( self::PREFIX . 'settings', self::PREFIX . 'map-address' );
+			register_setting( self::PREFIX . 'settings', self::PREFIX . 'map-zoom' );
+			register_setting( self::PREFIX . 'settings', self::PREFIX . 'map-info-window-width' );
 			
-			// @todo - need to add labels to the names so they can click on name?
+			// @todo - need to add labels to the names so they can click on name. maybe ask how on wpse
+			// @todo - add input validation  -- http://ottopress.com/2009/wordpress-settings-api-tutorial/
 		}
 		
 		/**
@@ -174,7 +196,7 @@ if( !class_exists('BGMPSettings') )
 		 */
 		public function mapZoomCallback()
 		{
-			echo '<input id="'. self::PREFIX .'map-zoom" name="'. self::PREFIX .'map-zoom" type="text" value="'. $this->mapZoom .'" class="code" />';
+			echo '<input id="'. self::PREFIX .'map-zoom" name="'. self::PREFIX .'map-zoom" type="text" value="'. $this->mapZoom .'" class="code" /> 0 (farthest) to 21 (closest)';
 		}
 		
 		/**

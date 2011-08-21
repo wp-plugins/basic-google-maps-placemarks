@@ -71,6 +71,21 @@ function bgmp_wrapper( $ )
 					console.log( 'bgmp_buildMap: '+ e );
 			}
 		},
+		
+		/**
+		 * Checks if the value is an integer. Slightly modified version of original.
+		 * @author Invent Partners
+		 * @link http://www.inventpartners.com/content/javascript_is_int
+		 * @param mixed value
+		 * @return bool
+		 */
+		isInt : function( value )
+		{
+			if( !isNaN( value ) && parseFloat( value ) == parseInt( value ) )
+				return true;
+			else
+				return false;
+		},
 
 		/**
 		 * Pull the placemark posts from Wordpress' database and add them to the map
@@ -79,9 +94,11 @@ function bgmp_wrapper( $ )
 		 */
 		addPlacemarks : function( map )
 		{
+			// @todo - should probably refactor this since you pulled out the ajax. update phpdoc too
+			
 			if( bgmpData.markers.length > 0 )
 				for( var m in bgmpData.markers )
-					bgmp.createMarker( map, bgmpData.markers[m]['title'], parseFloat(bgmpData.markers[m]['latitude']), parseFloat(bgmpData.markers[m]['longitude']), bgmpData.markers[m]['details'], bgmpData.markers[m]['icon'] );
+					bgmp.createMarker( map, bgmpData.markers[m]['title'], parseFloat( bgmpData.markers[m]['latitude'] ), parseFloat( bgmpData.markers[m]['longitude'] ), bgmpData.markers[m]['details'], bgmpData.markers[m]['icon'], parseInt( bgmpData.markers[m]['zIndex'] ) );
 		},
 
 		/**
@@ -93,26 +110,38 @@ function bgmp_wrapper( $ )
 		 * @param float longitude
 		 * @param string details Content of the infowinder
 		 * @param string icon URL of the icon
+		 * @param int zIndex The desired position in the placemark stacking order
 		 * @return bool True on success, false on failure
 		 */
-		createMarker : function( map, title, latitude, longitude, details, icon )
+		createMarker : function( map, title, latitude, longitude, details, icon, zIndex )
 		{
 			// @todo - clean up variable names
 			
 			var infowindowcontent, infowindow, marker;
 			
-			if( latitude == '' || longitude == '' )
+			if( isNaN( latitude ) || isNaN( longitude ) )
 			{
 				if( window.console )
-					console.log( "bgmp_createMarker(): Latitude and longitude weren't passed in." );
+					console.log( "bgmp_createMarker(): "+ title +" latitude and longitude weren't valid." );
+					
 				return false;
 			}
 			
 			if( icon == null )
 			{
+				// @todo - this check may not be needed anymore
+				
 				if( window.console )
-					console.log( "bgmp_createMarker(): The icon wasn't passed in." );
+					console.log( "bgmp_createMarker(): "+ title +"  icon wasn't passed in." );
 				return false;
+			}
+			
+			if( !bgmp.isInt( zIndex ) )
+			{
+				//if( window.console )
+					//console.log( "bgmp_createMarker():  "+ title +" z-index wasn't valid." );	// this would fire any time it's empty
+				
+				zIndex = 0;
 			}
 			
 			infowindowcontent = '<div class="bgmp_placemark"> <h1>'+ title +'</h1> <div>'+ details +'</div> </div>';
@@ -128,7 +157,8 @@ function bgmp_wrapper( $ )
 					'position':	new google.maps.LatLng( latitude, longitude ),
 					'map':		map,
 					'icon':		icon,
-					'title':	title
+					'title':	title,
+					'zIndex':	zIndex
 				} );
 				
 				google.maps.event.addListener( marker, 'click', function()

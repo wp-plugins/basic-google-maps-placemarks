@@ -18,7 +18,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 	{
 		// Declare variables and constants
 		protected $settings, $options, $updatedOptions, $userMessageCount, $mapShortcodeCalled;
-		const VERSION		= '1.3.2';
+		const VERSION		= '1.4';
 		const PREFIX		= 'bgmp_';
 		const POST_TYPE		= 'bgmp';
 		const DEBUG_MODE	= false;
@@ -43,7 +43,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 			add_action( 'admin_notices',						array( $this, 'printMessages') );
 			add_action( 'init',									array( $this, 'createPostType') );
 			add_action( 'after_setup_theme', 					array( $this, 'addFeaturedImageSupport' ), 11 );
-			add_action( 'admin_init',							array( $this, 'registerCustomFields') );
+			add_action( 'admin_init',							array( $this, 'addMetaBoxes') );
 			add_action( 'wp',									array( $this, 'loadResources' ), 11 );
 			add_action( 'wp_head',								array( $this, 'outputHead' ) );
 			add_action( 'save_post',							array( $this, 'saveCustomFields') );
@@ -186,19 +186,20 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		/**
 		 * Checks the current posts to see if they contain the map shortcode
 		 * @author Ian Dunn <ian@iandunn.name>
-		 * @param array $posts
 		 * @return bool
 		 */
 		function mapShortcodeCalled()
 		{
 			global $post;
+			$matches = array();
 			
 			$this->mapShortcodeCalled = apply_filters( self::PREFIX .'mapShortcodeCalled', $this->mapShortcodeCalled );
 			if( $this->mapShortcodeCalled )
 				return true;
-				
-			preg_match( '/'. get_shortcode_regex() .'/s', $post->post_content, $matches );
-			if( is_array($matches) && array_key_exists(2, $matches) && $matches[2] == 'bgmp-map' )
+			
+			preg_match_all( '/'. get_shortcode_regex() .'/s', $post->post_content, $matches );
+			
+			if( is_array( $matches ) && array_key_exists( 2, $matches ) && in_array( 'bgmp-map', $matches[2] ) )
 				return true;
 			
 			return false;
@@ -323,19 +324,20 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		}
 		
 		/**
-		 * Registers extra fields for the custom post type
+		 * Adds meta boxes for the custom post type
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
-		public function registerCustomFields()
+		public function addMetaBoxes()
 		{
-			add_meta_box( self::PREFIX . 'placemark-address', 'Placemark Address', array($this, 'markupCustomFields'), self::POST_TYPE, 'normal', 'high' );
+			add_meta_box( self::PREFIX . 'placemark-address', 'Placemark Address', array($this, 'markupAddressFields'), self::POST_TYPE, 'normal', 'high' );
+			add_meta_box( self::PREFIX . 'placemark-zIndex', 'Stacking Order', array($this, 'markupZIndexField'), self::POST_TYPE, 'side', 'default' );
 		}
 		
 		/**
-		 * Outputs the markup for the custom fields
+		 * Outputs the markup for the address fields
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
-		public function markupCustomFields()
+		public function markupAddressFields()
 		{
 			global $post;
 		
@@ -343,7 +345,22 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 			$latitude	= get_post_meta( $post->ID, self::PREFIX . 'latitude', true );
 			$longitude	= get_post_meta( $post->ID, self::PREFIX . 'longitude', true );
 			
-			require_once( dirname(__FILE__) . '/views/add-edit.php' );
+			require_once( dirname(__FILE__) . '/views/meta-address.php' );
+		}
+		
+		/**
+		 * Outputs the markup for the stacking order field
+		 * @author Ian Dunn <ian@iandunn.name>
+		 */
+		public function markupZIndexField()
+		{
+			global $post;
+		
+			$zIndex = get_post_meta( $post->ID, self::PREFIX . 'zIndex', true );
+			if( filter_var( $zIndex, FILTER_VALIDATE_INT ) === FALSE )
+				$zIndex = 0;
+				
+			require_once( dirname(__FILE__) . '/views/meta-z-index.php' );
 		}
 		
 		/**
@@ -354,27 +371,41 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		public function saveCustomFields( $postID )
 		{
 			global $post;
+			$coordinates = false;
 			
 			if(	$post && $post->post_type == self::POST_TYPE && current_user_can( 'edit_posts' ) && $_GET['action'] != 'trash' && $_GET['action'] != 'untrash' )
 			{
 				if( ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) || $post->post_status == 'auto-draft' )
 					return;
 				
+				// Save address
 				update_post_meta( $post->ID, self::PREFIX . 'address', $_POST[ self::PREFIX . 'address'] );
-				$coordinates = $this->geocode( $_POST[ self::PREFIX . 'address'] );
-				
+	
+				if( $_POST[ self::PREFIX . 'address'] )
+					$coordinates = $this->geocode( $_POST[ self::PREFIX . 'address'] );
+					
 				if( $coordinates )
 				{
 					update_post_meta( $post->ID, self::PREFIX . 'latitude', $coordinates['latitude'] );
 					update_post_meta( $post->ID, self::PREFIX . 'longitude', $coordinates['longitude'] );
 				}
 				else
-				{
-					$this->enqueueMessage('That address couldn\'t be geocoded, please make sure that it\'s correct.', 'error' );
-					
+				{	
 					update_post_meta( $post->ID, self::PREFIX . 'latitude', '' );
 					update_post_meta( $post->ID, self::PREFIX . 'longitude', '' );
+					
+					if( !empty( $_POST[ self::PREFIX . 'address'] ) )
+						$this->enqueueMessage('That address couldn\'t be geocoded, please make sure that it\'s correct.', 'error' );
 				}
+				
+				// Save z-index
+				if( filter_var( $_POST[ self::PREFIX . 'zIndex'], FILTER_VALIDATE_INT ) === FALSE )
+				{
+					update_post_meta( $post->ID, self::PREFIX . 'zIndex', 0 );
+					$this->enqueueMessage( 'The stacking order has to be an integer', 'error' );
+				}	
+				else
+					update_post_meta( $post->ID, self::PREFIX . 'zIndex', $_POST[ self::PREFIX . 'zIndex'] );
 			}
 		}
 		
@@ -523,7 +554,8 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 						'latitude'	=> get_post_meta( $pp->ID, self::PREFIX . 'latitude', true ),
 						'longitude'	=> get_post_meta( $pp->ID, self::PREFIX . 'longitude', true ),
 						'details'	=> nl2br( $pp->post_content ),
-						'icon'		=> is_array($icon) ? $icon[0] : plugins_url( 'images/default-marker.png', __FILE__ )
+						'icon'		=> is_array($icon) ? $icon[0] : plugins_url( 'images/default-marker.png', __FILE__ ),
+						'zIndex'	=> get_post_meta( $pp->ID, self::PREFIX . 'zIndex', true ),
 					);
 				}
 			}
@@ -584,10 +616,10 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		 * Stops execution and prints the input. Used for debugging.
 		 * @author Ian Dunn <ian@iandunn.name>
 		 * @param mixed $data
-		 * @param string $output 'echo' | 'notice' (will create admin_notice ) | 'die' (will wp_die() | 'return'
+		 * @param string $output 'echo' | 'notice' (will create admin_notice ) | 'die' | 'return'
 		 * @param string $message Optionally message to output before description
 		 */
-		protected function describe( $data, $output = 'echo', $message = '' )
+		protected function describe( $data, $output = 'die', $message = '' )
 		{
 			$type = gettype( $data );
 
@@ -634,15 +666,16 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 				case 'notice':
 					$this->enqueueMessage( $description, 'error' );
 					break;
-				case 'die':
-					wp_die( $description );
-					break;
 				case 'output':
 					return $description;
 					break;
 				case 'echo':
-				default:
 					echo $description;
+					break;
+				case 'die':
+				default:
+					wp_die( $description );
+					break;
 			}
 		}
 		
