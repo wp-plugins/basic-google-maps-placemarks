@@ -30,7 +30,7 @@ if( $_SERVER['SCRIPT_FILENAME'] == __FILE__ )
 	die("Access denied.");
 
 define( 'BGMP_NAME', 'Basic Google Maps Placemarks' );
-define( 'BGMP_REQUIRED_PHP_VERSON', '5' );
+define( 'BGMP_REQUIRED_PHP_VERSON', '5.2' );
 define( 'BGMP_REQUIRED_WP_VERSION', '3.0' );
 
 /**

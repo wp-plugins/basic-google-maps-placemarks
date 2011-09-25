@@ -147,6 +147,7 @@ You can send me feedback/comments/suggestions using the [contact form](http://ia
 
 = 1.4 =
 * Added meta box for placemark stacking order.
+* Upgraded PHP requirement to version 5.2
 * Moved settings from the Writing page to their own page
 * Fixed bug where [multiple shortcodes on a page would prevent detection of map shortcode when called from do_shortcode()](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-javascript-andor-css-files-arent-loaded#post-2280215).
 * Fixed bug where [empty address would sometimes prevent placemarks from appearing](http://wordpress.org/support/topic/basic-google-maps-placemark-firefox-not-rendering-all-placemarks).
