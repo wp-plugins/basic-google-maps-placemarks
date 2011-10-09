@@ -19,8 +19,69 @@ version x.y.z
 	z = Bug fixes, minor tweaks, small feature additions
 
 	
+1.5.1
+	change infowindow titles from h1 to h3
+	add current_user_can() in places -- http://wordpress.tv/2011/09/07/mark-jaquith-jon-cave-brad-williams-plugin-security-showdown/ 11:30
+	http://wordpress.stackexchange.com/questions/27418/adding-labels-to-setting-titles-with-api
+		also add lables to descriptions. test.
+	http://wordpress.org/support/topic/google-map-covering-dropdown-menus?replies=2#post-2300994
+		http://stackoverflow.com/questions/506984/how-can-i-place-a-html-div-over-the-google-earth-plugin-involves-wmode-i-imagin
+		https://www.google.com/accounts/ServiceLogin?service=groups2&continue=http://groups.google.com/group/google-earth-browser-plugin/browse_thread/thread/dc38137e4b816837%26followup%3Dhttp://groups.google.com/group/google-earth-browser-plugin/browse_thread/thread/dc38137e4b816837&followup=http://groups.google.com/group/google-earth-browser-plugin/browse_thread/thread/dc38137e4b816837%26followup%3Dhttp://groups.google.com/group/google-earth-browser-plugin/browse_thread/thread/dc38137e4b816837
+		http://earth-api-samples.googlecode.com/svn/trunk/demos/customcontrols/index.html
+		http://code.google.com/p/earth-api-samples/issues/detail?id=9&colspec=ID%20
+		http://maps.myosotissp.com/demos/popups.html
+	maybe put this into 1.5 since already started some of the unit test stuff
+	make default description color black - http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-no-description-in-placemark-balloon?replies=3#post-2376199
+	let listshortcode accept taxonomy like mapshortcode does
+	can't call enqueueMessage() in settings.php - http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-that-address-couldnt-be-geocoded-fatal-error?replies=5
+		fixed w/ temp workaround, but need better solution
+	set different center point for different maps. through shortcode args? zoom too.
+		
+1.major
+	finish setting up unit testing
+		add to 'before each new release' list
+			add new unit tests for any new/modified code
+			run unit tests
+		php - simpletest plugin?
+			maybe need to refactor everything so methods are more testable. break into controller and model. models should take input, do shit, and return. that's testable. the two mixed together isn't testable.
+			add unit tests for all functions
+			add integration tests for all functions (in separate file)
+		js
+			fireunit? kinda old, but most of the newer ones seem to require eclipse or something else
+			http://www.slideshare.net/aaronjorbin/dont-repeat-your-mistakes-javascript-unit-testing
+				look for wordpress.tv video of it from wrdcamp sf 2011
 
-minor
+1.minor
+	add icon next to name in list shortcode
+	add column on View page for address, icon
+	close infobox when click anywhere outside infobox
+		$(map).click( function()
+		{
+			if( not inside current placemark box)
+				close current placemark;
+		} );
+	add option to select map type, disable type selector for user, select zoom control -- http:www.svennerberg.com/examples/google_maps_3/properties.php
+	option for hybrid mode and sattelite view, zoom bar, etc
+	add option to disable info windows
+	lant/long shouldn't be disabled input fields, should just be regular text. some people will think they should be able to edit it.
+
+1.major
+	add hooks/filters
+		document their usage in readme.
+		do this instead of options? in addition to?
+	
+1.major
+	internatinoalization
+		use marcel bootsman's code to start dutch one. see email on 9/19/2011
+		use bablefish to make crappy translations for common languages. 
+		add list of transatlions to readme
+			say 'contact me' to help out w/ translation	
+		when this is done, maybe take some things out of faq and make a 'features' list on main page
+			wpms support
+			i8n
+			blah blah	
+	
+1.minor
 	enqueuemessage() bug - adds it twice for coordinates error, probably for everything else too
 	do shortcode bit only works with 'front page setting', not straight home.php template
 		Home.php would have to setup a custom $post variable with query_posts() or WP_Query() in order to access the content, but there's no way to pass that version of $post to the shortcode check function.
@@ -28,16 +89,16 @@ minor
 			http://wordpress.stackexchange.com/questions/10537/get-name-of-the-current-template-file
 		maybe make a static function they can call that will just pass a single array w/ slugs? instead of them having to setup shit in the theme's functions.php?
 		is_home() helpful?
+		update faq
 	maybe look at encoding the content w/ some reversible algorithm so that email addresses aren't exposed in $bgmpData
 		would have to add an option to turn on/off?
 	wp 3.3 could affect js handling
 		http://core.trac.wordpress.org/ticket/11520
-	rename all functions from camelcase to underscore?
 	maybe break messages and describe into Toolbelt class
 		give it it's own name not related to bgmp, a version number toos
 
 		
-minor
+1.minor
 	http://code.google.com/p/gmaps-api-issues/issues/detail?id=1724 workaround
 		didn't work. file a new bug report for the issue. setup a test page
 		when fixed, remove the override styles.
@@ -49,16 +110,14 @@ minor
 		create a bgmp.log() that's a wrapper for if(window.console) console.log
 	width px and % -- http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-how-to-tweak-the-code-to-get-width-instead-of-fixed-px?replies=4#post-2242249
 		test to make sure it can work as he described across browsers. if so, probalby just leave as is and update docs to let people know
-	pull messages and describe out into sep file that can reuse. give it a rev # or version #
 	describe()
 		add 'transient' as option
 			set_transient( self::PREFIX .'consturct', 'blah', 60 );
 		add 'echo' behavior, and return another option
 			already copy/pasted, but need to test
-		make 'die' the default
 		make it a switch instead of if else ifelse
 		
-minor
+1.minor
 	loadresources isn't specifiying a version number for the maps api. if they switch to v4 i don't want to plugin to automatically do it
 		see if you can specify v3
 	enqueuemessage should let it can be converted to string
@@ -70,7 +129,7 @@ minor
 		check out wp_enqueue_scripts
 		if works, update wpse question. also add it and admin_enqueue_scripts to codex list in the appropriate order
 	
-minor
+1.minor
 	double check that everything is sanitized
 	give everything a once over, check comments, empty phpdoc lines, etc
 	stat bug is back - http://wordpress.stackexchange.com/questions/21132/repository-reporting-incorrect-plugin-active-version-stat
@@ -90,11 +149,7 @@ minor
 	organize FAQ page into sections?
 	
 	
-minor
-	add description to zoom setting on settings page. 
-		what's the allowed range? 
-			add error check for that
-		is the lower number more zoomed in or less?
+1.minor
 	add px units to $('#bgmp_map-canvas').css('width', response.width ); etc ?
 		probably, just need to test
 		check the rest of the file for other places
@@ -106,7 +161,7 @@ minor
 		uninstall settings but not data. note that on the installation page under an 'uninstall' section
 		removed the infowindow height and renamed the infowindow width (to maxwidth) option in v1.2.1 or 1.3. remember that you still need to remove from db here
 
-major
+1.major
 	remove the 'upgrade to 1.0 addresses' activation bit - no longer needed for most users
 	mobile support
 	mobile placemark bug
@@ -114,57 +169,29 @@ major
 		read through code, try to think of what may cause it
 		try googling for answer	
 		
-minor
+1.minor
 	look into http://docs.jquery.com/Plugins/Authoring to see if you should do things that way
 		
-
-minor
-	close infobox when click anywhere outside infobox
-		$(map).click( function()
-		{
-			if( not inside current placemark box)
-				close current placemark;
-		} );
-	add option to select map type, disable type selector for user, select zoom control -- http:www.svennerberg.com/examples/google_maps_3/properties.php
-
 	
-major
+1.major
 	some things may only need to run on the admin side, or only on the front end. check for that and handle appropriatly
 		keep in mind http:codex.wordpress.org/AJAX_in_Plugins note 3 about being inside is_admin()
 	custom icon for placemarks menu. maybe a pinpoint? (similar to default google maps icon, but not exact same b/c of copyright)
 	
 	
-major
-	add hooks/filters
-		document their usage in readme.
-		do this instead of options? in addition to?
-	
-major
-	internatinoalization
-		use bablefish to make crappy translations for common languages. 
-		add list of transatlions to readme
-			say 'contact me' to help out w/ translation	
-		when this is done, maybe take some things out of faq and make a 'features' list on main page
-			wpms support
-			i8n
-			blah blah	
-	
-major
-	add column on View page for address, icon
+
 	
 	
 user requests. implement if enough people ask
-	2 - add ability to create multiple maps w/ distinct sets of markers, but only if more people ask for it
-		would create a post type for maps, then have a field on markers which define which map it's associated w/
 	1 - set width as % in addition to px
 			check that google api allows that
 			this may be working in 1.3 already, check notes for 1.3.2 or 1.3.3 for testing info
 	1 - option to disable zooming
 	1 - separate role for placemarks, so users can add placemarks but not regular posts
-	
 	1 - user supplied text for map link on list shortcode
-	1 - option for hybrid mode and sattelite view, zoom bar, etc
-
+	1 - option to disable info windowss
+	1 - custom taxonomy for placemark categories. each category would have an image. so instead of setting icon on placemark, you'd set icon on taxonomy, and then set taxonomy on placemark
+	1 - directions
 	
 future/maybe
 	list shortcode sorting
@@ -178,4 +205,5 @@ future/maybe
 	look into having a capability so users can control what other users can add them?
 	add version number to db option so can check it to know when to upgrade data?
 		and wouldn't have to run upgrades for < that version
+		clear caches after running upgrade - if(functino_exists('wp_clear_cache')...
 	add ? icon next to address field and move the 'you can type in blah blah' bit there

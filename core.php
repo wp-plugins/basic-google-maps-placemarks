@@ -17,10 +17,11 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 	class BasicGoogleMapsPlacemarks
 	{
 		// Declare variables and constants
-		protected $settings, $options, $updatedOptions, $userMessageCount, $mapShortcodeCalled;
-		const VERSION		= '1.4';
+		protected $settings, $options, $updatedOptions, $userMessageCount, $mapShortcodeCalled, $mapShortcodeCategories;
+		const VERSION		= '1.5';
 		const PREFIX		= 'bgmp_';
 		const POST_TYPE		= 'bgmp';
+		const TAXONOMY		= 'bgmp-category';
 		const DEBUG_MODE	= false;
 		
 		/**
@@ -37,11 +38,13 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 			$this->userMessageCount		= array( 'updates' => count( $this->options['updates'] ), 'errors' => count( $this->options['errors'] )	);
 			$this->updatedOptions		= false;
 			$this->mapShortcodeCalled	= false;
+			$this->mapShortcodeCategories	= null;
 			$this->settings				= new BGMPSettings( $this );
 			
 			// Register actions, filters and shortcodes
 			add_action( 'admin_notices',						array( $this, 'printMessages') );
 			add_action( 'init',									array( $this, 'createPostType') );
+			add_action( 'init',									array( $this, 'createCategoryTaxonomy' ) );
 			add_action( 'after_setup_theme', 					array( $this, 'addFeaturedImageSupport' ), 11 );
 			add_action( 'admin_init',							array( $this, 'addMetaBoxes') );
 			add_action( 'wp',									array( $this, 'loadResources' ), 11 );
@@ -192,17 +195,46 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		{
 			global $post;
 			$matches = array();
+			$found = false;
 			
 			$this->mapShortcodeCalled = apply_filters( self::PREFIX .'mapShortcodeCalled', $this->mapShortcodeCalled );
 			if( $this->mapShortcodeCalled )
 				return true;
 			
-			preg_match_all( '/'. get_shortcode_regex() .'/s', $post->post_content, $matches );
+			if( !$post )
+				return false;	// 404 or other context where $post doesn't exist
+				
+			// Check for shortcodes in the post's content
+			preg_match_all( '/'. get_shortcode_regex() .'/s', $post->post_content, $matches );			
+			if( !is_array( $matches ) || !array_key_exists( 2, $matches ) )
+				return false;
 			
-			if( is_array( $matches ) && array_key_exists( 2, $matches ) && in_array( 'bgmp-map', $matches[2] ) )
+			for( $i = 0; $i < count( $matches[2] ); $i++ )
+			{
+				if( $matches[2][$i] == 'bgmp-map' )
+				{
+					$found = $i;
+					break;
+				}
+			}
+			
+			if( $found !== false )
+			{
+				// Parse out the requested categories, if any
+				if( !empty( $matches[ 3 ][ $found ] ) )
+				{
+					$this->mapShortcodeCategories = str_replace( '"', '', $matches[ 3 ][ $found ] );
+					$this->mapShortcodeCategories = explode( '=', $this->mapShortcodeCategories );
+					$this->mapShortcodeCategories = explode( ',', $this->mapShortcodeCategories[1] );
+				}
+				
+				$this->mapShortcodeCategories = apply_filters( self::PREFIX .'mapShortcodeCategories', $this->mapShortcodeCategories );
+				
 				return true;
+			}
 			
-			return false;
+			else
+				return false;
 		}
 		
 		/**
@@ -245,7 +277,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 				$bgmpData = sprintf(
 					"bgmpData.options = %s;\r\nbgmpData.markers = %s",
 					json_encode( $this->getMapOptions() ),
-					json_encode( $this->getPlacemarks() )
+					json_encode( $this->getPlacemarks( $this->mapShortcodeCategories ) )
 				);
 				
 				wp_localize_script( 'bgmp', 'bgmpData', array( 'l10n_print_after' => $bgmpData ) );
@@ -302,7 +334,29 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 						'capability_type'	=> 'post',
 						'rewrite'			=> array( 'slug' => 'placemarks', 'with_front' => false ),
 						'query_var'			=> true,
-						'supports'			=> array( 'title', 'editor', 'author', 'thumbnail', 'revisions' )
+						'supports'			=> array( 'title', 'editor', 'author', 'thumbnail', 'comments', 'revisions' )
+					)
+				);
+			}
+		}
+		
+		/**
+		 * Registers the category taxonomy
+		 * @author Ian Dunn <ian@iandunn.name>
+		 */
+		public function createCategoryTaxonomy()
+		{
+			if( !taxonomy_exists( self::TAXONOMY ) )
+			{
+				register_taxonomy(
+					self::TAXONOMY,
+					self::POST_TYPE,
+					array(
+						'label'					=> 'Category',
+						'labels'				=> array( 'name' => 'Categories', 'singular_name' => 'Category' ),
+						'hierarchical'			=> true,
+						'rewrite'				=> array( 'slug' => self::TAXONOMY ),
+						'update_count_callback'	=> '_update_post_term_count'
 					)
 				);
 			}
@@ -536,12 +590,31 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		 * Gets the published placemarks from the database, formats and outputs them.
 		 * json_encode() requires PHP 5.
 		 * @author Ian Dunn <ian@iandunn.name>
+		 * @param mixed $categories null for all, or an array with category slugs to include only those categories
 		 * @return string JSON-encoded array
 		 */
-		public function getPlacemarks()
+		public function getPlacemarks( $categories = null )
 		{
 			$placemarks = array();
-			$publishedPlacemarks = get_posts( array( 'numberposts' => -1, 'post_type' => self::POST_TYPE, 'post_status' => 'publish' ) );
+			
+			$query = array( 
+				'numberposts' => -1,
+				'post_type' => self::POST_TYPE,
+				'post_status' => 'publish'
+			);
+			
+			if( $categories )
+			{
+				$query['tax_query'] = array(
+					array(
+						'taxonomy'	=> self::TAXONOMY,
+						'field'		=> 'slug',
+						'terms'		=> $categories
+					)
+				);
+			}
+			
+			$publishedPlacemarks = get_posts( $query );
 			
 			if( $publishedPlacemarks )
 			{
@@ -658,7 +731,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 				( $message ? 'Message: '. $message .'<br />' : '' ),
 				$type,
 				$length,
-				$data
+				esc_html( $data )
 			);
 			
 			switch( $output )

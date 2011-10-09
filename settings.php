@@ -61,17 +61,17 @@ if( !class_exists('BGMPSettings') )
 						$haveCoordinates = false;
 				}
 				
-				if( $haveCoordinates)
+				if( $haveCoordinates )
 				{
 					update_option( self::PREFIX . 'map-latitude', $coordinates['latitude'] );
 					update_option( self::PREFIX . 'map-longitude', $coordinates['longitude'] );
 				}
 				else
 				{
-					$this->bgmp->enqueueMessage('That address couldn\'t be geocoded, please make sure that it\'s correct.', 'error' );
+					// @todo - can't call protected from this class - $this->bgmp->enqueueMessage('That address couldn\'t be geocoded, please make sure that it\'s correct.', 'error' );
 					
-					update_option( self::PREFIX . 'map-latitude', '' );
-					update_option( self::PREFIX . 'map-longitude', '' );
+					update_option( self::PREFIX . 'map-latitude', 'Error' );	// @todo - update these
+					update_option( self::PREFIX . 'map-longitude', 'Error' );
 				}
 			}
 		}
@@ -105,7 +105,9 @@ if( !class_exists('BGMPSettings') )
 		 */
 		public function addSettingsLink($links)
 		{
+			array_unshift( $links, '<a href="http://wordpress.org/extend/plugins/basic-google-maps-placemarks/faq/">Help</a>' );
 			array_unshift( $links, '<a href="options-general.php?page='. self::PREFIX . 'settings">Settings</a>' );
+			
 			return $links; 
 		}
 		
