@@ -19,7 +19,8 @@ version x.y.z
 	z = Bug fixes, minor tweaks, small feature additions
 
 	
-1.5.1
+1.5.2
+	wp 3.3 support
 	change infowindow titles from h1 to h3
 	add current_user_can() in places -- http://wordpress.tv/2011/09/07/mark-jaquith-jon-cave-brad-williams-plugin-security-showdown/ 11:30
 	http://wordpress.stackexchange.com/questions/27418/adding-labels-to-setting-titles-with-api
@@ -36,6 +37,8 @@ version x.y.z
 	can't call enqueueMessage() in settings.php - http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-that-address-couldnt-be-geocoded-fatal-error?replies=5
 		fixed w/ temp workaround, but need better solution
 	set different center point for different maps. through shortcode args? zoom too.
+	merged 2 shutdown() conditions into a single line. test.
+	added esc_html() in printmessages(). will that mess up any warnings that have bold tags etc?
 		
 1.major
 	finish setting up unit testing

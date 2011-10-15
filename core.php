@@ -18,7 +18,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 	{
 		// Declare variables and constants
 		protected $settings, $options, $updatedOptions, $userMessageCount, $mapShortcodeCalled, $mapShortcodeCategories;
-		const VERSION		= '1.5';
+		const VERSION		= '1.5.1';
 		const PREFIX		= 'bgmp_';
 		const POST_TYPE		= 'bgmp';
 		const TAXONOMY		= 'bgmp-category';
@@ -649,7 +649,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 					echo '<div id="message" class="'. ( $type == 'updates' ? 'updated' : 'error' ) .'">';
 					foreach( $this->options[$type] as $message )
 						if( $message['mode'] == 'user' || self::DEBUG_MODE )
-							echo '<p>'. $message['message'] .'</p>';
+							echo '<p>'. esc_html( $message['message'] ) .'</p>';
 					echo '</div>';
 					
 					$this->options[$type] = array();
@@ -686,27 +686,28 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		}
 		
 		/**
-		 * Stops execution and prints the input. Used for debugging.
-		 * @author Ian Dunn <ian@iandunn.name>
+		 * Prints the output in various ways for debugging.
+		 * @author Ian Dunn <ian.dunn@mpangodev.com>
 		 * @param mixed $data
-		 * @param string $output 'echo' | 'notice' (will create admin_notice ) | 'die' | 'return'
+		 * @param string $output 'message' will be sent to an admin notice; 'die' will be output inside wp_die(); 'transient' will create a transient in the database; 'return' will be returned;
 		 * @param string $message Optionally message to output before description
 		 */
 		protected function describe( $data, $output = 'die', $message = '' )
 		{
 			$type = gettype( $data );
 
-			switch( $type)
+			// Build description
+			switch( $type )
 			{
 				case 'array':
 				case 'object':
 					$length = count( $data );
 					$data = print_r( $data, true );
-					break;
+				break;
 				
 				case 'string';
 					$length = strlen( $data );
-					break;
+				break;
 				
 				default:
 					$length = count( $data );
@@ -717,8 +718,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 					ob_end_clean();
 					
 					$data = print_r( $data, true );
-					
-					break;
+				break;
 			}
 			
 			$description = sprintf('
@@ -731,24 +731,33 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 				( $message ? 'Message: '. $message .'<br />' : '' ),
 				$type,
 				$length,
-				esc_html( $data )
+				$data
 			);
 			
+			// Output description
 			switch( $output )
 			{
 				case 'notice':
 					$this->enqueueMessage( $description, 'error' );
-					break;
+				break;
+				
+				case 'die':
+					wp_die( $description );
+				break;
+				
 				case 'output':
 					return $description;
-					break;
+				break;
+				
+				case 'transient':
+					$uniqueKey = $message ? str_replace( array( ' ', '-', '/', '\\', '.' ), '_', $message ) : mt_rand();	// removes characters that are invalid in MySQL column names
+					set_transient( self::PREFIX . 'describe_' . $uniqueKey, $description, 60 * 5 );
+				break;
+				
 				case 'echo':
-					echo $description;
-					break;
-				case 'die':
 				default:
-					wp_die( $description );
-					break;
+					echo $description;		// @todo - want to esc_html on message, but not entire description. can't do to $message above because don't want to escape for other switch cases
+				break;
 			}
 		}
 		
@@ -758,9 +767,8 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		 */
 		public function shutdown()
 		{
-			if( is_admin() )
-				if( $this->updatedOptions )
-					update_option( self::PREFIX . 'options', $this->options );
+			if( is_admin() && $this->updatedOptions )
+				update_option( self::PREFIX . 'options', $this->options );
 		}
 	} // end BasicGoogleMapsPlacemarks
 }

@@ -2,17 +2,17 @@
 Contributors: iandunn
 Donate link: http://www.doctorswithoutborders.org
 Tags: google map, map, embed, marker, placemark, icon, geocode
-Requires at least: 3.0
+Requires at least: 3.1
 Tested up to: 3.2.1
-Stable tag: 1.5
+Stable tag: 1.5.1
 
 Embeds a Google Map into your site and lets you add map markers with custom icons and information windows. Each marker can have a different icon.
 
 
 == Description ==
-BGMP creates a [custom post type](http://codex.wordpress.org/Post_Types) for placemarks (markers) on a Google Map. The map is added to a page or post using a shortcode, and there are settings which define it's size, center and zoom level.
+BGMP creates a [custom post type](http://codex.wordpress.org/Post_Types) for placemarks (markers) on a Google Map. The map is embedded into pages or posts using a shortcode, and there are settings which define it's size, center and zoom level.
 
-Then you can create markers that will show up on the map using the featured image as the map icon. When a marker is clicked on, a box will appear showing its title and description. There's also a shortcode that will output a text listing of all of the markers.
+Then you can create markers that will show up on the map using the featured image as the map icon. When a marker is clicked on, a box will appear showing its title and description. There's also a shortcode that will output a text listing of all of the markers. Placemarks can be assigned to categories and you can configure maps to only display certain categories.
 
 You can see a live example of the map it creates at [washingtonhousechurches.net](http://washingtonhousechurches.net).
 
@@ -27,14 +27,14 @@ You can see a live example of the map it creates at [washingtonhousechurches.net
 4. Click 'Install now'.
 5. Enter your FTP or FTPS username and password. If you don't know it, you can ask your web host for it.
 6. Click 'Activate plugin'.
-8. Follow the usage instructions below
+8. Follow the Basic Usage instructions below
 
 **Manual Installation**
 
 1. Download the plugin and un-zip it.
 2. Upload the *basic-google-maps-placemarks* folder to your *wp-content/plugins/* directory.
 3. Activate the plugin through the 'Plugins' menu in WordPress.
-4. Follow the usage instructions below
+4. Follow the Basic Usage instructions below
 
 **Upgrading:**
 
@@ -47,6 +47,7 @@ You can see a live example of the map it creates at [washingtonhousechurches.net
 2. Create a page or post where you'd like to embed the map, and type `[bgmp-map]` in the content area.
 3. Go to the Placemarks menu and click 'Add New'. Enter the title, address, etc.
 4. Click on 'Set Featured Image' to upload the icon.
+5. Click on the 'Publish' or 'Update' button to save the placemark.
 
 **Advanced Usage:**
 
@@ -57,13 +58,16 @@ You can see a live example of the map it creates at [washingtonhousechurches.net
 3. Edit the place where the map is embedded and add the category parameter to the shortcode. For example: [bgmp-map categories="restaurants,record-stores"] or [bgmp-map categories="parks"]. Use the category's slug, which is displayed on the Categories page in step 1. Separate each slug with a comma.
 4. You can add the [bgmp-map] shortcode to multiple pages, each time using a different set of categories.
 
-*Setting the stacking order of markers:*
+*Setting the stacking order of overlapping markers:*
 
-> If two markers are overlapping, you can give one of them a higher stacking order than the other to determine which one will appear on top. Edit the placemark and enter the number in the Stacking Order meta box in the right column.
+1. Choose which placemark you want to appear on top and edit it.
+2. Enter a number in the Stacking Order meta box in the right column that is greater than the other placemark's stacking order.
 
 *Adding a text-based list of placemarks to a page:*
 
-> Edit the page you want the list to appear on and type `[bgmp-list]`.
+1. Edit the post or page you want the list to appear on.
+2. Type `[bgmp-list]` in the context area.
+3. Click the 'Publish' or 'Update' button.
 
 Check [the FAQ](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/faq/) and [support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10) if you have any questions.
 
@@ -71,7 +75,7 @@ Check [the FAQ](http://wordpress.org/extend/plugins/basic-google-maps-placemarks
 == Frequently Asked Questions ==
 
 = How do I use the plugin? =
-Read the usage section of [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/) for instructions. If you still have questions, read this FAQ or check [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10).
+Read the Basic Usage section of [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/) for instructions. If you still have questions, read this FAQ or check [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10).
 
 = The map doesn't look right. =
 This is probably because some rules from your theme's stylesheet are being applied to the map. Contact your theme developer for advice on how to override the rules.
@@ -165,13 +169,22 @@ Yes. You can type anything into the Address field that you would type into a sta
 * Review the code for security vulnerabilities and best practices.
 
 = How can I get help when I'm having a problem? =
-1. Read the Usage section of [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/).
+1. Read the Basic Usage section of [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/).
 2. Read the answers on this page.
 3. Check [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10), because there's half a chance your problem has already been answered there, and if not the answer you get will help others in the future.
-4. If you can't find anything there, then first disable all other plugins and switch to the default theme. Then. check if the problem is still happening. If it is, then start a new thread in the forum with *a detailed description* of your problem *and the URL to the page on your site where the map is embedded*. I monitor the forums and will respond as my schedule permits. If you create a post, make sure it's tagged with `basic-google-maps-placemarks` so that I get a notification. If you use the link above it'll automatically tag it for you. Also make sure you check the 'Notify me of follow-up posts via email' box so you won't miss any replies.
+
+If you still need help, then first follow these instructions:
+
+1. Disable all other plugins and switch to the default theme, then check if the problem is still happening. 
+2. If it isn't, then the problem may actually be with your theme or other plugins you have installed. 
+3. If the problem is still happening, then start a new thread in the forum with a **detailed description** of your problem and **the URL to the map on your site**.
+4. Tag the post with `basic-google-maps-placemarks` so that I get an e-mail notification. If you use the link above it'll automatically tag it for you.
+5. Check the 'Notify me of follow-up posts via e-mail' box so you won't miss any replies.
+
+I monitor the forums and will respond as my schedule permits.
 
 = How can I send feedback that isn't of a support nature? =
-If you need help with a problem, see the FAQ answer above, but if instead you'd like to send me feedback/comments/suggestions then you can use the [contact form](http://iandunn.name/contact) on my website, and I'll respond as my schedule permits. *Please **don't** use this if you're having trouble using the plugin;* use the support forums instead (see above question for details). **I only provide support using the forums, not over e-mail.**
+If you need help with a problem, see the FAQ answer above, but if instead you'd like to send me feedback/comments/suggestions then you can use the [contact form](http://iandunn.name/contact) on my website, and I'll respond as my schedule permits. *Please **don't** use this if you're having trouble using the plugin;* use [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10) instead. **I only provide support using the forums, not over e-mail.**
 
 = Can I hire you to make custom modifications to the plugin? =
 Yes, please [contact me](http://iandunn.name/contact) and we can discuss the details.
@@ -186,6 +199,9 @@ Yes, please [contact me](http://iandunn.name/contact) and we can discuss the det
 
 
 == Changelog ==
+
+= 1.5.1 =
+* Increased Wordpress version requirement to 3.1
 
 = 1.5 =
 * Added a custom taxonomy to categorize placemarks. Thanks to [Marcel Bootsman](http://nostromo.nl) for contributing code to this.
@@ -258,6 +274,9 @@ Yes, please [contact me](http://iandunn.name/contact) and we can discuss the det
 
 
 == Upgrade Notice ==
+
+= 1.5.1 = 
+BGMP 1.5.1 increases the WordPress version requirement to 3.1.
 
 = 1.5 =
 BGMP 1.5 adds support for categorizing placemarks and creating maps on different pages that display different categories.
