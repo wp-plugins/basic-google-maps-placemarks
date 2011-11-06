@@ -25,6 +25,8 @@ function bgmp_wrapper( $ )
 			bgmp.name				= 'Basic Google Maps Placemarks';
 			bgmp.canvas				= document.getElementById("bgmp_map-canvas");	// We have to use getElementById instead of a jQuery selector here in order to pass it to the Maps API.
 			bgmp.previousInfoWindow	= undefined;
+			bgmpData.options		= $.parseJSON( bgmpData.options );
+			bgmpData.markers		= $.parseJSON( bgmpData.markers );
 			
 			if( bgmp.canvas )
 				bgmp.buildMap();

@@ -118,15 +118,15 @@ if( !class_exists('BGMPSettings') )
 		 */
 		public function addSettings()
 		{
-			add_settings_section(self::PREFIX . 'map-settings', '', array($this, 'settingsSectionCallback'), self::PREFIX . 'settings' );
+			add_settings_section( self::PREFIX . 'map-settings', '', array($this, 'settingsSectionCallback'), self::PREFIX . 'settings' );
 			
-			add_settings_field(self::PREFIX . 'map-width',				'Map Width',					array($this, 'mapWidthCallback'),					self::PREFIX . 'settings', self::PREFIX . 'map-settings');
-			add_settings_field(self::PREFIX . 'map-height',				'Map Height',					array($this, 'mapHeightCallback'),					self::PREFIX . 'settings', self::PREFIX . 'map-settings');
-			add_settings_field(self::PREFIX . 'map-address',			'Map Center Address',			array($this, 'mapAddressCallback'),					self::PREFIX . 'settings', self::PREFIX . 'map-settings');
-			add_settings_field(self::PREFIX . 'map-latitude',			'Map Center Latitude',			array($this, 'mapLatitudeCallback'),				self::PREFIX . 'settings', self::PREFIX . 'map-settings');
-			add_settings_field(self::PREFIX . 'map-longitude',			'Map Center Longitude',			array($this, 'mapLongitudeCallback'),				self::PREFIX . 'settings', self::PREFIX . 'map-settings');
-			add_settings_field(self::PREFIX . 'map-zoom',				'Zoom',							array($this, 'mapZoomCallback'),					self::PREFIX . 'settings', self::PREFIX . 'map-settings');
-			add_settings_field(self::PREFIX . 'map-info-window-width',	'Info. Window Maximum Width',	array($this, 'mapInfoWindowMaxWidthCallback'),		self::PREFIX . 'settings', self::PREFIX . 'map-settings');
+			add_settings_field( self::PREFIX . 'map-width',				'Map Width',					array($this, 'mapWidthCallback'),					self::PREFIX . 'settings', self::PREFIX . 'map-settings' );
+			add_settings_field( self::PREFIX . 'map-height',			'Map Height',					array($this, 'mapHeightCallback'),					self::PREFIX . 'settings', self::PREFIX . 'map-settings') ;
+			add_settings_field( self::PREFIX . 'map-address',			'Map Center Address',			array($this, 'mapAddressCallback'),					self::PREFIX . 'settings', self::PREFIX . 'map-settings' );
+			add_settings_field( self::PREFIX . 'map-latitude',			'Map Center Latitude',			array($this, 'mapLatitudeCallback'),				self::PREFIX . 'settings', self::PREFIX . 'map-settings' );
+			add_settings_field( self::PREFIX . 'map-longitude',			'Map Center Longitude',			array($this, 'mapLongitudeCallback'),				self::PREFIX . 'settings', self::PREFIX . 'map-settings' );
+			add_settings_field( self::PREFIX . 'map-zoom',				'Zoom',							array($this, 'mapZoomCallback'),					self::PREFIX . 'settings', self::PREFIX . 'map-settings' );
+			add_settings_field( self::PREFIX . 'map-info-window-width',	'Info. Window Maximum Width',	array($this, 'mapInfoWindowMaxWidthCallback'),		self::PREFIX . 'settings', self::PREFIX . 'map-settings' );
 			
 			register_setting( self::PREFIX . 'settings', self::PREFIX . 'map-width' );
 			register_setting( self::PREFIX . 'settings', self::PREFIX . 'map-height' );

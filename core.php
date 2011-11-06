@@ -7,8 +7,8 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 {
 	/**
 	 * A Wordpress plugin that adds a custom post type for placemarks and builds a Google Map with them
-	 * Requires PHP5+ because of various OOP features, json_encode(), pass by reference, etc
-	 * Requires Wordpress 3.0 because of custom post type support
+	 * Requires PHP 5.2 because of filter_var()
+	 * Requires Wordpress 3.3 because of wp_add_script_data()
 	 *
 	 * @package BasicGoogleMapsPlacemarks
 	 * @author Ian Dunn <ian@iandunn.name>
@@ -18,7 +18,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 	{
 		// Declare variables and constants
 		protected $settings, $options, $updatedOptions, $userMessageCount, $mapShortcodeCalled, $mapShortcodeCategories;
-		const VERSION		= '1.5.1';
+		const VERSION		= '1.5.2a';
 		const PREFIX		= 'bgmp_';
 		const POST_TYPE		= 'bgmp';
 		const TAXONOMY		= 'bgmp-category';
@@ -33,13 +33,13 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 			require_once( dirname(__FILE__) . '/settings.php');
 			
 			// Initialize variables
-			$defaultOptions				= array( 'updates' => array(), 'errors' => array() );
-			$this->options				= array_merge( $defaultOptions, get_option( self::PREFIX . 'options', array() ) );
-			$this->userMessageCount		= array( 'updates' => count( $this->options['updates'] ), 'errors' => count( $this->options['errors'] )	);
-			$this->updatedOptions		= false;
-			$this->mapShortcodeCalled	= false;
+			$defaultOptions					= array( 'updates' => array(), 'errors' => array() );
+			$this->options					= array_merge( $defaultOptions, get_option( self::PREFIX . 'options', array() ) );
+			$this->userMessageCount			= array( 'updates' => count( $this->options['updates'] ), 'errors' => count( $this->options['errors'] )	);
+			$this->updatedOptions			= false;
+			$this->mapShortcodeCalled		= false;
 			$this->mapShortcodeCategories	= null;
-			$this->settings				= new BGMPSettings( $this );
+			$this->settings					= new BGMPSettings( $this );
 			
 			// Register actions, filters and shortcodes
 			add_action( 'admin_notices',						array( $this, 'printMessages') );
@@ -53,7 +53,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 			add_action( 'wpmu_new_blog', 						array( $this, 'activateNewSite' ) );
 			add_action( 'shutdown',								array( $this, 'shutdown' ) );
 			
-			add_filter( 'parse_query',							array($this, 'sortAdminView' ) );
+			add_filter( 'parse_query',							array( $this, 'sortAdminView' ) );
 			
 			add_shortcode( 'bgmp-map',							array( $this, 'mapShortcode') );
 			add_shortcode( 'bgmp-list',							array( $this, 'listShortcode') );
@@ -191,7 +191,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 		 * @author Ian Dunn <ian@iandunn.name>
 		 * @return bool
 		 */
-		function mapShortcodeCalled()
+		protected function mapShortcodeCalled()
 		{
 			global $post;
 			$matches = array();
@@ -274,13 +274,15 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 				wp_enqueue_script('googleMapsAPI');
 				wp_enqueue_script('bgmp');
 				
-				$bgmpData = sprintf(
-					"bgmpData.options = %s;\r\nbgmpData.markers = %s",
-					json_encode( $this->getMapOptions() ),
-					json_encode( $this->getPlacemarks( $this->mapShortcodeCategories ) )
+				// @todo - change this to wp_add_script_data() when it makes it into beta/rc
+				wp_localize_script(
+					'bgmp',
+					'bgmpData',
+					array(
+						'options' => json_encode( $this->getMapOptions() ),
+						'markers' => json_encode( $this->getPlacemarks( $this->mapShortcodeCategories ) )
+					)
 				);
-				
-				wp_localize_script( 'bgmp', 'bgmpData', array( 'l10n_print_after' => $bgmpData ) );
 			}
 			
 			if( is_admin() || $this->mapShortcodeCalled )
@@ -628,7 +630,7 @@ if( !class_exists('BasicGoogleMapsPlacemarks') )
 						'longitude'	=> get_post_meta( $pp->ID, self::PREFIX . 'longitude', true ),
 						'details'	=> nl2br( $pp->post_content ),
 						'icon'		=> is_array($icon) ? $icon[0] : plugins_url( 'images/default-marker.png', __FILE__ ),
-						'zIndex'	=> get_post_meta( $pp->ID, self::PREFIX . 'zIndex', true ),
+						'zIndex'	=> get_post_meta( $pp->ID, self::PREFIX . 'zIndex', true )
 					);
 				}
 			}

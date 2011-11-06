@@ -18,9 +18,11 @@ version x.y.z
 	y = New features or other significant changes. Things that average users would want enough to upgrade.
 	z = Bug fixes, minor tweaks, small feature additions
 
-	
 1.5.2
 	wp 3.3 support
+		change to wp_add_script_data when that's added to beta/rc
+	
+1.5.3 - break this into 2 minor releases?
 	change infowindow titles from h1 to h3
 	add current_user_can() in places -- http://wordpress.tv/2011/09/07/mark-jaquith-jon-cave-brad-williams-plugin-security-showdown/ 11:30
 	http://wordpress.stackexchange.com/questions/27418/adding-labels-to-setting-titles-with-api
@@ -34,12 +36,22 @@ version x.y.z
 	maybe put this into 1.5 since already started some of the unit test stuff
 	make default description color black - http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-no-description-in-placemark-balloon?replies=3#post-2376199
 	let listshortcode accept taxonomy like mapshortcode does
+		also, should probably use getPlacemarks() instead of it's own get_posts() call
 	can't call enqueueMessage() in settings.php - http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-that-address-couldnt-be-geocoded-fatal-error?replies=5
 		fixed w/ temp workaround, but need better solution
 	set different center point for different maps. through shortcode args? zoom too.
 	merged 2 shutdown() conditions into a single line. test.
 	added esc_html() in printmessages(). will that mess up any warnings that have bold tags etc?
-		
+	line breaks messing up lists --- http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-line-breaks-added-to-description-popup?replies=1
+	move 'help' link to next to 'visit pluygin site' instead of with settings/deactivate ?
+	bgmp-map shortcode accepts center,zoom, etc parameters
+		make a note on teh settings page about this w/ link to instructions page 
+	
+1.minor
+	add option to select map type, disable type selector for user, select zoom control -- http:www.svennerberg.com/examples/google_maps_3/properties.php
+		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-change-map-type, probably a few others
+	option for hybrid mode and sattelite view, zoom bar, etc
+	
 1.major
 	finish setting up unit testing
 		add to 'before each new release' list
@@ -63,8 +75,6 @@ version x.y.z
 			if( not inside current placemark box)
 				close current placemark;
 		} );
-	add option to select map type, disable type selector for user, select zoom control -- http:www.svennerberg.com/examples/google_maps_3/properties.php
-	option for hybrid mode and sattelite view, zoom bar, etc
 	add option to disable info windows
 	lant/long shouldn't be disabled input fields, should just be regular text. some people will think they should be able to edit it.
 

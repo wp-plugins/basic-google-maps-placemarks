@@ -2,8 +2,8 @@
 Contributors: iandunn
 Donate link: http://www.doctorswithoutborders.org
 Tags: google map, map, embed, marker, placemark, icon, geocode
-Requires at least: 3.1
-Tested up to: 3.2.1
+Requires at least: 3.3-beta2
+Tested up to: 3.3-beta2
 Stable tag: 1.5.1
 
 Embeds a Google Map into your site and lets you add map markers with custom icons and information windows. Each marker can have a different icon.
@@ -162,6 +162,8 @@ This only works if the file that calls do_shortcode() is [registered as a page t
 = Can I use coordinates to set the marker, instead of an address? =
 Yes. You can type anything into the Address field that you would type into a standard Google Maps search field, which includes coordinates. For example: 48.61322,-123.3465.
 
+However, Google Maps is kind of picky about what coordinates they accept, and the plugin has no control over that. If it won't accept your coordinates, try using <a href="http://www.itouchmap.com/latlong.html" title="Latitude and Longitude of a Point">this page</a> to find the coordinates that Maps will accept. If it still won't accept those coordinates, you're out of luck.
+
 = How can I help with the plugin's development? =
 * Answer questions on [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10). You can click the 'Subscribe to Emails for this Tag' link to get an e-mail whenever a new post is created.
 * If you find a bug, create a post on [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10) with as much information as possible. If you're a developer, create a patch and include a link to it in the post.
@@ -199,6 +201,9 @@ Yes, please [contact me](http://iandunn.name/contact) and we can discuss the det
 
 
 == Changelog ==
+
+= 1.5.2 =
+* Made BGMP compatible with WordPress 3.3 and set it as the minimum required version.
 
 = 1.5.1 =
 * Increased Wordpress version requirement to 3.1
@@ -274,6 +279,9 @@ Yes, please [contact me](http://iandunn.name/contact) and we can discuss the det
 
 
 == Upgrade Notice ==
+
+= 1.5.2 =
+BGMP 1.5.2 adds compatability for WordPress 3.3.
 
 = 1.5.1 = 
 BGMP 1.5.1 increases the WordPress version requirement to 3.1.
