@@ -20,7 +20,9 @@ version x.y.z
 
 1.5.2
 	wp 3.3 support
-		change to wp_add_script_data when that's added to beta/rc
+		change to wp_add_script_data when that's added to beta/rc - may not need to manually json_encode() once you do this. it might do it for you
+	test in rcs
+	update readme stable tag/tested again
 	
 1.5.3 - break this into 2 minor releases?
 	change infowindow titles from h1 to h3

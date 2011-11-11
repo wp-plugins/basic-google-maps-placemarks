@@ -2,9 +2,10 @@
 Contributors: iandunn
 Donate link: http://www.doctorswithoutborders.org
 Tags: google map, map, embed, marker, placemark, icon, geocode
-Requires at least: 3.3-beta2
-Tested up to: 3.3-beta2
+Requires at least: 3.3
+Tested up to: 3.3
 Stable tag: 1.5.1
+License: GPL2
 
 Embeds a Google Map into your site and lets you add map markers with custom icons and information windows. Each marker can have a different icon.
 
