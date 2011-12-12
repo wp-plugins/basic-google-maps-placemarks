@@ -23,15 +23,13 @@ function bgmp_wrapper( $ )
 		init : function()
 		{
 			bgmp.name				= 'Basic Google Maps Placemarks';
-			bgmp.canvas				= document.getElementById("bgmp_map-canvas");	// We have to use getElementById instead of a jQuery selector here in order to pass it to the Maps API.
+			bgmp.canvas				= document.getElementById( 'bgmp_map-canvas' );	// We have to use getElementById instead of a jQuery selector here in order to pass it to the Maps API.
 			bgmp.previousInfoWindow	= undefined;
-			bgmpData.options		= $.parseJSON( bgmpData.options );
-			bgmpData.markers		= $.parseJSON( bgmpData.markers );
 			
 			if( bgmp.canvas )
 				bgmp.buildMap();
 			else
-				$( bgmp.canvas ).html( bgmp.name + " error: couldn't retrieve DOM elements.");
+				$( bgmp.canvas ).html( bgmp.name + " error: couldn't retrieve DOM elements." );
 		},
 		
 		/**
@@ -44,27 +42,30 @@ function bgmp_wrapper( $ )
 			
 			if( bgmpData.options.mapWidth == '' || bgmpData.options.mapHeight == '' || bgmpData.options.latitude == '' || bgmpData.options.longitude == '' || bgmpData.options.zoom == '' || bgmpData.options.infoWindowMaxWidth == '' )
 			{
-				$( bgmp.canvas ).html( bgmp.name + " error: map options not set.");
+				$( bgmp.canvas ).html( bgmp.name + " error: map options not set." );
 				return;
 			}
 			
 			mapOptions = 
 			{
-				'zoom'				: parseInt( bgmpData.options.zoom ),
-				'center'			: new google.maps.LatLng( parseFloat(bgmpData.options.latitude), parseFloat(bgmpData.options.longitude) ),
-				'mapTypeId'			: google.maps.MapTypeId.ROADMAP,
-				'mapTypeControl'	: false
+				'zoom'						: parseInt( bgmpData.options.zoom ),
+				'center'					: new google.maps.LatLng( parseFloat( bgmpData.options.latitude ), parseFloat( bgmpData.options.longitude ) ),
+				'mapTypeId'					: google.maps.MapTypeId[ bgmpData.options.type ],
+				'mapTypeControl'			: bgmpData.options.typeControl == 'off' ? false : true,
+				'mapTypeControlOptions'		: { style: google.maps.MapTypeControlStyle[ bgmpData.options.typeControl ] },
+				'navigationControl'			: bgmpData.options.navigationControl == 'off' ? false : true,
+				'navigationControlOptions'	: { style: google.maps.NavigationControlStyle[ bgmpData.options.navigationControl ] }
 			};
 			
 			// Override default width/heights from settings
-			$('#bgmp_map-canvas').css('width', bgmpData.options.mapWidth );
-			$('#bgmp_map-canvas').css('height', bgmpData.options.mapHeight );
+			$( '#bgmp_map-canvas' ).css( 'width', bgmpData.options.mapWidth );
+			$( '#bgmp_map-canvas' ).css( 'height', bgmpData.options.mapHeight );
 			
 			// Create the map
 			try
 			{
 				map = new google.maps.Map( bgmp.canvas, mapOptions );
-				bgmp.addPlacemarks(map);
+				bgmp.addPlacemarks( map );
 			}
 			catch( e )
 			{
@@ -100,7 +101,7 @@ function bgmp_wrapper( $ )
 			
 			if( bgmpData.markers.length > 0 )
 				for( var m in bgmpData.markers )
-					bgmp.createMarker( map, bgmpData.markers[m]['title'], parseFloat( bgmpData.markers[m]['latitude'] ), parseFloat( bgmpData.markers[m]['longitude'] ), bgmpData.markers[m]['details'], bgmpData.markers[m]['icon'], parseInt( bgmpData.markers[m]['zIndex'] ) );
+					bgmp.createMarker( map, bgmpData.markers[m]['title'], bgmpData.markers[m]['latitude'], bgmpData.markers[m]['longitude'], bgmpData.markers[m]['details'], bgmpData.markers[m]['icon'], parseInt( bgmpData.markers[m]['zIndex'] ) );
 		},
 
 		/**
@@ -146,29 +147,33 @@ function bgmp_wrapper( $ )
 				zIndex = 0;
 			}
 			
-			infowindowcontent = '<div class="bgmp_placemark"> <h1>'+ title +'</h1> <div>'+ details +'</div> </div>';
+			infowindowcontent = '<div class="bgmp_placemark"> <h3>'+ title +'</h3> <div>'+ details +'</div> </div>';
 			
 			try
 			{
 				infowindow = new google.maps.InfoWindow( {
-					content:	infowindowcontent,
-					maxWidth:	bgmpData.options.infoWindowMaxWidth
+					content		: infowindowcontent,
+					maxWidth	: bgmpData.options.infoWindowMaxWidth
 				} );
 				
+				// Replace commas with periods. Some (human) languages use commas to delimit the fraction from the whole number, but Google Maps doesn't accept that.
+				latitude = parseFloat( latitude.replace( ',', '.' ) );
+				longitude = parseFloat( longitude.replace( ',', '.' ) );
+				
 				marker = new google.maps.Marker( {
-					'position':	new google.maps.LatLng( latitude, longitude ),
-					'map':		map,
-					'icon':		icon,
-					'title':	title,
-					'zIndex':	zIndex
+					'position'	: new google.maps.LatLng( latitude, longitude ),
+					'map'		: map,
+					'icon'		: icon,
+					'title'		: title,
+					'zIndex'	: zIndex
 				} );
 				
 				google.maps.event.addListener( marker, 'click', function()
 				{
-					if( bgmp.previousInfoWindow != undefined)
+					if( bgmp.previousInfoWindow != undefined )
 						bgmp.previousInfoWindow.close();
 					
-					infowindow.open(map, marker);
+					infowindow.open( map, marker );
 					bgmp.previousInfoWindow = infowindow;
 				} );
 				

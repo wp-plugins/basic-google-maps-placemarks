@@ -2,9 +2,9 @@
 Contributors: iandunn
 Donate link: http://www.doctorswithoutborders.org
 Tags: google map, map, embed, marker, placemark, icon, geocode
-Requires at least: 3.3
+Requires at least: 3.1
 Tested up to: 3.3
-Stable tag: 1.5.1
+Stable tag: 1.6
 License: GPL2
 
 Embeds a Google Map into your site and lets you add map markers with custom icons and information windows. Each marker can have a different icon.
@@ -87,7 +87,7 @@ This is probably because some rules from your theme's stylesheet are being appli
 Also, make sure your theme is calling *[wp_footer()](http://codex.wordpress.org/Function_Reference/wp_footer)* right before the closing *body* tag in footer.php. 
 
 = Can I embed more than one map on the same page? =
-No.
+No, the Google Maps JavaScript API can only support one map on a page.
 
 = How can I force the info. window width and height to always be the same size? =
 Add the following styles to your theme's style.css file:
@@ -165,11 +165,43 @@ Yes. You can type anything into the Address field that you would type into a sta
 
 However, Google Maps is kind of picky about what coordinates they accept, and the plugin has no control over that. If it won't accept your coordinates, try using <a href="http://www.itouchmap.com/latlong.html" title="Latitude and Longitude of a Point">this page</a> to find the coordinates that Maps will accept. If it still won't accept those coordinates, you're out of luck.
 
+= Can I change the default marker icon? =
+Yes, if you want to replace the icon for all markers you can add this to your theme's functions.php:
+
+`
+function setBGMPDefaultIcon( $iconURL )
+{
+	return get_bloginfo( 'stylesheet_directory' ) . '/images/bgmp-default-icon.png';
+}
+add_filter( 'bgmp_default-icon', 'setBGMPDefaultIcon' );
+`
+
+If you only want to replace the default marker under certain conditions (e.g., when the marker is assigned to a specific category), then you can using something like this:
+
+`
+function setBGMPDefaultIcon( $iconURL, $placemarkID )
+{
+	if( $placemarkID == 352 ) // change this to be whatever condition you want
+		$iconURL = get_bloginfo( 'stylesheet_directory' ) . '/images/bgmp-default-icon.png';
+		
+	return $iconURL;
+}
+add_filter( 'bgmp_default-icon', 'setBGMPDefaultIcon', 10, 2 );
+`
+
+The string you return needs to be the full URL to the new icon.
+
+= Are there any hooks I can use to modify or extend the plugin? =
+Yes, I've tried to add filters for everything you might reasonably want. If you need a filter or action that isn't there, let me know and I'll add it to the next version.
+
 = How can I help with the plugin's development? =
 * Answer questions on [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10). You can click the 'Subscribe to Emails for this Tag' link to get an e-mail whenever a new post is created.
 * If you find a bug, create a post on [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10) with as much information as possible. If you're a developer, create a patch and include a link to it in the post.
 * Check the TODO.txt file for features that need to be added and submit a patch.
 * Review the code for security vulnerabilities and best practices.
+
+= Can I make a donation to support the plugin? =
+I do this as a way to give back to the WordPress community, so I don't want to take any donations, but if you'd like to give something I'd encourage you to make a donation to [Doctors Without Borders](http://www.doctorswithoutborders.org).
 
 = How can I get help when I'm having a problem? =
 1. Read the Basic Usage section of [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/).
@@ -184,7 +216,7 @@ If you still need help, then first follow these instructions:
 4. Tag the post with `basic-google-maps-placemarks` so that I get an e-mail notification. If you use the link above it'll automatically tag it for you.
 5. Check the 'Notify me of follow-up posts via e-mail' box so you won't miss any replies.
 
-I monitor the forums and will respond as my schedule permits.
+I monitor the forums and respond to most requests.
 
 = How can I send feedback that isn't of a support nature? =
 If you need help with a problem, see the FAQ answer above, but if instead you'd like to send me feedback/comments/suggestions then you can use the [contact form](http://iandunn.name/contact) on my website, and I'll respond as my schedule permits. *Please **don't** use this if you're having trouble using the plugin;* use [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10) instead. **I only provide support using the forums, not over e-mail.**
@@ -203,11 +235,20 @@ Yes, please [contact me](http://iandunn.name/contact) and we can discuss the det
 
 == Changelog ==
 
-= 1.5.2 =
-* Made BGMP compatible with WordPress 3.3 and set it as the minimum required version.
+= 1.6 =
+* Added options for changing the map type, type control and navigation control.
+* Added [a new filter on the default icon URL](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-categories-feature-requests).
+* Changed infomation window titles from H1 to H3 because it's more semantically appropriate
+* Made the default information window text black because [it wasn't visible in some themes](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-no-description-in-placemark-balloon).
+* Fixed bug where [coordinates with commas instead of periods wouldn't work](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-plugin-error-bad-displays-a-map).
+* Added a lot of additional filters
+* Placemark descriptions are passed through wpautop() instead of nl2br() to prevent [extra line breaks](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-line-breaks-added-to-description-popup).
+* Added option to track plugin version and upgrade routine
+* Added labels to fields on the Settings page
+* Added error message when wp_remote_get() fails in geocode()
 
 = 1.5.1 =
-* Increased Wordpress version requirement to 3.1
+* Updated readme.txt to reflect that the Wordpress version requirement is 3.1 as of BGMP 1.5.
 
 = 1.5 =
 * Added a custom taxonomy to categorize placemarks. Thanks to [Marcel Bootsman](http://nostromo.nl) for contributing code to this.
@@ -217,7 +258,7 @@ Yes, please [contact me](http://iandunn.name/contact) and we can discuss the det
 
 = 1.4 =
 * Added meta box for placemark stacking order. Thanks to Jesper Löfgren for contributing code for this.
-* Upgraded PHP requirement to version 5.2
+* Upgraded PHP requirement to version 5.2 in order to use filter_var().
 * Moved settings from the Writing page to their own page.
 * Fixed bug where [multiple shortcodes on a page would prevent detection of map shortcode when called from do_shortcode()](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-javascript-andor-css-files-arent-loaded#post-2280215).
 * Fixed bug where [empty address would sometimes prevent placemarks from appearing](http://wordpress.org/support/topic/basic-google-maps-placemark-firefox-not-rendering-all-placemarks).
@@ -281,8 +322,8 @@ Yes, please [contact me](http://iandunn.name/contact) and we can discuss the det
 
 == Upgrade Notice ==
 
-= 1.5.2 =
-BGMP 1.5.2 adds compatability for WordPress 3.3.
+= 1.6 =
+BGMP 1.6 adds options to change the map type and fixes several minor bugs.
 
 = 1.5.1 = 
 BGMP 1.5.1 increases the WordPress version requirement to 3.1.

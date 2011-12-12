@@ -1,15 +1,15 @@
 Before each new release
 	Update playground installs to latest WP version
-	Update alpha version numbers in both places in code
+	Update alpha version numbers in basic-google-maps-placemarks.php comment and core.php constant
 	Develop on WP playground
 	Update readme compatible tag to latest WP version
 	Update readme changelog and upgrade notice
-	Update PHP/WP version requirements in both places in code
+	Update PHP/WP version requirements in basic-google-maps-placemarks.php comment and core.php constant
 	Test on WPMS playground
 	Test on washingtonhousechurches.net
 	Update final version numbers in both places in code
 	Update readme stable tag
-	Remote any notes from TODO for current release
+	Remove any notes from TODO for current release
 	Commit to repository w/ description of changes
 	Download zip and test extracting
 	Respond to any relevant open forum posts, mark as resolved where appropriate
@@ -19,46 +19,57 @@ version x.y.z
 	y = New features or other significant changes. Things that average users would want enough to upgrade.
 	z = Bug fixes, minor tweaks, small feature additions
 
-1.5.2
-	wp 3.3 support
-		change to wp_add_script_data when that's added to beta/rc - may not need to manually json_encode() once you do this. it might do it for you
-		test in rcs
-		update readme stable tag/tested again
-		update wp_required_version constant from 3.3-beta3 to 3.3
-	
-	add a filter to default image
-		done. test filter and readme example	
-		
-	check widths of address/coords fields on edit placemark and settings screens
-	
-	update forums
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-no-description-in-placemark-balloon
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-line-breaks-added-to-description-popup
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-categories-feature-requests
-	
-1.5.3
+1.6.x
 	bgmp-map shortcode accepts center,zoom, etc parameters
+		inside mapShortcodeCalled()
+		change to use $this->mapShortcodeArugments[cat] etc?
+		http://codex.wordpress.org/Function_Reference/shortcode_atts
 		make a note on teh settings page about this w/ link to instructions page 
 		update readme w/ instructions on how to use
-		http://wordpress.org/support/topic/basic-google-maps-placemarks-ok-but-only-1-map?replies=2#post-2450490
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-categories-feature-requests?replies=1#post-2448903
+		http://wordpress.org/support/topic/basic-google-maps-placemarks-ok-but-only-1-map
+		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-categories-feature-requests
 		at least 1 other support topic
 
+	some people are confused that lat/long fields on edit placemark screen are disabled. want to show geocoded coords, but need more intuitive way
+	
+	if http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-errors-everywhere-a-location-is-required?replies=3 is problem on server, add faq entry
+		i get [error text] no matter what i put in
+		plugin needs to talk to maps' web service to get coordinates from address
+		likely that firewall is blocking outgoing requests from server, or php not loaded with necessary functinos
+		copy paste this code to theme functions.php, login to back end, paste results here
+		[code from entry]
+		
+		could also mention http://wordpress.org/extend/plugins/core-control/ to switch transport methods
+	
 	let list shortcode accept taxonomy, center, zoom like map shortcode does
 		also, should probably use getPlacemarks() instead of it's own get_posts() call
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-categories-feature-requests?replies=1#post-2448903
 		
-	some people are confused that lat/long fields on edit placemark screen are disabled. want to show geocoded coords, but need more intuitive way
-	
+
 	filter on category-specific default icon?
+		this already taken care of? can filter the default icon and lookup the cat b/c id is passed in 
+		gui option would be nice though
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-categories-feature-requests?replies=1#post-2448903
 		
-	commas in coordinates break
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-plugin-error-bad-displays-a-map
-		caused when other languages used (as set by server? wp? browser?)
-		maybe all you need to do is to string replace commas w/ periods before you pass the coords to the maps api?
+
+	change localize_script() to wp_add_script_data when that's added 
+		may not need to manually json_encode() once you do this. it might do it for you
 		
-1.5.x
+	increase widths of address/coords fields on edit placemark and settings screens
+		done part way, but not working b/c wp action doesn't fire on admin side
+		
+	wp 3.3 localize_script supports arrays now, so don't need separate map and marker variables in js? can just output a single bgmpdata array?
+	
+1.6.x
+	infowinder not rounded anymore?
+	add filters on all that
+	inline documentation
+		add 3.3 popouts for intro to main things the first time they install
+		add inline docu for reference - http://wpdevel.wordpress.com/2011/12/06/help-and-screen-api-changes-in-3-3/
+	switch to using add_meta_boxes_{$page} hook
+		http://wpdevel.wordpress.com/2011/12/07/do-not-include-wp-adminincludestemplate-php-to-get-add_meta_box/
+
+1.6.x
 	close infobox when click anywhere outside infobox
 		$(map).click( function()
 		{
@@ -74,23 +85,20 @@ version x.y.z
 		http://maps.myosotissp.com/demos/popups.html
 	can't call enqueueMessage() in settings.php - http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-that-address-couldnt-be-geocoded-fatal-error?replies=5
 		fixed w/ temp workaround, but need better solution
-	infowinder not rounded anymore?
-	set CPT has_archive to true?
+		just make enqueuemssage public?
 	add a bulleted list of features to readme description page? makes it easier for people to know if they want plugin or not
-	filter on get_posts args
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-placemark-page-with-just-one-placemark
+	switch to wp_add_script_before if it comes out in wp 3.4
 	
-1.5.x
+1.6.x
 	wahc doesn't work as demo anymore since not current version. setup wpms playground blog as new demo, populate w/ sample content. update link in readme. make sure to update w/ new releases (add to list above). don't use to test, only as pristine demo.
 	unit testing
+	redo enqueuemessage,etc to use WP_Error objects instead of just strings?
+		but what about for normal messages?
+	look for all @todo comments in code, and move them here. clean them up before moving on to next 1.major version
+	update readme filter examples w/ http://wpengineer.com/2319/advent-calendar-predefined-callback-functions-for-filters/
 	
-1.5.x
-	add option to select map type, disable type selector for user, select zoom control -- http:www.svennerberg.com/examples/google_maps_3/properties.php
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-change-map-type, probably a few others
-	option for hybrid mode and sattelite view, zoom bar, etc
-
 1.major
-	toggle categories dynamically w/ javascript
+	toggle categories dynamically w/ javascript - maybe. maybe too much work / not in scope.
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-categories-feature-requests?replies=1#post-2448903
 			
 1.major
@@ -233,11 +241,13 @@ version x.y.z
 	
 	
 user requests. implement if enough people ask
+	5 - javascript to toggle categories on map dynamically
 	2 - set width as % in addition to px
 			check that google api allows that
 			this may be working in 1.3 already, check notes for 1.3.2 or 1.3.3 for testing info
 	2 - custom taxonomy for placemark categories. each category would have an image. so instead of setting icon on placemark, you'd set icon on taxonomy, and then set taxonomy on placemark
 		or at least let set feat image on category. looks for in order: placemark icon > category icon > default icon
+	2 - default image for based on category
 	1 - option to disable zooming
 	1 - separate role for placemarks, so users can add placemarks but not regular posts
 	1 - user supplied text for map link on list shortcode
@@ -245,6 +255,7 @@ user requests. implement if enough people ask
 	1 - directions
 	1 - zip code search to display placemarks near a given zip code. could also have a shortcode option to display them
 	1 - show map on single placemark page that only shows that individual marker - http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-placemark-page-with-just-one-placemarks
+	1 - search only placemarks
 	
 future/maybe
 	list shortcode sorting
@@ -256,7 +267,4 @@ future/maybe
 		probably just use the readme?
 	map won't load if theme doesn't call wp_footer(). add check to make sure theme is doing that. display error if it isn't.
 	look into having a capability so users can control what other users can add them?
-	add version number to db option so can check it to know when to upgrade data?
-		and wouldn't have to run upgrades for < that version
-		clear caches after running upgrade - if(functino_exists('wp_clear_cache')...
 	add ? icon next to address field and move the 'you can type in blah blah' bit there

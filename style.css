@@ -26,9 +26,10 @@
 		margin: 0 !important;
 		font-size: medium !important;
 		line-height: normal !important;
+		color: black !important;
 	}
 		
-		.bgmp_placemark h1
+		.bgmp_placemark h3
 		{
 			margin: 0 !important;
 			padding: 5px 0;
@@ -69,5 +70,5 @@
  */
 input#bgmp_address, input#bgmp_map-address
 {
-	width: 400px;
+	width: 600px;
 }
