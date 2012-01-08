@@ -3,20 +3,29 @@ Contributors: iandunn
 Donate link: http://www.doctorswithoutborders.org
 Tags: google map, map, embed, marker, placemark, icon, geocode
 Requires at least: 3.1
-Tested up to: 3.3
-Stable tag: 1.6
+Tested up to: 3.3.1
+Stable tag: 1.6.1
 License: GPL2
 
-Embeds a Google Map into your site and lets you add map markers with custom icons and information windows. Each marker can have a different icon.
+Embeds a Google Map into your site and lets you add map markers with custom icons and information windows.
 
 
 == Description ==
-BGMP creates a [custom post type](http://codex.wordpress.org/Post_Types) for placemarks (markers) on a Google Map. The map is embedded into pages or posts using a shortcode, and there are settings which define it's size, center and zoom level.
+BGMP creates a [custom post type](http://codex.wordpress.org/Post_Types) for placemarks (markers) on a Google Map. The map is embedded into pages or posts using a shortcode, and there are settings to affect how it's displayed. Then you can create markers that will show up on the map using the featured image as the map icon. When a marker is clicked on, a box will appear showing its title and description.
 
-Then you can create markers that will show up on the map using the featured image as the map icon. When a marker is clicked on, a box will appear showing its title and description. There's also a shortcode that will output a text listing of all of the markers. Placemarks can be assigned to categories and you can configure maps to only display certain categories.
+**Features**
 
-You can see a live example of the map it creates at [washingtonhousechurches.net](http://washingtonhousechurches.net).
+* Each map marker can have a unique custom icon, share a common custom icon, or use the default icon.
+* Options to set the map type (street, satellite, etc), center location, size, zoom level, navigation controls, etc.
+* Placemarks can be assigned to categories, and you can control which categories are displayed on a individual map.
+* Extra shortcode to output a text-based list of markers for mobile devices, search engines, etc.
+* Lots of filters so that developers to customize and extend the plugin.
+* Use HTML, images, etc inside the information window.
+* Compatible with WordPress MultiSite.
 
+You can see a live example of the plugin running at [washingtonhousechurches.net](http://washingtonhousechurches.net).
+
+Basic instructions are on [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/). Check [the FAQ](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/faq/) and [support forums](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10) for help.
 
 == Installation ==
 
@@ -40,7 +49,6 @@ You can see a live example of the map it creates at [washingtonhousechurches.net
 **Upgrading:**
 
 1. Just re-upload the plugin folder to the wp-content/plugins directory to overwrite the old files.
-2. If you're upgrading from version 1.0, you'll need to populate the new address field based on existing coordinates. Just deactiveate and re-activate the plugin and it'll do that automatically. This may take a minute or two, depending on the number of placemarks you have.
 
 **Basic Usage:**
 
@@ -76,38 +84,61 @@ Check [the FAQ](http://wordpress.org/extend/plugins/basic-google-maps-placemarks
 == Frequently Asked Questions ==
 
 = How do I use the plugin? =
-Read the Basic Usage section of [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/) for instructions. If you still have questions, read this FAQ or check [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10).
+Read the Basic Usage section of [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/) for instructions. If you still have questions, read this FAQ and check [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10).
+
 
 = The map doesn't look right. =
 This is probably because some rules from your theme's stylesheet are being applied to the map. Contact your theme developer for advice on how to override the rules.
 
+
 = The page says 'Loading map...', but the map never shows up. =
-[Check to see if there are any Javascript errors](http://www.cmsmarket.com/resources/dev-corner/92-how-to-check-for-javascript-errors) caused by your theme or other plugins, because an error by any script will prevent all the other scripts from running.
+[Check to see if there are any Javascript errors](http://www.cmsmarket.com/resources/dev-corner/92-how-to-check-for-javascript-errors) caused by your theme or other plugins, because an error by any script can prevent all the other scripts from running.
 
 Also, make sure your theme is calling *[wp_footer()](http://codex.wordpress.org/Function_Reference/wp_footer)* right before the closing *body* tag in footer.php. 
+
+
+= None of the placemarks are showing up on the map =
+If your theme is calling `add_theme_support( 'post-thumbnails' )` and passing in a specific list of post types -- rather than enabling support for all post types -- then it should check if some post types are already registered and include those as well. This only applies if it's hooking into `after_theme_setup` with a priority higher than 10. Contact your theme developer and ask them to fix their code.
+
+
+= Can I use coordinates to set the marker, instead of an address? =
+Yes. You can type anything into the Address field that you would type into a standard Google Maps search field, which includes coordinates. 
+
+If the plugin recognizes your input as coordinates then it will create the marker at that exact point on the map. If it doesn't, it will attempt to geocode them, which can sometimes result in a different location than you intended. To help the plugin recognize the coordinates, make sure they're in decimal notation (e.g. 48.61322,-123.3465) instead of minutes/seconds notation. The latitude and longitude must be separated by a comma and cannot contain any letters or symbols.
+
+If you're having a hard time getting a set of coordinates to work, try visiting <a href="http://www.itouchmap.com/latlong.html" title="Latitude and Longitude of a Point">this page</a> and using the coordinates they give you.
+
+
+= Can I change the default icon for all markers instead of setting the same featured image on each individual post? =
+Yes, if you want to replace the icon for all markers you can add this to your theme's functions.php:
+
+`
+function setBGMPDefaultIcon( $iconURL )
+{
+	return get_bloginfo( 'stylesheet_directory' ) . '/images/bgmp-default-icon.png';
+}
+add_filter( 'bgmp_default-icon', 'setBGMPDefaultIcon' );
+`
+
+If you only want to replace the default marker under certain conditions (e.g., when the marker is assigned to a specific category), then you can using something like this:
+
+`
+function setBGMPDefaultIcon( $iconURL, $placemarkID )
+{
+	if( $placemarkID == 352 ) // change this to be whatever condition you want
+		$iconURL = get_bloginfo( 'stylesheet_directory' ) . '/images/bgmp-default-icon.png';
+		
+	return $iconURL;
+}
+add_filter( 'bgmp_default-icon', 'setBGMPDefaultIcon', 10, 2 );
+`
+
+The string you return needs to be the full URL to the new icon.
+
 
 = Can I embed more than one map on the same page? =
 No, the Google Maps JavaScript API can only support one map on a page.
 
-= How can I force the info. window width and height to always be the same size? =
-Add the following styles to your theme's style.css file:
-
-`
-.bgmp_placemark
-{
-	width: 450px;
-	height: 350px;
-}
-`
-
-= Can registered users create their own placemarks? =
-Yes. The plugin creates a [custom post type](http://codex.wordpress.org/Post_Types), so it has the same [permission structure](http://codex.wordpress.org/Roles_and_Capabilities) as regular posts/pages.
-
-= Will the plugin work in WordPress MultiSite? =
-Yes. Version 1.2 added support for MultiSite installations.
-
-= None of the placemarks are showing up the map =
-If your theme is calling `add_theme_support( 'post-thumbnails' )` and passing in a specific list of post types -- rather than enabling support for all post types -- then it should check if some post types are already registered and include those as well. This only applies if it's hooking into `after_theme_setup` with a priority higher than 10. Contact your theme developer and ask them to fix their code.
 
 = How can I override the styles the plugin applies to the map? =
 The width/height of the map and marker information windows are always defined in the Settings, but you can override everything else by putting this code in your theme's functions.php file:
@@ -127,8 +158,6 @@ function my_theme_name_bgmp_style()
 
 Then create a bgmp-style.css file inside your theme directory and put your styles there. If you'd prefer, you could also just make it an empty file and put the styles in your main style.css, but either way you need to register and enqueue a style with the `bgmp_style` handle, because the plugin checks to make sure the CSS and JavaScript files are loaded before embedding the map.
 
-= I upgraded to the latest version and now the map isn't working. =
-If you're running a caching plugin like WP Super Cache, make sure you delete the cache contents so that the latest files are loaded, and then refresh your browser.
 
 = I get an error when using do_shortcode() to call the map shortcode =
 For efficiency, the plugin only loads the required JavaScript, CSS and markup files on pages where it detects the map shortcode is being called. It's not possible to detect when [do_shortcode()](http://codex.wordpress.org/Function_Reference/do_shortcode) is used, so you need to manually let the plugin know to load the files by adding this code to your theme:
@@ -160,53 +189,47 @@ Copy and paste that into your theme's *functions.php* file, update the function 
 
 This only works if the file that calls do_shortcode() is [registered as a page template](http://codex.wordpress.org/Pages#Creating_Your_Own_Page_Templates) and assigned to a page.
 
-= Can I use coordinates to set the marker, instead of an address? =
-Yes. You can type anything into the Address field that you would type into a standard Google Maps search field, which includes coordinates. For example: 48.61322,-123.3465.
 
-However, Google Maps is kind of picky about what coordinates they accept, and the plugin has no control over that. If it won't accept your coordinates, try using <a href="http://www.itouchmap.com/latlong.html" title="Latitude and Longitude of a Point">this page</a> to find the coordinates that Maps will accept. If it still won't accept those coordinates, you're out of luck.
-
-= Can I change the default marker icon? =
-Yes, if you want to replace the icon for all markers you can add this to your theme's functions.php:
+= How can I force the info. window width and height to always be the same size? =
+Add the following styles to your theme's style.css file:
 
 `
-function setBGMPDefaultIcon( $iconURL )
+.bgmp_placemark
 {
-	return get_bloginfo( 'stylesheet_directory' ) . '/images/bgmp-default-icon.png';
+	width: 450px;
+	height: 350px;
 }
-add_filter( 'bgmp_default-icon', 'setBGMPDefaultIcon' );
 `
 
-If you only want to replace the default marker under certain conditions (e.g., when the marker is assigned to a specific category), then you can using something like this:
 
-`
-function setBGMPDefaultIcon( $iconURL, $placemarkID )
-{
-	if( $placemarkID == 352 ) // change this to be whatever condition you want
-		$iconURL = get_bloginfo( 'stylesheet_directory' ) . '/images/bgmp-default-icon.png';
-		
-	return $iconURL;
-}
-add_filter( 'bgmp_default-icon', 'setBGMPDefaultIcon', 10, 2 );
-`
+= Can registered users create their own placemarks? =
+Yes. The plugin creates a [custom post type](http://codex.wordpress.org/Post_Types), so it has the same [permission structure](http://codex.wordpress.org/Roles_and_Capabilities) as regular posts/pages.
 
-The string you return needs to be the full URL to the new icon.
+
+= I upgraded to the latest version and now the map isn't working. =
+If you're running a caching plugin like WP Super Cache, make sure you delete the cache contents so that the latest files are loaded, and then refresh your browser.
+
 
 = Are there any hooks I can use to modify or extend the plugin? =
-Yes, I've tried to add filters for everything you might reasonably want. If you need a filter or action that isn't there, let me know and I'll add it to the next version.
+Yes, I've tried to add filters for everything you might reasonably want, just browse the source code to look for them. If you need a filter or action that isn't there, let me know and I'll add it to the next version.
+
 
 = How can I help with the plugin's development? =
-* Answer questions on [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10). You can click the 'Subscribe to Emails for this Tag' link to get an e-mail whenever a new post is created.
+* The thing I could really use some help with is answering questions on [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10). I don't have a lot of time to work on the plugin, so the time I spend answering questions reduces the amount of time I have to add new features. If you're familiar with the plugin and would like to help out, you can click the 'Subscribe to Emails for this Tag' link to get an e-mail whenever a new post is created.
+* Volunteer to test new versions before they're officially released. [Contact me](http://iandunn.name/contact) if you want to be put on the list.
 * If you find a bug, create a post on [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10) with as much information as possible. If you're a developer, create a patch and include a link to it in the post.
 * Check the TODO.txt file for features that need to be added and submit a patch.
 * Review the code for security vulnerabilities and best practices.
 
+
 = Can I make a donation to support the plugin? =
 I do this as a way to give back to the WordPress community, so I don't want to take any donations, but if you'd like to give something I'd encourage you to make a donation to [Doctors Without Borders](http://www.doctorswithoutborders.org).
 
+
 = How can I get help when I'm having a problem? =
-1. Read the Basic Usage section of [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/).
+1. Read the Basic Usage and Advanced Usage sections of [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/).
 2. Read the answers on this page.
-3. Check [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10), because there's half a chance your problem has already been answered there, and if not the answer you get will help others in the future.
+3. Check [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10), because there's a good chance your problem has already been answered there.
 
 If you still need help, then first follow these instructions:
 
@@ -218,8 +241,10 @@ If you still need help, then first follow these instructions:
 
 I monitor the forums and respond to most requests.
 
+
 = How can I send feedback that isn't of a support nature? =
 If you need help with a problem, see the FAQ answer above, but if instead you'd like to send me feedback/comments/suggestions then you can use the [contact form](http://iandunn.name/contact) on my website, and I'll respond as my schedule permits. *Please **don't** use this if you're having trouble using the plugin;* use [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10) instead. **I only provide support using the forums, not over e-mail.**
+
 
 = Can I hire you to make custom modifications to the plugin? =
 Yes, please [contact me](http://iandunn.name/contact) and we can discuss the details.
@@ -234,6 +259,12 @@ Yes, please [contact me](http://iandunn.name/contact) and we can discuss the det
 
 
 == Changelog ==
+
+= 1.6.1 =
+* Valid coordinates in the Address field will now bypass geocoding.
+* Improved geocode error messages.
+* Added a few more !important declarations to CSS rules to prevent [theme styles overriding the map styles](http://wordpress.org/support/topic/hide-popup-box?replies=10).
+* Added more CSS classes to the [bgmp-list] elements.
 
 = 1.6 =
 * Added options for changing the map type, type control and navigation control.
@@ -321,6 +352,9 @@ Yes, please [contact me](http://iandunn.name/contact) and we can discuss the det
 
 
 == Upgrade Notice ==
+
+= 1.6.1 =
+BGMP 1.6.1 makes it easier to use coordinates for a placemark location instead of an address.
 
 = 1.6 =
 BGMP 1.6 adds options to change the map type and fixes several minor bugs.

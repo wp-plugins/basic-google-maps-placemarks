@@ -45,9 +45,9 @@
 	
 	#bgmp_map-canvas img
 	{
-		width: auto;
-		max-width: none;
-		height: auto;
+		width: auto !important;
+		max-width: none !important;
+		height: auto !important;
 		background: none !important;
 		border-width: 0;
 		padding: 0;

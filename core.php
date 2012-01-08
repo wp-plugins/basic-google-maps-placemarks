@@ -18,7 +18,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 	{
 		// Declare variables and constants
 		protected $settings, $options, $updatedOptions, $userMessageCount, $mapShortcodeCalled, $mapShortcodeCategories;
-		const VERSION		= '1.6';
+		const VERSION		= '1.6.1';
 		const PREFIX		= 'bgmp_';
 		const POST_TYPE		= 'bgmp';
 		const TAXONOMY		= 'bgmp-category';
@@ -42,7 +42,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			$this->settings						= new BGMPSettings( $this );
 			
 			// Register actions, filters and shortcodes
-			add_action( 'plugins_loaded',		array( $this, 'upgrade' ) );
+			add_action( 'init',					array( $this, 'upgrade' ) );
 			add_action( 'init',					array( $this, 'createPostType' ) );
 			add_action( 'init',					array( $this, 'createCategoryTaxonomy' ) );
 			add_action( 'after_setup_theme',	array( $this, 'addFeaturedImageSupport' ), 11 );
@@ -429,7 +429,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		public function addMetaBoxes()
 		{
 			add_meta_box( self::PREFIX . 'placemark-address', 'Placemark Address', array($this, 'markupAddressFields'), self::POST_TYPE, 'normal', 'high' );
-			add_meta_box( self::PREFIX . 'placemark-zIndex', 'Stacking Order', array($this, 'markupZIndexField'), self::POST_TYPE, 'side', 'default' );
+			add_meta_box( self::PREFIX . 'placemark-zIndex', 'Stacking Order', array($this, 'markupZIndexField'), self::POST_TYPE, 'side', 'low' );
 		}
 		
 		/**
@@ -498,9 +498,6 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			{	
 				update_post_meta( $post->ID, self::PREFIX . 'latitude', '' );
 				update_post_meta( $post->ID, self::PREFIX . 'longitude', '' );
-				
-				if( !empty( $_POST[ self::PREFIX . 'address'] ) )
-					$this->enqueueMessage('That address couldn\'t be geocoded, please make sure that it\'s correct.', 'error' );
 			}
 			
 			
@@ -517,24 +514,106 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		/**
 		 * Geocodes an address
 		 * Google's API has a daily request limit, but this is only called when a post is published, so shouldn't ever be a problem.
-		 * @param
+		 *
+		 * @param string $address
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function geocode( $address )
 		{
+			// Bypass geocoding if already have valid coordinates
+			$coordinates = $this->validateCoordinates( $address );
+			if( is_array( $coordinates ) )
+				return $coordinates;
+			
+			// Geocode address and handle errors
 			$geocodeResponse = wp_remote_get( 'http://maps.googleapis.com/maps/api/geocode/json?address='. str_replace( ' ', '+', $address ) .'&sensor=false' );
+			// @todo - esc_url() on address?
+			
 			if( is_wp_error( $geocodeResponse ) )
 			{
 				$this->enqueueMessage( BGMP_NAME . ' geocode error: '. implode( '<br />', $geocodeResponse->get_error_messages() ), 'error' );
 				return false;
 			}
+			
+			// Check response code
+			if( !isset( $geocodeResponse[ 'response' ][ 'code' ] ) || !isset( $geocodeResponse[ 'response' ][ 'message' ] ) )
+			{
+				$this->enqueueMessage( BGMP_NAME . ' geocode error: Response code not present.', 'error' );
+				return false;
+			}
+			elseif( $geocodeResponse[ 'response' ][ 'code' ] != 200 )
+			{
+				/*
+					@todo - strip content inside <style> tag. regex inappropriate, but DOMDocument doesn't exist on dev server, but does on most?. would probably have to wrap this in an if( class_exists() )...
+					
+					$responseHTML = new DOMDocument();
+					$responseHTML->loadHTML( $geocodeResponse[ 'body' ] );
+					// nordmalize it b/c doesn't have <body> tag inside?
+					$this->describe( $responseHTML->saveHTML() );
+				*/
 				
+				$this->enqueueMessage( '<p>'. BGMP_NAME . ' geocode error: '. $geocodeResponse[ 'response' ][ 'code' ] .' '. $geocodeResponse[ 'response' ][ 'message' ] .'.</p> <p>Response: '. strip_tags( $geocodeResponse[ 'body' ] ) .'</p>', 'error' );
+				
+				return false;
+			}
+			
+			// Decode response and handle errors
 			$coordinates = json_decode( $geocodeResponse['body'] );
 			
-			if( empty( $coordinates->results ) )
+			if( function_exists( 'json_last_error' ) && json_last_error() != JSON_ERROR_NONE )
+			{
+				// @todo - Once PHP 5.3+ is more widely adopted, remove the function_exists() check here and just bump the PHP requirement to 5.3
+				
+				$this->enqueueMessage( BGMP_NAME . ' geocode error: Response was not formatted in JSON.', 'error' );
 				return false;
-			else
-				return array( 'latitude' => $coordinates->results[0]->geometry->location->lat, 'longitude' => $coordinates->results[0]->geometry->location->lng );
+			}
+			
+			if( isset( $coordinates->status ) && $coordinates->status == 'REQUEST_DENIED' )
+			{
+				$this->enqueueMessage( BGMP_NAME . ' geocode error: Request Denied', 'error' );
+				return false;
+			}
+				
+			if( !isset( $coordinates->results ) || empty( $coordinates->results ) )
+			{
+				$this->enqueueMessage( "That address couldn't be geocoded, please make sure that it's correct.", "error" );
+				return false;
+			}
+			
+			return array( 'latitude' => $coordinates->results[0]->geometry->location->lat, 'longitude' => $coordinates->results[0]->geometry->location->lng );
+		}
+		
+		/**
+		 * Checks if a given string represents a valid set of geographic coordinates
+		 * Expects latitude/longitude notation, not minutes/seconds
+		 *
+		 * @author Ian Dunn <ian@iandunn.name>
+		 * @param string $coordinates
+		 * @return mixed false if any of the tests fails | an array with 'latitude' and 'longitude' keys/value pairs if all of the tests succeed 
+		 */
+		protected function validateCoordinates( $coordinates )
+		{
+			// @todo - some languages swap the roles of the commas and decimal point. this assumes english.
+			
+			$coordinates = str_replace( ' ', '', $coordinates );
+				
+			if( !$coordinates )
+				return false;
+				
+			if( substr_count( $coordinates, ',' ) != 1 )
+				return false;
+			
+			$coordinates = explode( ',', $coordinates );
+			$latitude = $coordinates[ 0 ];
+			$longitude = $coordinates[ 1 ];
+			
+			if( !is_numeric( $latitude ) || $latitude < -90 || $latitude > 90 )
+				return false;
+				
+			if( !is_numeric( $longitude ) || $longitude < -180 || $longitude > 180 )
+				return false;
+			
+			return array( 'latitude' => $latitude, 'longitude' => $longitude );
 		}
 		
 		/**
@@ -607,10 +686,10 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 					$address = get_post_meta( $p->ID, self::PREFIX . 'address', true );
 						
 					$markerHTML = sprintf('
-						<li>
-							<h3>%s</h3>
-							<div>%s</div>
-							<p><a href="%s">%s</a></p>
+						<li class="'. self::PREFIX .'list-item">
+							<h3 class="'. self::PREFIX .'list-placemark-title">%s</h3>
+							<div class="'. self::PREFIX .'list-description">%s</div>
+							<p class="'. self::PREFIX .'list-link"><a href="%s">%s</a></p>
 						</li>',
 						$p->post_title,
 						wpautop( $p->post_content ),
@@ -670,7 +749,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			
 			if( $categories )
 			{
-				$query['tax_query'] = array(
+				$query[ 'tax_query' ] = array(
 					array(
 						'taxonomy'	=> self::TAXONOMY,
 						'field'		=> 'slug',
@@ -741,14 +820,14 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			if( !is_string( $message ) )
 				return false;
 			
-			array_push( $this->options[$type .'s'], array(
-				'message' => $message,
-				'type' => $type,
-				'mode' => $mode
+			array_push( $this->options[ $type .'s' ], array(
+				'message'	=> $message,
+				'type'		=> $type,
+				'mode'		=> $mode
 			) );
 			
 			if( $mode == 'user' )
-				$this->userMessageCount[$type . 's']++;
+				$this->userMessageCount[ $type . 's' ]++;
 			
 			$this->updatedOptions = true;
 			
@@ -801,7 +880,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				( $message ? 'Message: '. $message .'<br />' : '' ),
 				$type,
 				$length,
-				$data
+				htmlspecialchars( $data )
 			);
 			
 			// Output description

@@ -47,6 +47,10 @@ class bgmpCoreUnitTests extends UnitTestCase
 	// mapshortcode called
 		// method from faq of setting it to true
 
+		
+	/*
+	 * geocode()
+	 */
 	public function testGeocodeReturnsFalseWithInvalidAddress()
 	{
 		$bgmp = new BasicGoogleMapsPlacemarks();
@@ -67,6 +71,80 @@ class bgmpCoreUnitTests extends UnitTestCase
 		$this->assertEqual( $address['longitude'], '-71.035377' );
 	}
 
+	
+	/*
+	 * validateCoordinates()
+	 */
+	public function testValidateCoordinatesSucceedsWithValidCoordinates()
+	{
+		$bgmp = new BasicGoogleMapsPlacemarks();
+		$validateCoordinates = self::getHiddenMethod( 'validateCoordinates' );
+  
+		$this->assertTrue( is_array( $validateCoordinates->invokeArgs( $bgmp, array( '-4.915833,-157.5' ) ) ) );
+		$this->assertTrue( is_array( $validateCoordinates->invokeArgs( $bgmp, array( '39.7589478,-84.1916069' ) ) ) );
+		$this->assertTrue( is_array( $validateCoordinates->invokeArgs( $bgmp, array( ' 39.7589478 , -84.1916069 ' ) ) ) );
+		$this->assertTrue( is_array( $validateCoordinates->invokeArgs( $bgmp, array( '90,180' ) ) ) );
+		$this->assertTrue( is_array( $validateCoordinates->invokeArgs( $bgmp, array( '-90,-180' ) ) ) );
+		$this->assertTrue( is_array( $validateCoordinates->invokeArgs( $bgmp, array( '90,-180' ) ) ) );
+		$this->assertTrue( is_array( $validateCoordinates->invokeArgs( $bgmp, array( '-90,180' ) ) ) );
+		$this->assertTrue( is_array( $validateCoordinates->invokeArgs( $bgmp, array( '16.06403619205951,108.21956070873716' ) ) ) );
+		$this->assertTrue( is_array( $validateCoordinates->invokeArgs( $bgmp, array( '55.939246,-3.060258' ) ) ) );
+	}
+	 
+	public function testValidateCoordinatesFailsWithEuropeanNotation()
+	{
+		$bgmp = new BasicGoogleMapsPlacemarks();
+		$validateCoordinates = self::getHiddenMethod( 'validateCoordinates' );
+  
+		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( '39,7589478.-84,1916069' ) ) );
+		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( '50,0252 19,4520' ) ) );
+	}
+	
+	public function testValidateCoordinatesFailsWithMinutesSecondsNotation()
+	{
+		$bgmp = new BasicGoogleMapsPlacemarks();
+		$validateCoordinates = self::getHiddenMethod( 'validateCoordinates' );
+  
+		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( '38°53\'23"N,77°00\'27"W' ) ) );
+	}
+	
+	public function testValidateCoordinatesFailsWithEmptyCoordinates()
+	{
+		$bgmp = new BasicGoogleMapsPlacemarks();
+		$validateCoordinates = self::getHiddenMethod( 'validateCoordinates' );
+  
+		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( null ) ) );
+		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( '' ) ) );
+		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( false ) ) );
+	}
+	
+	public function testValidateCoordinatesFailsWithAddressString()
+	{
+		$bgmp = new BasicGoogleMapsPlacemarks();
+		$validateCoordinates = self::getHiddenMethod( 'validateCoordinates' );
+  
+		// want to vary the number of commas
+		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( '4 S Main St, Dayton, OH 45423, USA' ) ) );
+		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( 'Pike Place Market, Seattle' ) ) );
+		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( 'Unos Pizza Chicago' ) ) );
+	}
+	
+	public function testValidateCoordinatesFailsWhenLatitudeLongitudeOutOfBounds()
+	{
+		$bgmp = new BasicGoogleMapsPlacemarks();
+		$validateCoordinates = self::getHiddenMethod( 'validateCoordinates' );
+  
+		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( '90.1,-84.1916069' ) ) );
+		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( '-90.1,-84.1916069' ) ) );
+		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( '39.7589478,180.1' ) ) );
+		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( '39.7589478,-180.1' ) ) );
+		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( '-90.1,-180.1' ) ) );
+		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( '90.1,180.1' ) ) );
+	}
+	
+	/*
+	 * reverseGeocode()
+	 */
 	public function testReverseGeocodeReturnsFalseWithInvalidCoordinates()
 	{
 		$bgmp = new BasicGoogleMapsPlacemarks();
@@ -81,7 +159,7 @@ class bgmpCoreUnitTests extends UnitTestCase
 		$reverseGeocode = self::getHiddenMethod( 'reverseGeocode' );
 		$address = $reverseGeocode->invokeArgs( $bgmp, array( '39.7589478', '-84.1916069' ) );
   
-		$this->assertEqual( $address, '2-44 State Highway 48, Dayton, OH 45423, USA' );
+		$this->assertEqual( $address, '4 S Main St, Dayton, OH 45423, USA' );
 	}
 		
 	// map shortcode
