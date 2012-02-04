@@ -4,17 +4,16 @@
 	<tbody>
 		<tr>
 			<th><label for="<?php echo self::PREFIX; ?>address">Address:</label></th>
-			<td><input id="<?php echo self::PREFIX; ?>address" name="<?php echo self::PREFIX; ?>address" type="text" value="<?php echo $address; ?>" /></td>
-		</tr>
-		
-		<tr>
-			<th><label for="<?php echo self::PREFIX; ?>latitude">Latitude:</label></th>
-			<td><input id="<?php echo self::PREFIX; ?>latitude" name="<?php echo self::PREFIX; ?>latitude" type="text" value="<?php echo $latitude; ?>" readonly="readonly" /></td>
-		</tr>
-		
-		<tr>
-			<th><label for="<?php echo self::PREFIX; ?>longitude">Longitude:</label></th>
-			<td><input id="<?php echo self::PREFIX; ?>longitude" name="<?php echo self::PREFIX; ?>longitude" type="text" value="<?php echo $longitude; ?>" readonly="readonly" /></td>
+			<td>
+				<input id="<?php echo self::PREFIX; ?>address" name="<?php echo self::PREFIX; ?>address" type="text" value="<?php echo $address; ?>" />
+				
+				<?php if( $showGeocodeResults ) : ?>
+					<em>(Geocoded to: <?php echo $latitude; ?>, <?php echo $longitude; ?>)</em>
+			
+				<?php elseif( $showGeocodeError ) : ?>
+					<em>(Error geocoding address. Please make sure it's correct and try again.)</em>
+				<?php endif; ?>
+			</td>
 		</tr>
 	</tbody>
 </table>

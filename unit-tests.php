@@ -47,30 +47,158 @@ class bgmpCoreUnitTests extends UnitTestCase
 	// mapshortcode called
 		// method from faq of setting it to true
 
+	
+	/*
+	 * getShortcodes()
+	 */
+	public function testGetShortcodes()
+	{
+		$bgmp = new BasicGoogleMapsPlacemarks();
+		$getShortcodes = self::getHiddenMethod( 'getShortcodes' );
 		
+		// detects presence of [bgmp-list]
+		// detects presecne of [bgmp-map]
+		// detects parameters?
+		// others?
+		
+		//$this->assertFalse( $getShortcodes->invokeArgs( $bgmp, array( '39,7589478.-84,1916069' ) ) );
+		//$this->assertFalse( $getShortcodes->invokeArgs( $bgmp, array( '50,0252 19,4520' ) ) );
+	}
+	
+	
+	/*
+	 * cleanMapShortcodeArguments()
+	 */
+	public function testCleanMapShortcodeArguments()
+	{
+		$bgmp = new BasicGoogleMapsPlacemarks();
+		$cleanMapShortcodeArguments = self::getHiddenMethod( 'cleanMapShortcodeArguments' );
+		
+		// Should always get an array back
+		$emptyArray = array();
+		$this->assertEqual( $emptyArray, $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( $emptyArray ) ) );
+		$this->assertEqual( $emptyArray, $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( null ) ) );
+		$this->assertEqual( $emptyArray, $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( '' ) ) );
+		$this->assertEqual( $emptyArray, $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( 'asdfasdfas' ) ) );
+		$this->assertEqual( $emptyArray, $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( 234 ) ) );
+		
+		// Categories
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'categories' => 'parks,restaurants,shopping-malls' ) ) );
+		$this->assertTrue( in_array( 'parks', $cleaned[ 'categories' ] ) );
+		$this->assertTrue( in_array( 'restaurants', $cleaned[ 'categories' ] ) );
+		$this->assertFalse( in_array( 'shopping-malls', $cleaned[ 'categories' ] ) );
+		
+		// Width
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'width' => 100 ) ) );
+		$this->assertTrue( isset( $cleaned[ 'mapWidth' ] ) && $cleaned[ 'mapWidth' ] == 100 );
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'width' => -5 ) ) );
+		$this->assertFalse( isset( $cleaned[ 'mapWidth' ] ) );
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'width' => 'seven' ) ) );
+		$this->assertFalse( isset( $cleaned[ 'mapWidth' ] ) );
+		
+		// Height
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'height' => '100' ) ) );
+		$this->assertTrue( isset( $cleaned[ 'mapHeight' ] ) && $cleaned[ 'mapHeight' ] == 100 );
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'height' => -5 ) ) );
+		$this->assertFalse( isset( $cleaned[ 'mapHeight' ] ) );
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'height' => 'seven' ) ) );
+		$this->assertFalse( isset( $cleaned[ 'mapHeight' ] ) );
+		
+		// Center
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'center' => 'Portland, Oregon' ) ) );
+		$this->assertTrue( isset( $cleaned[ 'latitude' ] ) && $cleaned[ 'latitude' ] == '45.5234515' );
+		$this->assertTrue( isset( $cleaned[ 'longitude' ] ) && $cleaned[ 'longitude' ] == '-122.6762071' );
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'center' => '-40, 105' ) ) );
+		$this->assertTrue( isset( $cleaned[ 'latitude' ] ) && $cleaned[ 'latitude' ] == '-40' );
+		$this->assertTrue( isset( $cleaned[ 'longitude' ] ) && $cleaned[ 'longitude' ] == '105' );
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'center' => '-95, 105' ) ) );
+		$this->assertFalse( isset( $cleaned[ 'latitude' ] ) && $cleaned[ 'latitude' ] == '-95' );
+		$this->assertFalse( isset( $cleaned[ 'longitude' ] ) && $cleaned[ 'longitude' ] == '105' );
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'center' => '85, 185' ) ) );
+		$this->assertFalse( isset( $cleaned[ 'latitude' ] ) && $cleaned[ 'latitude' ] == '85' );
+		$this->assertFalse( isset( $cleaned[ 'longitude' ] ) && $cleaned[ 'longitude' ] == '185' );
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'center' => 'sdfjasldf' ) ) );
+		$this->assertFalse( isset( $cleaned[ 'latitude' ] ) );
+		$this->assertFalse( isset( $cleaned[ 'longitude' ] ) );
+		
+		// Zoom
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'zoom' => 0 ) ) );
+		$this->assertTrue( isset( $cleaned[ 'zoom' ] ) && $cleaned[ 'zoom' ] == 0 );
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'zoom' => 21 ) ) );
+		$this->assertTrue( isset( $cleaned[ 'zoom' ] ) && $cleaned[ 'zoom' ] == 21 );
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'zoom' => -1 ) ) );
+		$this->assertFalse( isset( $cleaned[ 'zoom' ] ) );
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'zoom' => 22 ) ) );
+		$this->assertFalse( isset( $cleaned[ 'zoom' ] ) );
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'zoom' => 'asdfa' ) ) );
+		$this->assertFalse( isset( $cleaned[ 'zoom' ] ) );
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'zoom' => false ) ) );
+		$this->assertFalse( isset( $cleaned[ 'zoom' ] ) );
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'zoom' => '' ) ) );
+		$this->assertFalse( isset( $cleaned[ 'zoom' ] ) );
+		
+		// Type
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'type' => 'ROADMAP' ) ) );
+		$this->assertTrue( isset( $cleaned[ 'type' ] ) && $cleaned[ 'type' ] == 'ROADMAP' );
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'type' => 'roadmap' ) ) );
+		$this->assertTrue( isset( $cleaned[ 'type' ] ) && $cleaned[ 'type' ] == 'ROADMAP' );
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'type' => 'dafsda' ) ) );
+		$this->assertFalse( isset( $cleaned[ 'type' ] ) );
+		
+		// Everything
+		$params = array(
+			'categories' => 'asdfasdf,record-stores',
+			'width' => '350',
+			'height' => 600,
+			'center' => 'Dayton, Ohio',
+			'zoom' => -1,
+			'type' => 'hybrid',
+		);
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( $params ) );
+		$this->assertTrue( in_array( 'record-stores', $cleaned[ 'categories' ] ) );
+		$this->assertFalse( in_array( 'asdfasdf', $cleaned[ 'categories' ] ) );
+		$this->assertTrue( isset( $cleaned[ 'mapWidth' ] ) && $cleaned[ 'mapWidth' ] == 350 );
+		$this->assertTrue( isset( $cleaned[ 'mapHeight' ] ) && $cleaned[ 'mapHeight' ] == 600 );
+		$this->assertTrue( isset( $cleaned[ 'latitude' ] ) && $cleaned[ 'latitude' ] == '39.7589478' );
+		$this->assertTrue( isset( $cleaned[ 'longitude' ] ) && $cleaned[ 'longitude' ] == '-84.1916069' );
+		$this->assertFalse( isset( $cleaned[ 'zoom' ] ) );
+		$this->assertTrue( isset( $cleaned[ 'type' ] ) && $cleaned[ 'type' ] == 'HYBRID' );
+		
+		$params = array(
+			'categories' => 'asdfasdf',
+			'width' => 'safasd',
+			'height' => 600,
+			'center' => '50.2342,-89.383453',
+			'zoom' => 15,
+			'type' => 'moose',
+		);
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( $params ) );
+		$this->assertFalse( in_array( 'asdfasdf', $cleaned[ 'categories' ] ) );
+		$this->assertFalse( isset( $cleaned[ 'mapWidth' ] ) );
+		$this->assertTrue( isset( $cleaned[ 'mapHeight' ] ) && $cleaned[ 'mapHeight' ] == 600 );
+		$this->assertTrue( isset( $cleaned[ 'latitude' ] ) && $cleaned[ 'latitude' ] == '50.2342' );
+		$this->assertTrue( isset( $cleaned[ 'longitude' ] ) && $cleaned[ 'longitude' ] == '-89.383453' );
+		$this->assertTrue( isset( $cleaned[ 'zoom' ] ) && $cleaned[ 'zoom' ] == 15 );
+		$this->assertFalse( isset( $cleaned[ 'type' ] ) );
+	}
+	
+				
 	/*
 	 * geocode()
 	 */
-	public function testGeocodeReturnsFalseWithInvalidAddress()
+	public function testGeocode()
 	{
 		$bgmp = new BasicGoogleMapsPlacemarks();
+		
 		$this->assertFalse( $bgmp->geocode( 'fjal39802afjl;fsdjfalsdf329jfas;' ) );
-	}
-	
-	public function testGeocodeReturnsCorrectLatitude()
-	{
-		$bgmp = new BasicGoogleMapsPlacemarks();
+		
 		$address = $bgmp->geocode( "Kylie's Chicago Pizza Seattle" );
 		$this->assertEqual( $address['latitude'], '47.6062095' );
-	}
 	
-	public function testGeocodeReturnsCorrectLongitude()
-	{
-		$bgmp = new BasicGoogleMapsPlacemarks();
 		$address = $bgmp->geocode( "111 Chelsea Street, Boston, MA 02128" );
 		$this->assertEqual( $address['longitude'], '-71.035377' );
 	}
-
+	
 	
 	/*
 	 * validateCoordinates()
@@ -145,20 +273,14 @@ class bgmpCoreUnitTests extends UnitTestCase
 	/*
 	 * reverseGeocode()
 	 */
-	public function testReverseGeocodeReturnsFalseWithInvalidCoordinates()
+	public function testReverseGeocode()
 	{
 		$bgmp = new BasicGoogleMapsPlacemarks();
 		$reverseGeocode = self::getHiddenMethod( 'reverseGeocode' );
 		
 		$this->assertFalse( $reverseGeocode->invokeArgs( $bgmp, array( '23432.324', 'tomato' ) ) );
-	}
-	
-	public function testReverseGeocodeReturnsCorrectAddressWithValidCoordinates()
-	{
-		$bgmp = new BasicGoogleMapsPlacemarks();
-		$reverseGeocode = self::getHiddenMethod( 'reverseGeocode' );
+
 		$address = $reverseGeocode->invokeArgs( $bgmp, array( '39.7589478', '-84.1916069' ) );
-  
 		$this->assertEqual( $address, '4 S Main St, Dayton, OH 45423, USA' );
 	}
 		
@@ -182,7 +304,7 @@ class bgmpCoreUnitTests extends UnitTestCase
 	public function testGetPlacemarksReturnsPopulatedArrayWhenPostsExist()
 	{
 		$bgmp = new BasicGoogleMapsPlacemarks();
-		$markers = $bgmp->getPlacemarks();
+		$markers = $bgmp->getMapPlacemarks();
 		
 		// @todo - insert a test post to ensure at least 1 exists
 		$this->assertTrue( is_array( $markers ) );
@@ -190,6 +312,10 @@ class bgmpCoreUnitTests extends UnitTestCase
 		// test that they contain actual posts w/ ids
 		// @todo - remove the test post to clean up
 	}
+	
+	// public function testUpgradeFromBeforeX.X.X
+	
+	// createPostType() returns post type object and not WP_Error object
 	
 	// enquue  message
 		// returns false when $message isn't a string

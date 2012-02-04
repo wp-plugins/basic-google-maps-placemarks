@@ -104,7 +104,7 @@ If your theme is calling `add_theme_support( 'post-thumbnails' )` and passing in
 = Can I use coordinates to set the marker, instead of an address? =
 Yes. You can type anything into the Address field that you would type into a standard Google Maps search field, which includes coordinates. 
 
-If the plugin recognizes your input as coordinates then it will create the marker at that exact point on the map. If it doesn't, it will attempt to geocode them, which can sometimes result in a different location than you intended. To help the plugin recognize the coordinates, make sure they're in decimal notation (e.g. 48.61322,-123.3465) instead of minutes/seconds notation. The latitude and longitude must be separated by a comma and cannot contain any letters or symbols.
+If the plugin recognizes your input as coordinates then it will create the marker at that exact point on the map. If it doesn't, it will attempt to geocode them, which can sometimes result in a different location than you intended. To help the plugin recognize the coordinates, make sure they're in decimal notation (e.g. 48.61322,-123.3465) instead of minutes/seconds notation. The latitude and longitude must be separated by a comma and cannot contain any letters or symbols. If your input has been geocoded, you'll see a note next to the address field that gives the geocoded coordinates, and the plugin will use those to create the marker on the map; if you don't see that note then that means that your input was not geocoded and your exact coordates will be used to place the marker.
 
 If you're having a hard time getting a set of coordinates to work, try visiting <a href="http://www.itouchmap.com/latlong.html" title="Latitude and Longitude of a Point">this page</a> and using the coordinates they give you.
 
@@ -175,14 +175,9 @@ function my_theme_name_bgmp_shortcode_check()
 	
 	if( $post )
 		if( in_array( $post->post_name, $shortcodePageSlugs ) )
-			add_filter( 'bgmp_mapShortcodeCalled', 'your_theme_name_bgmp_shortcode_called' );
+			add_filter( 'bgmp_map-shortcode-called', '__return_true' );
 }
 add_action( 'wp', 'my_theme_name_bgmp_shortcode_check' );
-
-function your_theme_name_bgmp_shortcode_called( $mapShortcodeCalled )
-{
-	return true;
-}
 `
 
 Copy and paste that into your theme's *functions.php* file, update the function names and filter arguments, and then add the slugs of any pages/posts containing the map to $shortcodePageSlugs. If you're using it on the home page, the slug will be 'home'.
@@ -209,6 +204,7 @@ Yes. The plugin creates a [custom post type](http://codex.wordpress.org/Post_Typ
 = I upgraded to the latest version and now the map isn't working. =
 If you're running a caching plugin like WP Super Cache, make sure you delete the cache contents so that the latest files are loaded, and then refresh your browser.
 
+If you upgraded other plugins at the same time, it's possible that one of them is causing a JavaScript error that breaks the entire page or some other kind of conflict.
 
 = Are there any hooks I can use to modify or extend the plugin? =
 Yes, I've tried to add filters for everything you might reasonably want, just browse the source code to look for them. If you need a filter or action that isn't there, let me know and I'll add it to the next version.
@@ -219,7 +215,7 @@ Yes, I've tried to add filters for everything you might reasonably want, just br
 * Volunteer to test new versions before they're officially released. [Contact me](http://iandunn.name/contact) if you want to be put on the list.
 * If you find a bug, create a post on [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10) with as much information as possible. If you're a developer, create a patch and include a link to it in the post.
 * Check the TODO.txt file for features that need to be added and submit a patch.
-* Review the code for security vulnerabilities and best practices.
+* Review the code for security vulnerabilities and best practices. If you find a security issue, please [contact me](http://iandunn.name/contact) privately so that I can release a patched version before the issue becomes public.
 
 
 = Can I make a donation to support the plugin? =
@@ -234,12 +230,12 @@ I do this as a way to give back to the WordPress community, so I don't want to t
 If you still need help, then first follow these instructions:
 
 1. Disable all other plugins and switch to the default theme, then check if the problem is still happening. 
-2. If it isn't, then the problem may actually be with your theme or other plugins you have installed. 
-3. If the problem is still happening, then start a new thread in the forum with a **detailed description** of your problem and **the URL to the map on your site**.
+2. If it isn't, then the problem may actually be with your theme or other plugins you have installed
+3. If the problem is still happening, then start a new thread in the forum with a **detailed description** of your problem and **the URL to the map on your site**. If you don't want to post the URL publically, then leave it out of your forums post and [send it to me privately](http://iandunn.name/contact), along with a link to the forums post.
 4. Tag the post with `basic-google-maps-placemarks` so that I get an e-mail notification. If you use the link above it'll automatically tag it for you.
 5. Check the 'Notify me of follow-up posts via e-mail' box so you won't miss any replies.
 
-I monitor the forums and respond to most requests.
+I monitor the forums and respond to most requests, although I do this in my spare time, so please be patient if you're waiting for a reply. A lot of times I only have time to answer questions over the weekend.
 
 
 = How can I send feedback that isn't of a support nature? =
@@ -260,11 +256,14 @@ Yes, please [contact me](http://iandunn.name/contact) and we can discuss the det
 
 == Changelog ==
 
+= 1.7 =
+* Replaced disabled latitude/longitude fields with added '(Geocoded to...)' note.
+
 = 1.6.1 =
-* Valid coordinates in the Address field will now bypass geocoding.
-* Improved geocode error messages.
-* Added a few more !important declarations to CSS rules to prevent [theme styles overriding the map styles](http://wordpress.org/support/topic/hide-popup-box?replies=10).
-* Added more CSS classes to the [bgmp-list] elements.
+* Valid coordinates in the Address field will now [bypass geocoding](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-plugin-changes-the-coordinates).
+* Improved [geocode error messages](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-errors-everywhere-a-location-is-required).
+* Added a few more !important declarations to CSS rules to prevent [theme styles overriding the map styles](http://wordpress.org/support/topic/hide-popup-box).
+* Added [more CSS classes](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-list-page-placementalignment) to the [bgmp-list] elements.
 
 = 1.6 =
 * Added options for changing the map type, type control and navigation control.
@@ -288,7 +287,7 @@ Yes, please [contact me](http://iandunn.name/contact) and we can discuss the det
 * Fixed a warning on 404 pages.
 
 = 1.4 =
-* Added meta box for placemark stacking order. Thanks to Jesper Löfgren for contributing code for this.
+* Added meta box for placemark stacking order. Thanks to Jesper Lofgren for contributing code for this.
 * Upgraded PHP requirement to version 5.2 in order to use filter_var().
 * Moved settings from the Writing page to their own page.
 * Fixed bug where [multiple shortcodes on a page would prevent detection of map shortcode when called from do_shortcode()](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-javascript-andor-css-files-arent-loaded#post-2280215).
@@ -352,6 +351,9 @@ Yes, please [contact me](http://iandunn.name/contact) and we can discuss the det
 
 
 == Upgrade Notice ==
+
+= 1.7 =
+x
 
 = 1.6.1 =
 BGMP 1.6.1 makes it easier to use coordinates for a placemark location instead of an address.

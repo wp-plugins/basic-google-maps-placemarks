@@ -17,8 +17,8 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 	class BasicGoogleMapsPlacemarks
 	{
 		// Declare variables and constants
-		protected $settings, $options, $updatedOptions, $userMessageCount, $mapShortcodeCalled, $mapShortcodeCategories;
-		const VERSION		= '1.6.1';
+		protected $settings, $options, $updatedOptions, $userMessageCount, $mapShortcodeCalled, $mapShortcodeArguments;
+		const VERSION		= '1.7-rc1';
 		const PREFIX		= 'bgmp_';
 		const POST_TYPE		= 'bgmp';
 		const TAXONOMY		= 'bgmp-category';
@@ -33,31 +33,33 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			require_once( dirname(__FILE__) . '/settings.php' );
 			
 			// Initialize variables
-			$defaultOptions						= array( 'updates' => array(), 'errors' => array(), 'dbVersion' => '0' );
-			$this->options						= array_merge( $defaultOptions, get_option( self::PREFIX . 'options', array() ) );
-			$this->userMessageCount				= array( 'updates' => count( $this->options['updates'] ), 'errors' => count( $this->options['errors'] )	);
-			$this->updatedOptions				= false;
-			$this->mapShortcodeCalled			= false;
-			$this->mapShortcodeCategories		= null;
-			$this->settings						= new BGMPSettings( $this );
+			$defaultOptions							= array( 'updates' => array(), 'errors' => array(), 'dbVersion' => '0' );
+			$this->options							= array_merge( $defaultOptions, get_option( self::PREFIX . 'options', array() ) );
+			$this->userMessageCount					= array( 'updates' => count( $this->options['updates'] ), 'errors' => count( $this->options['errors'] )	);
+			$this->updatedOptions					= false;
+			$this->mapShortcodeCalled				= false;
+			$this->mapShortcodeCategories			= null;
+			$this->settings							= new BGMPSettings( $this );
 			
 			// Register actions, filters and shortcodes
-			add_action( 'init',					array( $this, 'upgrade' ) );
-			add_action( 'init',					array( $this, 'createPostType' ) );
-			add_action( 'init',					array( $this, 'createCategoryTaxonomy' ) );
-			add_action( 'after_setup_theme',	array( $this, 'addFeaturedImageSupport' ), 11 );
-			add_action( 'admin_init',			array( $this, 'addMetaBoxes' ) );
-			add_action( 'wp',					array( $this, 'loadResources' ), 11 );
-			add_action( 'wp_head',				array( $this, 'outputHead' ) );
-			add_action( 'admin_notices',		array( $this, 'printMessages' ) );
-			add_action( 'save_post',			array( $this, 'saveCustomFields' ) );
-			add_action( 'wpmu_new_blog', 		array( $this, 'activateNewSite' ) );
-			add_action( 'shutdown',				array( $this, 'shutdown' ) );
+			add_action( 'init',						array( $this, 'upgrade' ) );
+			add_action( 'init',						array( $this, 'createPostType' ) );
+			add_action( 'init',						array( $this, 'createCategoryTaxonomy' ) );
+			add_action( 'after_setup_theme',		array( $this, 'addFeaturedImageSupport' ), 11 );
+			add_action( 'admin_init',				array( $this, 'addMetaBoxes' ) );
+			add_action( 'wp',						array( $this, 'getMapShortcodeArguments' ) );
+			add_action( 'wp',						array( $this, 'loadResources' ), 11 );				// @todo - should be wp_enqueue_scripts instead?
+			add_action( 'admin_enqueue_scripts',	array( $this, 'loadResources' ), 11 );				// @todo - should hook into specific $hook_prefix instead to limit to specific pages? or do that in loadResources()?
+			add_action( 'wp_head',					array( $this, 'outputHead' ) );
+			add_action( 'admin_notices',			array( $this, 'printMessages' ) );
+			add_action( 'save_post',				array( $this, 'saveCustomFields' ) );
+			add_action( 'wpmu_new_blog', 			array( $this, 'activateNewSite' ) );
+			add_action( 'shutdown',					array( $this, 'shutdown' ) );
 			
-			add_filter( 'parse_query',			array( $this, 'sortAdminView' ) );
+			add_filter( 'parse_query',				array( $this, 'sortAdminView' ) );
 			
-			add_shortcode( 'bgmp-map',			array( $this, 'mapShortcode') );
-			add_shortcode( 'bgmp-list',			array( $this, 'listShortcode') );
+			add_shortcode( 'bgmp-map',				array( $this, 'mapShortcode') );
+			add_shortcode( 'bgmp-list',				array( $this, 'listShortcode') );
 			
 			register_activation_hook( dirname(__FILE__) . '/basic-google-maps-placemarks.php', array( $this, 'networkActivate') );
 		}
@@ -70,15 +72,16 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		{
 			global $wpdb;
 			
-			if( function_exists('is_multisite') && is_multisite() )
+			if( function_exists( 'is_multisite' ) && is_multisite() )
 			{
 				// Enable image uploads so the 'Set Featured Image' meta box will be available
 				$mediaButtons = get_site_option( 'mu_media_buttons' );
 				
-				if( !array_key_exists( 'image', $mediaButtons ) || !$mediaButtons['image'] )
+				if( !array_key_exists( 'image', $mediaButtons ) || !$mediaButtons[ 'image' ] )
 				{
-					$mediaButtons['image'] = 1;
+					$mediaButtons[ 'image' ] = 1;
 					update_site_option( 'mu_media_buttons', $mediaButtons );
+					$this->enqueueMessage( BGMP_NAME . ' has enabled uploading images network-wide so that placemark icons can be set.' );		// @todo - give more specific message, test. enqueue for network admin but not regular admins
 				}
 				
 				// Activate the plugin across the network if requested
@@ -143,7 +146,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		}
 		
 		/**
-		 * Checks if the plugin was recently upgraded and upgrades if necessary
+		 * Checks if the plugin was recently updated and upgrades if necessary
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function upgrade()
@@ -206,11 +209,11 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		public function addFeaturedImageSupport()
 		{
 			// We enabled image media buttons for MultiSite on activation, but the admin may have turned it back off
-			if( is_admin() && function_exists('is_multisite') && is_multisite() )
+			if( is_admin() && function_exists( 'is_multisite' ) && is_multisite() )
 			{
 				$mediaButtons = get_site_option( 'mu_media_buttons' );
 				
-				if( !array_key_exists( 'image', $mediaButtons ) || !$mediaButtons['image'] )
+				if( !array_key_exists( 'image', $mediaButtons ) || !$mediaButtons[ 'image' ] )
 				{
 					$this->enqueueMessage( sprintf(
 						"%s requires the Images media button setting to be enabled in order to use custom icons on markers, but it's currently turned off. If you'd like to use custom icons you can enable it on the <a href=\"%ssettings.php\">Network Settings</a> page, in the Upload Settings section.",
@@ -232,6 +235,160 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		}
 		
 		/**
+		 * Gets all of the shortcodes in the current post
+		 * @author Ian Dunn <ian@iandunn.name>
+		 * @param string $content
+		 * return mixed false | array
+		 */
+		protected function getShortcodes( $content )
+		{
+			$matches = array();
+			
+			preg_match_all( '/'. get_shortcode_regex() .'/s', $content, $matches );
+			if( !is_array( $matches ) || !array_key_exists( 2, $matches ) )
+				return false;
+				
+			return $matches;
+		}
+		
+		/**
+		 * Validates and cleans the map shortcode arguments
+		 * @author Ian Dunn <ian@iandunn.name>
+		 * @param array
+		 * return array
+		 */
+		protected function cleanMapShortcodeArguments( $arguments )
+		{
+			// @todo - not doing this in settings yet, but should. want to make sure it's DRY when you do. 
+			// @todo - Any errors generated in there would stack up until admin loads page, then they'll all be displayed, include  ones from geocode() etc. that's not great solution, but is there better way?
+				// maybe add a check to enqueuemessage() to make sure that messages doesn't already exist. that way there'd only be 1 of them. if do that, make sure to fix the bug where they're getting adding twice before, b/c this would mask that
+				// maybe call getMapShortcodeArguments() when saving post so they get immediate feedback about any errors in shortcode
+					// do something similar for list shortcode arguments?
+			
+			if( !is_array( $arguments ) )
+				return array();
+				
+			if( isset( $arguments[ 'categories' ] ) )
+			{
+				$arguments[ 'categories' ] = explode( ',', $arguments[ 'categories' ] );
+				
+				global $post;
+				
+				foreach( $arguments[ 'categories' ] as $index => $term )
+				{
+					if( !term_exists( $term, self::TAXONOMY ) )
+					{
+						unset( $arguments[ 'categories' ][ $index ] );	// Note - This will leave holes in the key sequence, but it doesn't look like that's a problem with the way we're using it.
+						$this->enqueueMessage( BGMP_NAME . ' shortcode error: '. $term .' is not a valid category.', 'error' );
+					}
+				}
+			}
+			
+			// Rename width and height keys to match internal ones. Using different ones in shortcode to make it easier for user.
+			if( isset( $arguments[ 'width' ] ) )
+			{
+				if( is_numeric( $arguments[ 'width' ] ) && $arguments[ 'width' ] > 0 )
+					$arguments[ 'mapWidth' ] = $arguments[ 'width' ];
+				else
+					$this->enqueueMessage( BGMP_NAME . ' shortcode error: '. $arguments[ 'width' ] .' is not a valid width.', 'error' );
+					
+				unset( $arguments[ 'width' ] );
+			}
+			
+			if( isset( $arguments[ 'height' ] ) && $arguments[ 'height' ] > 0 )
+			{
+				if( is_numeric( $arguments[ 'height' ] ) )
+					$arguments[ 'mapHeight' ] = $arguments[ 'height' ];
+				else
+					$this->enqueueMessage( BGMP_NAME . ' shortcode error: '. $arguments[ 'height' ] .' is not a valid height.', 'error' );
+					
+				unset( $arguments[ 'height' ] );
+			}
+			
+			if( isset( $arguments[ 'center' ] ) )
+			{
+				// Note: Google's API has a daily request limit, which could be a problem when geocoding map shortcode center address each time page loads. Users could get around that by using a caching plugin, though.
+										
+				$coordinates = $this->geocode( $arguments[ 'center' ] );
+				if( $coordinates )
+					$arguments = array_merge( $arguments, $coordinates );
+				
+				unset( $arguments[ 'center' ] );
+			}
+		
+			if( isset( $arguments[ 'zoom' ] ) )
+			{
+				if( !is_numeric( $arguments[ 'zoom' ] ) || $arguments[ 'zoom' ] < 0 || $arguments[ 'zoom' ] > 21 )
+				{
+					$this->enqueueMessage( BGMP_NAME . ' shortcode error: '. $arguments[ 'zoom' ] .' is not a valid zoom level.', 'error' );
+					unset( $arguments[ 'zoom' ] );
+				}
+			}
+			
+			if( isset( $arguments[ 'type' ] ) )
+			{
+				$arguments[ 'type' ] = strtoupper( $arguments[ 'type' ] );
+				
+				if( !array_key_exists( $arguments[ 'type' ], $this->settings->mapTypes ) )
+				{
+					$this->enqueueMessage( BGMP_NAME . ' shortcode error: '. $arguments[ 'type' ] . ' is not a valid map type.', 'error' );
+					unset( $arguments[ 'type' ] );
+				}
+			}
+			
+			return $arguments;
+		}
+		
+		/**
+		 * Parses out shortcode arguments for [bgmp-map]
+		 * If we wait until the shortcode is called, then it's too late to print the markers/options in the footer for functions.js, so we have to do it early.
+		 *
+		 * @author Ian Dunn <ian@iandunn.name>
+		 */
+		public function getMapShortcodeArguments()
+		{
+			// @todo - this could be made unit testable if post_content was passed in as param, but would need some kind of controller to wrap it. could then return instead of setting $this->mapshortcodeargs directly
+			
+			global $post;
+			
+			if( !$post )
+				return;
+				
+			setup_postdata( $post );
+			$shortcodes = $this->getShortcodes( get_the_content() );
+			wp_reset_postdata();
+			$arguments = array();
+			
+			if( isset( $shortcodes[ 2 ] ) )
+			{
+				$found = false;
+				
+				for( $i = 0; $i < count( $shortcodes[ 2 ] ); $i++ )
+				{
+					if( $shortcodes[ 2 ][ $i ] == 'bgmp-map' )
+					{
+						$found = $i;
+						break;
+					}
+				}
+				
+				if( $found !== false )
+				{
+					$arguments = shortcode_parse_atts( $shortcodes[ 3 ][ $found ] );
+				
+					if( is_array( $arguments ) && !empty( $arguments ) )
+						$arguments = $this->cleanMapShortcodeArguments( $arguments );
+					else
+						$arguments = array();
+				}	
+			}
+			
+			if( isset( $arguments[ 'categories' ] ) )
+				$arguments[ 'categories' ] = apply_filters( self::PREFIX .'mapShortcodeCategories', $arguments[ 'categories' ] );		// @todo - deprecated b/c not consistent w/ shortcode naming scheme and have filter for all arguments now. need a way to notify people
+			$this->mapShortcodeArguments = apply_filters( self::PREFIX . 'map-shortcode-arguments', $arguments );
+		}
+		
+		/**
 		 * Checks the current posts to see if they contain the map shortcode
 		 * @author Ian Dunn <ian@iandunn.name>
 		 * @return bool
@@ -239,47 +396,25 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		protected function mapShortcodeCalled()
 		{
 			global $post;
-			$matches = array();
-			$found = false;
 			
-			$this->mapShortcodeCalled = apply_filters( self::PREFIX .'mapShortcodeCalled', $this->mapShortcodeCalled );		// filter should be named map-shortcode-called, but people already using the camelcase version
+			if( !$post )
+				return false;
+				
+			$this->mapShortcodeCalled = apply_filters( self::PREFIX .'mapShortcodeCalled', $this->mapShortcodeCalled );		// @todo - deprecated b/c not consistent w/ shortcode naming scheme. need a way to notify people
+			$this->mapShortcodeCalled = apply_filters( self::PREFIX .'map-shortcode-called', $this->mapShortcodeCalled );
+			
 			if( $this->mapShortcodeCalled )
 				return true;
 			
-			if( !$post )
-				return false;	// 404 or other context where $post doesn't exist
-				
-			// Check for shortcodes in the post's content
-			preg_match_all( '/'. get_shortcode_regex() .'/s', $post->post_content, $matches );			
-			if( !is_array( $matches ) || !array_key_exists( 2, $matches ) )
-				return false;
+			setup_postdata( $post );
+			$shortcodes = $this->getShortcodes( get_the_content() );
+			wp_reset_postdata();
 			
-			for( $i = 0; $i < count( $matches[2] ); $i++ )
-			{
-				if( $matches[2][$i] == 'bgmp-map' )
-				{
-					$found = $i;
-					break;
-				}
-			}
+			for( $i = 0; $i < count( $shortcodes[2] ); $i++ )
+				if( $shortcodes[ 2 ][ $i ] == 'bgmp-map' )
+					return true;
 			
-			if( $found !== false )
-			{
-				// Parse out any arguments
-				if( !empty( $matches[ 3 ][ $found ] ) )
-				{
-					$this->mapShortcodeCategories = str_replace( '"', '', $matches[ 3 ][ $found ] );
-					$this->mapShortcodeCategories = explode( '=', $this->mapShortcodeCategories );
-					$this->mapShortcodeCategories = explode( ',', $this->mapShortcodeCategories[1] );
-				}
-				
-				$this->mapShortcodeCategories = apply_filters( self::PREFIX .'mapShortcodeCategories', $this->mapShortcodeCategories );		// filter should be named map-shortcode-categories, but people already using camelcase version
-				
-				return true;
-			}
-			
-			else
-				return false;
+			return false;
 		}
 		
 		/**
@@ -321,7 +456,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				$bgmpData = sprintf(
 					"bgmpData.options = %s;\r\nbgmpData.markers = %s",
 					json_encode( $this->getMapOptions() ),
-					json_encode( $this->getPlacemarks( $this->mapShortcodeCategories ) )
+					json_encode( $this->getMapPlacemarks() )
 				);
 				
 				wp_localize_script( 'bgmp', 'bgmpData', array( 'l10n_print_after' => $bgmpData ) );
@@ -393,17 +528,19 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		{
 			if( !taxonomy_exists( self::TAXONOMY ) )
 			{
+				$taxonomyParams = array(
+					'label'					=> 'Category',
+					'labels'				=> array( 'name' => 'Categories', 'singular_name' => 'Category' ),
+					'hierarchical'			=> true,
+					'rewrite'				=> array( 'slug' => self::TAXONOMY ),
+					'update_count_callback'	=> '_update_post_term_count'
+				);
+					
 				register_taxonomy(
 					self::TAXONOMY,
 					self::POST_TYPE,
-					array(
-						'label'					=> 'Category',
-						'labels'				=> array( 'name' => 'Categories', 'singular_name' => 'Category' ),
-						'hierarchical'			=> true,
-						'rewrite'				=> array( 'slug' => self::TAXONOMY ),
-						'update_count_callback'	=> '_update_post_term_count'
-					)
-				);	// @todo - add filter on the array
+					apply_filters( self::PREFIX . 'category-taxonomy-params', $taxonomyParams )
+				);
 			}
 		}
 		
@@ -415,10 +552,12 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		{
 			global $pagenow;
 			
-			if( is_admin() && $pagenow == 'edit.php' && array_key_exists('post_type', $_GET) && $_GET['post_type'] == self::POST_TYPE )
+			if( is_admin() && $pagenow == 'edit.php' && array_key_exists( 'post_type', $_GET ) && $_GET[ 'post_type' ] == self::POST_TYPE )
 			{
 				$query->query_vars['order'] = apply_filters( self::PREFIX . 'admin-sort-order', 'ASC' );
 				$query->query_vars['orderby'] = apply_filters( self::PREFIX . 'admin-sort-orderby', 'title' );
+				
+				// @todo - should just have a filter on $query, or don't even need one at all, since they can filter $query directly?
 			}
 		}
 		
@@ -440,9 +579,11 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		{
 			global $post;
 		
-			$address	= get_post_meta( $post->ID, self::PREFIX . 'address', true );
-			$latitude	= get_post_meta( $post->ID, self::PREFIX . 'latitude', true );
-			$longitude	= get_post_meta( $post->ID, self::PREFIX . 'longitude', true );
+			$address			= get_post_meta( $post->ID, self::PREFIX . 'address', true );
+			$latitude			= get_post_meta( $post->ID, self::PREFIX . 'latitude', true );
+			$longitude			= get_post_meta( $post->ID, self::PREFIX . 'longitude', true );
+			$showGeocodeResults = ( $address && !$this->validateCoordinates( $address ) && $latitude && $longitude ) ? true : false;
+			$showGeocodeError	= ( $address && ( !$latitude || !$longitude ) ) ? true : false;
 			
 			require_once( dirname(__FILE__) . '/views/meta-address.php' );
 		}
@@ -484,22 +625,21 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				
 			
 			// Save address
-			update_post_meta( $post->ID, self::PREFIX . 'address', $_POST[ self::PREFIX . 'address'] );
+			update_post_meta( $post->ID, self::PREFIX . 'address', $_POST[ self::PREFIX . 'address' ] );
 
 			if( $_POST[ self::PREFIX . 'address'] )
-				$coordinates = $this->geocode( $_POST[ self::PREFIX . 'address'] );
+				$coordinates = $this->geocode( $_POST[ self::PREFIX . 'address' ] );
 				
 			if( $coordinates )
 			{
-				update_post_meta( $post->ID, self::PREFIX . 'latitude', $coordinates['latitude'] );
-				update_post_meta( $post->ID, self::PREFIX . 'longitude', $coordinates['longitude'] );
+				update_post_meta( $post->ID, self::PREFIX . 'latitude', $coordinates[ 'latitude' ] );
+				update_post_meta( $post->ID, self::PREFIX . 'longitude', $coordinates[ 'longitude' ] );
 			}
 			else
 			{	
 				update_post_meta( $post->ID, self::PREFIX . 'latitude', '' );
 				update_post_meta( $post->ID, self::PREFIX . 'longitude', '' );
 			}
-			
 			
 			// Save z-index
 			if( filter_var( $_POST[ self::PREFIX . 'zIndex'], FILTER_VALIDATE_INT ) === FALSE )
@@ -513,8 +653,6 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		
 		/**
 		 * Geocodes an address
-		 * Google's API has a daily request limit, but this is only called when a post is published, so shouldn't ever be a problem.
-		 *
 		 * @param string $address
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
@@ -544,7 +682,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			elseif( $geocodeResponse[ 'response' ][ 'code' ] != 200 )
 			{
 				/*
-					@todo - strip content inside <style> tag. regex inappropriate, but DOMDocument doesn't exist on dev server, but does on most?. would probably have to wrap this in an if( class_exists() )...
+					@todo - strip content inside <style> tag. regex inappropriate, but DOMDocument doesn't exist on dev server, but does on most?. would have to wrap this in an if( class_exists() )...
 					
 					$responseHTML = new DOMDocument();
 					$responseHTML->loadHTML( $geocodeResponse[ 'body' ] );
@@ -580,7 +718,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				return false;
 			}
 			
-			return array( 'latitude' => $coordinates->results[0]->geometry->location->lat, 'longitude' => $coordinates->results[0]->geometry->location->lng );
+			return array( 'latitude' => $coordinates->results[ 0 ]->geometry->location->lat, 'longitude' => $coordinates->results[ 0 ]->geometry->location->lng );
 		}
 		
 		/**
@@ -591,7 +729,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		 * @param string $coordinates
 		 * @return mixed false if any of the tests fails | an array with 'latitude' and 'longitude' keys/value pairs if all of the tests succeed 
 		 */
-		protected function validateCoordinates( $coordinates )
+		public function validateCoordinates( $coordinates )
 		{
 			// @todo - some languages swap the roles of the commas and decimal point. this assumes english.
 			
@@ -618,7 +756,8 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		
 		/**
 		 * Reverse-geocodes a set of coordinates
-		 * Google's API has a daily request limit, but this is only called when a post is published, so shouldn't ever be a problem.
+		 * Google's API has a daily request limit, but this is only called during upgrades from 1.0, so that shouldn't ever be a problem.
+		 * 
 		 * @param string $latitude
 		 * @param string $longitude
 		 * @author Ian Dunn <ian@iandunn.name>
@@ -631,7 +770,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			if( is_wp_error( $geocodeResponse ) || empty( $address->results ) )
 				return false;
 			else
-				return $address->results[0]->formatted_address;
+				return $address->results[ 0 ]->formatted_address;
 		}
 			
 		/**
@@ -673,6 +812,20 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				'order'			=> 'ASC'
 			);
 			
+			if( isset( $attributes[ 'categories' ] ) )
+			{
+				// @todo - check each cat to make sure it exists? if not, print error to admin panel.
+					// non-existant cats don't break the query or anything, so the only purpose for this would be to give feedback to the admin. 
+				
+				$params[ 'tax_query' ] = array(
+					array(
+						'taxonomy'	=> self::TAXONOMY,
+						'field'		=> 'slug',
+						'terms'		=> explode( ',', $attributes[ 'categories' ] )
+					)
+				);
+			}
+			
 			$posts = get_posts( apply_filters( self::PREFIX . 'list-shortcode-params', $params ) );
 			
 			if( $posts )
@@ -682,6 +835,9 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				foreach( $posts as $p )
 				{
 					// @todo - redo this w/ setup_postdata() and template tags instead of accessing properties directly
+					// @todo - make this an external view file?
+						// maybe capture into var w/ output buffering
+						// wouldn't be able to filter each item in loop, then?
 					
 					$address = get_post_meta( $p->ID, self::PREFIX . 'address', true );
 						
@@ -705,7 +861,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				return $output;
 			}
 			else
-				return "There aren't any published placemarks right now";
+				return "No placemarks were found.";
 		}
 		
 		/**
@@ -727,17 +883,17 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				'infoWindowMaxWidth'	=> $this->settings->mapInfoWindowMaxWidth
 			);
 			
+			$options = shortcode_atts( $options, $this->mapShortcodeArguments );
+			
 			return apply_filters( self::PREFIX . 'map-options', $options );
 		}
 		
 		/**
 		 * Gets the published placemarks from the database, formats and outputs them.
-		 * json_encode() requires PHP 5.
 		 * @author Ian Dunn <ian@iandunn.name>
-		 * @param mixed $categories null for all, or an array with category slugs to include only those categories
 		 * @return string JSON-encoded array
 		 */
-		public function getPlacemarks( $categories = null )
+		public function getMapPlacemarks()
 		{
 			$placemarks = array();
 			
@@ -747,18 +903,19 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				'post_status'	=> 'publish'
 			);
 			
-			if( $categories )
+			if( isset( $this->mapShortcodeArguments[ 'categories' ] ) )
 			{
 				$query[ 'tax_query' ] = array(
 					array(
 						'taxonomy'	=> self::TAXONOMY,
 						'field'		=> 'slug',
-						'terms'		=> $categories
+						'terms'		=> $this->mapShortcodeArguments[ 'categories' ]
 					)
 				);
 			}
 			
-			$publishedPlacemarks = get_posts( apply_filters( self::PREFIX . 'get-placemarks-query', $query ) );
+			$query = apply_filters( self::PREFIX . 'get-placemarks-query', $query );		// @todo - filter name deprecated
+			$publishedPlacemarks = get_posts( apply_filters( self::PREFIX . 'get-map-placemarks-query', $query ) );
 			
 			if( $publishedPlacemarks )
 			{
@@ -778,7 +935,8 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				}
 			}
 			
-			return apply_filters( self::PREFIX . 'get-placemarks-return', $placemarks );
+			$placemarks = apply_filters( self::PREFIX . 'get-placemarks-return', $placemarks );	// @todo - filter name deprecated
+			return apply_filters( self::PREFIX . 'get-map-placemarks-return', $placemarks );
 		}
 		
 		/**
@@ -836,10 +994,11 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		
 		/**
 		 * Prints the output in various ways for debugging.
-		 * @author Ian Dunn <ian.dunn@mpangodev.com>
+		 * @author Ian Dunn <ian@iandunn.name>
 		 * @param mixed $data
 		 * @param string $output 'message' will be sent to an admin notice; 'die' will be output inside wp_die(); 'transient' will create a transient in the database; 'return' will be returned;
 		 * @param string $message Optionally message to output before description
+		 * @return mixed
 		 */
 		protected function describe( $data, $output = 'die', $message = '' )
 		{

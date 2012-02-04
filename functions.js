@@ -168,6 +168,17 @@ function bgmp_wrapper( $ )
 					'zIndex'	: zIndex
 				} );
 				
+				/*
+					http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-plugin-error-bad-displays-a-map?replies=18#post-2547595
+					
+					detect what google.maps.latlng() detects when commas passed in.
+					if returns error log that
+					same for marker?
+					
+					latitude "50,3227856"
+					longitude "19,1184871"
+				*/
+				
 				google.maps.event.addListener( marker, 'click', function()
 				{
 					if( bgmp.previousInfoWindow != undefined )

@@ -15,12 +15,13 @@ if( !class_exists( 'BGMPSettings' ) )
 	class BGMPSettings
 	{
 		protected $bgmp;
-		public $mapWidth, $mapHeight, $mapAddress, $mapLatitude, $mapLongitude, $mapZoom, $mapType, $mapTypeControl, $mapNavigationControl, $mapInfoWindowMaxWidth;
+		public $mapWidth, $mapHeight, $mapAddress, $mapLatitude, $mapLongitude, $mapZoom, $mapType, $mapTypes, $mapTypeControl, $mapNavigationControl, $mapInfoWindowMaxWidth;
 		const PREFIX = 'bgmp_';		// @todo - can't you just acceess $bgmp's instead ?
-		
+					
 		/**
 		 * Constructor
 		 * @author Ian Dunn <ian@iandunn.name>
+		 * @param object BasicGoogleMapsPlacemarks object
 		 */
 		public function __construct( $bgmp )
 		{
@@ -32,6 +33,12 @@ if( !class_exists( 'BGMPSettings' ) )
 			$this->mapLongitude				= get_option( self::PREFIX . 'map-longitude',			-122.3320708 );
 			$this->mapZoom					= get_option( self::PREFIX . 'map-zoom',				7 );
 			$this->mapType					= get_option( self::PREFIX . 'map-type',				'ROADMAP' );
+			$this->mapTypes					= array(
+				'ROADMAP'	=> 'Street Map',
+				'SATELLITE'	=> 'Satellite Images',
+				'HYBRID'	=> 'Hybrid',
+				'TERRAIN'	=> 'Terrain'
+			);
 			$this->mapTypeControl			= get_option( self::PREFIX . 'map-type-control',		'off' );
 			$this->mapNavigationControl		= get_option( self::PREFIX . 'map-navigation-control',	'DEFAULT' );
 			$this->mapInfoWindowMaxWidth	= get_option( self::PREFIX . 'map-info-window-width',	500 );	// @todo - this isn't DRY, same values in BGMP::singleActivate() and upgrade()
@@ -52,7 +59,7 @@ if( !class_exists( 'BGMPSettings' ) )
 		{
 			$haveCoordinates = true;
 			
-			if( isset($_POST) && array_key_exists( self::PREFIX . 'map-address', $_POST ) )
+			if( isset( $_POST[ self::PREFIX . 'map-address' ] ) )
 			{
 				if( empty( $_POST[ self::PREFIX . 'map-address' ] ) )
 					$haveCoordinates = false;
@@ -73,8 +80,8 @@ if( !class_exists( 'BGMPSettings' ) )
 				{
 					// @todo - can't call protected from this class - $this->bgmp->enqueueMessage('That address couldn\'t be geocoded, please make sure that it\'s correct.', 'error' );
 					
-					update_option( self::PREFIX . 'map-latitude', 'Error' );	// @todo - update these
-					update_option( self::PREFIX . 'map-longitude', 'Error' );
+					update_option( self::PREFIX . 'map-latitude', '' );	// @todo - update these
+					update_option( self::PREFIX . 'map-longitude', '' );
 				}
 			}
 		}
@@ -117,6 +124,7 @@ if( !class_exists( 'BGMPSettings' ) )
 		/**
 		 * Adds our custom settings to the admin Settings pages
 		 * We intentionally don't register the map-latitude and map-longitude settings because they're set by updateMapCoordinates()
+		 *
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function addSettings()
@@ -126,8 +134,6 @@ if( !class_exists( 'BGMPSettings' ) )
 			add_settings_field( self::PREFIX . 'map-width',					'Map Width',					array($this, 'mapWidthCallback'),					self::PREFIX . 'settings', self::PREFIX . 'map-settings',	 array( 'label_for' => self::PREFIX . 'map-width' ) );
 			add_settings_field( self::PREFIX . 'map-height',				'Map Height',					array($this, 'mapHeightCallback'),					self::PREFIX . 'settings', self::PREFIX . 'map-settings',	 array( 'label_for' => self::PREFIX . 'map-height' ) );
 			add_settings_field( self::PREFIX . 'map-address',				'Map Center Address',			array($this, 'mapAddressCallback'),					self::PREFIX . 'settings', self::PREFIX . 'map-settings',	 array( 'label_for' => self::PREFIX . 'map-address' ) );
-			add_settings_field( self::PREFIX . 'map-latitude',				'Map Center Latitude',			array($this, 'mapLatitudeCallback'),				self::PREFIX . 'settings', self::PREFIX . 'map-settings',	 array( 'label_for' => self::PREFIX . 'map-latitude' ) );
-			add_settings_field( self::PREFIX . 'map-longitude',				'Map Center Longitude',			array($this, 'mapLongitudeCallback'),				self::PREFIX . 'settings', self::PREFIX . 'map-settings',	 array( 'label_for' => self::PREFIX . 'map-longitude' ) );
 			add_settings_field( self::PREFIX . 'map-zoom',					'Zoom',							array($this, 'mapZoomCallback'),					self::PREFIX . 'settings', self::PREFIX . 'map-settings',	 array( 'label_for' => self::PREFIX . 'map-zoom' ) );
 			add_settings_field( self::PREFIX . 'map-type',					'Map Type',						array($this, 'mapTypeCallback'),					self::PREFIX . 'settings', self::PREFIX . 'map-settings',	 array( 'label_for' => self::PREFIX . 'map-type' ) );			
 			add_settings_field( self::PREFIX . 'map-type-control',			'Type Control',					array($this, 'mapTypeControlCallback'),				self::PREFIX . 'settings', self::PREFIX . 'map-settings',	 array( 'label_for' => self::PREFIX . 'map-type-control' ) );
@@ -180,24 +186,12 @@ if( !class_exists( 'BGMPSettings' ) )
 		public function mapAddressCallback()
 		{
 			echo '<input id="'. self::PREFIX .'map-address" name="'. self::PREFIX .'map-address" type="text" value="'. $this->mapAddress .'" class="code" />';
-		}
-		
-		/**
-		 * Adds the latitude field to the Settings page
-		 * @author Ian Dunn <ian@iandunn.name>
-		 */
-		public function mapLatitudeCallback()
-		{
-			echo '<input id="'. self::PREFIX .'map-latitude" name="'. self::PREFIX .'map-latitude" type="text" value="'. $this->mapLatitude .'" class="code" readonly="readonly" />';
-		}
-		
-		/**
-		 * Adds the longitude field to the Settings page
-		 * @author Ian Dunn <ian@iandunn.name>
-		 */
-		public function mapLongitudeCallback()
-		{
-			echo '<input id="'. self::PREFIX .'map-longitude" name="'. self::PREFIX .'map-longitude" type="text" value="'. $this->mapLongitude .'" class="code" readonly="readonly" />';
+			
+			if( $this->mapAddress && !$this->bgmp->validateCoordinates( $this->mapAddress ) && $this->mapLatitude && $this->mapLongitude )
+				echo ' <em>(Geocoded to: '. $this->mapLatitude .', '. $this->mapLongitude .')</em>';
+				
+			elseif( $this->mapAddress && ( !$this->mapLatitude || !$this->mapLongitude ) )
+				echo " <em>(Error geocoding address. Please make sure it's correct and try again.)</em>";
 		}
 		
 		/**
@@ -210,21 +204,21 @@ if( !class_exists( 'BGMPSettings' ) )
 		}
 		
 		/**
-		 * Adds the zoom field to the Settings page
+		 * Adds the map type field to the Settings page
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function mapTypeCallback()
 		{
-			echo '<select id="'. self::PREFIX .'map-type" name="'. self::PREFIX .'map-type">
-					<option value="ROADMAP" '. ( $this->mapType == 'ROADMAP' ? 'selected="selected"' : '' ) .'>Street Map</option>
-					<option value="SATELLITE" '. ( $this->mapType == 'SATELLITE' ? 'selected="selected"' : '' ) .'>Satellite Images</option>
-					<option value="HYBRID" '. ( $this->mapType == 'HYBRID' ? 'selected="selected"' : '' ) .'>Hybrid</option>
-					<option value="TERRAIN" '. ( $this->mapType == 'TERRAIN' ? 'selected="selected"' : '' ) .'>Terrain</option>
-				</select>';
+			echo '<select id="'. self::PREFIX .'map-type" name="'. self::PREFIX .'map-type">';
+			
+			foreach( $this->mapTypes as $code => $label )
+				echo '<option value="'. $code .'" '. ( $this->mapType == $code ? 'selected="selected"' : '' ) .'>'. $label .'</option>';
+			
+			echo '</select>';
 		}
 		
 		/**
-		 * Adds the zoom field to the Settings page
+		 * Adds the map type control field to the Settings page
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function mapTypeControlCallback()
@@ -239,7 +233,7 @@ if( !class_exists( 'BGMPSettings' ) )
 		}
 		
 		/**
-		 * Adds the zoom field to the Settings page
+		 * Adds the map navigation controll field to the Settings page
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function mapNavigationControlCallback()
