@@ -5,7 +5,7 @@
 		<tr>
 			<th><label for="<?php echo self::PREFIX; ?>address">Address:</label></th>
 			<td>
-				<input id="<?php echo self::PREFIX; ?>address" name="<?php echo self::PREFIX; ?>address" type="text" value="<?php echo $address; ?>" />
+				<input id="<?php echo self::PREFIX; ?>address" name="<?php echo self::PREFIX; ?>address" type="text" class="regular-text" value="<?php echo $address; ?>" />
 				
 				<?php if( $showGeocodeResults ) : ?>
 					<em>(Geocoded to: <?php echo $latitude; ?>, <?php echo $longitude; ?>)</em>

@@ -20,61 +20,13 @@ version x.y.z
 	z = Bug fixes, minor tweaks, small feature additions
 
 	
-1.7
-	increase widths of address/coords fields on edit placemark and settings screens
-		done part way, but not working b/c wp action doesn't fire on admin side
-		maybe just also have it fire on admin_enqueue_scripts?
-		done, but some @todo's in constructor
-		finish text in changelog
-		
-	bgmp-map shortcode accepts center,zoom, etc parameters
-		change to use $this->mapShortcodeArugments[cat] etc?
-		make a note on teh settings page about this w/ link to instructions page 
-		update readme w/ instructions on how to use
-		add to features in readme?
-		http://wordpress.org/support/topic/basic-google-maps-placemarks-ok-but-only-1-map
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-categories-feature-requests
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-categories-with-zoom-levels
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-change-the-map-center-and-zoom-level-in-a-post
-		add credit in changelog for guy who sent in code - what this actually for something else? didn't use any of his code for this
-		
-		add to readme - if using do_shortcode, need to pass in arguments via filter. this sucks, really worth it to load css/js conditionally? better way to solve problem?
-		
-		test all the functions you refactored
-			getShortcodes - unit
-			getShortcodeArguments
-			mapShortcodeCalled
-			loadresources
-			listshortcode
-			getmapoptions
-			settings - maptypecallback
-			test when shortcodes empty, have differetn data, etc
-		
-	let list shortcode accept taxonomy, center, zoom like map shortcode does
-		also, should probably use getPlacemarks() instead of it's own get_posts() call
-			eh, probably not
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-categories-feature-requests?replies=1#post-2448903
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-any-way-to-create-a-list-of-categories?replies=1#post-2539195
-		update readme w/ instructions on how to use
-		add to features in readme
-		pretty much done,just test more
+1.7.1	
+	bgmpdata can be output inside shortcode funciton
+		this would simplify things a lot, wouldn't have to parse out anymore
+		wouldn't have to use filters to insert args with do_shortcode - updatge readme
+		still peek ahead to tell if shortcode called or not, and enqueue functions.js based on that, but don't need to do that for data
 
-	add note to faq about Post Type Order and other conflicting plugins?
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-shortcode-bgmp-list-not-returning-all-placemarks?replies=4
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-limited-lisitings-issue-per-category?replies=4
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-map-showing-all-placemarkers-no-filter?replies=3
-		maybe add 'known conflicts with other plugins' section to 'other notes'
-			also wp-ecommerece when shortcode is inside product post type
-		also make sure that no other google maps plugins are activated, and that your theme doesn't incloude the maps api
-			'view source' and search for "maps.google.com/maps/api/js". should only be 1. if more then problem.
-		
-	add note to readme about not supporting implementation problems?
-		support bugs, feature requests, but not conflicts with your theme or other plugins, not shit where you're just doing it wrong
-		just don't have time
-		if this plugin doesn't work, try others
-		
-		
-1.7.1
+1.7.2
 	inline documentation
 		add 3.3 pointers for intro to main things the first time they install
 		add inline docu for reference - http://wpdevel.wordpress.com/2011/12/06/help-and-screen-api-changes-in-3-3/
@@ -82,10 +34,7 @@ version x.y.z
 	parse shortcodes inside the info window. (would have to parse it before passed to js)
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-including-shortcodes-in-info-box?replies=1#post-2522736
 		in getPlacemarks(), just pass $pp->post_content through do_shortcode() ?	
-		
-	update readme, tell people to use child theme or http://www.doitwithwp.com/create-functions-plugin/ instead of adding to functinos.php
-		don't do in example code, but add note afterward saying 'said functions.php for simplicity, but best way is to...'
-		
+			
 	cleanup, refactor stuff?	
 		lots of TODOs in code
 		
@@ -105,6 +54,26 @@ version x.y.z
 			make note in faqs to see "other notes" and visa-versa
 		basic/advanced usage moved from installation to other notes?
 		
+1.7.3
+	show map on single placemark page that only shows that individual marker
+		add "placemarks" param to bgmp-map shortcode. e.g., [bgmp-map placemarks="13,93,234"]. pass in post ids
+		add to list shortcode also?
+		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-placemark-page-with-just-one-placemarks
+		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-possibility-to-show-a-single-placemark?replies=1#post-2554004
+	
+	move variable init from __construct() to init hook callback. nothing but action registrations in constuct()
+	
+	savecustomfields() should use $postid that was passed in instead of global $post->id ?
+	
+	ensure filtered varaable data types don't change, like you did for ODCG
+		return is_array( $postMeta ) ? $postMeta : array();
+	
+	add notes on automatic upgrading to installation page
+	
+	ditch the conditional javascript loading so map arguments and do_shortcode can function like normal?
+		give user option to turn off scripts except for a whitelisted list of pages or something?
+	
+	
 1.major
 	internatinoalization
 		use marcel bootsman's code to start dutch one. see email on 9/19/2011
@@ -317,9 +286,6 @@ user requests. implement if enough people ask
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-place-marker-links?replies=1#post-2554607
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-onclick-from-external-link?replies=1
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-categories-feature-requests?replies=13#post-2558220
-	3 - show map on single placemark page that only shows that individual marker
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-placemark-page-with-just-one-placemarks
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-possibility-to-show-a-single-placemark?replies=1#post-2554004
 	3 - instead of setting icon on placemark, you could set it on taxonomy. looks for in order: placemark icon > category icon > default icon
 	2 - set width as % in addition to px
 			check that google api allows that

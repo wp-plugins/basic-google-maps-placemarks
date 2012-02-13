@@ -18,7 +18,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 	{
 		// Declare variables and constants
 		protected $settings, $options, $updatedOptions, $userMessageCount, $mapShortcodeCalled, $mapShortcodeArguments;
-		const VERSION		= '1.7-rc1';
+		const VERSION		= '1.7';
 		const PREFIX		= 'bgmp_';
 		const POST_TYPE		= 'bgmp';
 		const TAXONOMY		= 'bgmp-category';
@@ -49,7 +49,6 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			add_action( 'admin_init',				array( $this, 'addMetaBoxes' ) );
 			add_action( 'wp',						array( $this, 'getMapShortcodeArguments' ) );
 			add_action( 'wp',						array( $this, 'loadResources' ), 11 );				// @todo - should be wp_enqueue_scripts instead?
-			add_action( 'admin_enqueue_scripts',	array( $this, 'loadResources' ), 11 );				// @todo - should hook into specific $hook_prefix instead to limit to specific pages? or do that in loadResources()?
 			add_action( 'wp_head',					array( $this, 'outputHead' ) );
 			add_action( 'admin_notices',			array( $this, 'printMessages' ) );
 			add_action( 'save_post',				array( $this, 'saveCustomFields' ) );
@@ -247,7 +246,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			preg_match_all( '/'. get_shortcode_regex() .'/s', $content, $matches );
 			if( !is_array( $matches ) || !array_key_exists( 2, $matches ) )
 				return false;
-				
+			
 			return $matches;
 		}
 		
@@ -462,7 +461,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				wp_localize_script( 'bgmp', 'bgmpData', array( 'l10n_print_after' => $bgmpData ) );
 			}
 			
-			if( is_admin() || $this->mapShortcodeCalled )
+			if( $this->mapShortcodeCalled )
 				wp_enqueue_style( self::PREFIX . 'style' );
 		}
 		
@@ -605,7 +604,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		
 		/**
 		 * Saves values of the the custom post type's extra fields
-		 * @param
+		 * @param int $postID
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function saveCustomFields( $postID )

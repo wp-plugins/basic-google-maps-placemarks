@@ -63,12 +63,3 @@
 		height: auto;
 		overflow: auto;
 	}
-
-
-/*
- * Admin
- */
-input#bgmp_address, input#bgmp_map-address
-{
-	width: 400px;
-}

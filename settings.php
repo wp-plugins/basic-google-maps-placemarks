@@ -158,7 +158,11 @@ if( !class_exists( 'BGMPSettings' ) )
 		 */
 		public function settingsSectionCallback()
 		{
-			echo '<p>These settings determine the size and center of the map, zoom level and popup window size. For the center address, you can type in anything that you would type into a Google Maps search field, from a full address to an intersection, landmark, city or just a zip code.</p>';
+			?>
+			
+			<p>The map(s) will use these settings as defaults, but you can override them on individual maps using shortcode arguments. See <a href="http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/">the Installation page</a> for details.</p>
+			
+			<?php
 		}
 		
 		/**
@@ -167,7 +171,7 @@ if( !class_exists( 'BGMPSettings' ) )
 		 */
 		public function mapWidthCallback()
 		{
-			echo '<input id="'. self::PREFIX .'map-width" name="'. self::PREFIX .'map-width" type="text" value="'. $this->mapWidth .'" class="code" /> pixels';
+			echo '<input id="'. self::PREFIX .'map-width" name="'. self::PREFIX .'map-width" type="text" value="'. $this->mapWidth .'" class="small-text" /> pixels';
 		}
 		
 		/**
@@ -176,7 +180,7 @@ if( !class_exists( 'BGMPSettings' ) )
 		 */
 		public function mapHeightCallback()
 		{
-			echo '<input id="'. self::PREFIX .'map-height" name="'. self::PREFIX .'map-height" type="text" value="'. $this->mapHeight .'" class="code" /> pixels';
+			echo '<input id="'. self::PREFIX .'map-height" name="'. self::PREFIX .'map-height" type="text" value="'. $this->mapHeight .'" class="small-text" /> pixels';
 		}
 		
 		/**
@@ -185,13 +189,15 @@ if( !class_exists( 'BGMPSettings' ) )
 		 */
 		public function mapAddressCallback()
 		{
-			echo '<input id="'. self::PREFIX .'map-address" name="'. self::PREFIX .'map-address" type="text" value="'. $this->mapAddress .'" class="code" />';
+			echo '<input id="'. self::PREFIX .'map-address" name="'. self::PREFIX .'map-address" type="text" value="'. $this->mapAddress .'" class="regular-text" />';
 			
 			if( $this->mapAddress && !$this->bgmp->validateCoordinates( $this->mapAddress ) && $this->mapLatitude && $this->mapLongitude )
 				echo ' <em>(Geocoded to: '. $this->mapLatitude .', '. $this->mapLongitude .')</em>';
 				
 			elseif( $this->mapAddress && ( !$this->mapLatitude || !$this->mapLongitude ) )
 				echo " <em>(Error geocoding address. Please make sure it's correct and try again.)</em>";
+				
+			echo '<p>You can type in anything that you would type into a Google Maps search field, from a full address to an intersection, landmark, city, zip code or latitude/longitude coordinates.</p>';
 		}
 		
 		/**
@@ -200,7 +206,7 @@ if( !class_exists( 'BGMPSettings' ) )
 		 */
 		public function mapZoomCallback()
 		{
-			echo '<input id="'. self::PREFIX .'map-zoom" name="'. self::PREFIX .'map-zoom" type="text" value="'. $this->mapZoom .'" class="code" /> 0 (farthest) to 21 (closest)';
+			echo '<input id="'. self::PREFIX .'map-zoom" name="'. self::PREFIX .'map-zoom" type="text" value="'. $this->mapZoom .'" class="small-text" /> 0 (farthest) to 21 (closest)';
 		}
 		
 		/**
@@ -254,7 +260,7 @@ if( !class_exists( 'BGMPSettings' ) )
 		 */
 		public function mapInfoWindowMaxWidthCallback()
 		{
-			echo '<input id="'. self::PREFIX .'map-info-window-width" name="'. self::PREFIX .'map-info-window-width" type="text" value="'. $this->mapInfoWindowMaxWidth .'" class="code" /> pixels';
+			echo '<input id="'. self::PREFIX .'map-info-window-width" name="'. self::PREFIX .'map-info-window-width" type="text" value="'. $this->mapInfoWindowMaxWidth .'" class="small-text" /> pixels';
 		}
 	} // end BGMPSettings
 }

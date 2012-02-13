@@ -4,7 +4,7 @@ Donate link: http://www.doctorswithoutborders.org
 Tags: google map, map, embed, marker, placemark, icon, geocode
 Requires at least: 3.1
 Tested up to: 3.3.1
-Stable tag: 1.6.1
+Stable tag: 1.7
 License: GPL2
 
 Embeds a Google Map into your site and lets you add map markers with custom icons and information windows.
@@ -17,6 +17,7 @@ BGMP creates a [custom post type](http://codex.wordpress.org/Post_Types) for pla
 
 * Each map marker can have a unique custom icon, share a common custom icon, or use the default icon.
 * Options to set the map type (street, satellite, etc), center location, size, zoom level, navigation controls, etc.
+* Setup unique maps on different pages with their own placemarks, map types, center locations, etc.
 * Placemarks can be assigned to categories, and you can control which categories are displayed on a individual map.
 * Extra shortcode to output a text-based list of markers for mobile devices, search engines, etc.
 * Lots of filters so that developers to customize and extend the plugin.
@@ -46,7 +47,7 @@ Basic instructions are on [the Installation page](http://wordpress.org/extend/pl
 3. Activate the plugin through the 'Plugins' menu in WordPress.
 4. Follow the Basic Usage instructions below
 
-**Upgrading:**
+**Manual Upgrading:**
 
 1. Just re-upload the plugin folder to the wp-content/plugins directory to overwrite the old files.
 
@@ -59,6 +60,12 @@ Basic instructions are on [the Installation page](http://wordpress.org/extend/pl
 5. Click on the 'Publish' or 'Update' button to save the placemark.
 
 **Advanced Usage:**
+
+*Multiple maps with different locations, zoom levels, etc:*
+
+1. Just add the extra parameters to the [bgmp-map] shortcode. Here's an example of the different ones you can use:
+
+> [bgmp-map categories="parks,restaurants" width="500" height="500" center="chicago" zoom="10" type="terrain"]
 
 *Multiple maps with different placemarks:*
 
@@ -77,6 +84,81 @@ Basic instructions are on [the Installation page](http://wordpress.org/extend/pl
 1. Edit the post or page you want the list to appear on.
 2. Type `[bgmp-list]` in the context area.
 3. Click the 'Publish' or 'Update' button.
+4. (optional) You can specifiy a specific category or categories to pull from. e.g., [bgmp-list categories="record-stores,parks"]
+
+*Using [bgmp-map] in a template file with do_shortcode():*
+
+For efficiency, the plugin only loads the required JavaScript, CSS and markup files on pages where it detects the map shortcode is being called. It's not possible to detect when [do_shortcode()](http://codex.wordpress.org/Function_Reference/do_shortcode) is used, so you need to manually let the plugin know to load the files by adding this code to your theme:
+
+`
+function my_theme_name_bgmp_shortcode_check()
+{
+	global $post;
+	
+	$shortcodePageSlugs = array(
+		'first-page-slug',
+		'second-page-slug',
+		'hello-world'
+	);
+	
+	if( $post )
+		if( in_array( $post->post_name, $shortcodePageSlugs ) )
+			add_filter( 'bgmp_map-shortcode-called', '__return_true' );
+}
+add_action( 'wp', 'my_theme_name_bgmp_shortcode_check' );
+`
+
+Copy and paste that into your theme's *functions.php* file or a [functionality plugin](http://www.doitwithwp.com/create-functions-plugin/), update the function names and filter arguments, and then add the slugs of any pages/posts containing the map to $shortcodePageSlugs. If you're using it on the home page, the slug will be 'home'.
+
+This only works if the file that calls do_shortcode() is [registered as a page template](http://codex.wordpress.org/Pages#Creating_Your_Own_Page_Templates) and assigned to a page.
+
+If you want to use any shortcode arguments, you'll have to put them inside a filter callback instead of the shortcode itself, e.g.,
+
+`
+function setBGMPMapShortcodeArguments( $options )
+{
+	global $bgmp;
+	$coordinates = $bgmp->geocode( 'Seattle' );
+	
+	$options[ 'mapWidth' ]				= 500;
+	$options[ 'mapHeight' ]				= 400;
+	$options[ 'latitude' ]				= $coordinates[ 'latitude' ];
+	$options[ 'longitude' ]				= $coordinates[ 'longitude' ];
+	$options[ 'zoom' ]					= 10;
+	$options[ 'type' ]					= 'ROADMAP';
+	$options[ 'typeControl' ]			= 'HORIZONTAL_BAR';
+	$options[ 'navigationControl' ]		= 'SMALL';
+	$options[ 'infoWindowMaxWidth' ]	= 350;
+	$options[ 'categories' ]			= array( 'record-stores', 'parks' );
+	
+	return $options;
+}
+add_filter( 'bgmp_map-shortcode-arguments', 'setBGMPMapShortcodeArguments' );
+`
+
+These are the valid arguments for map type, type control and navigation control. They're case-sensative.
+
+*Map Type*
+
+* ROADMAP
+* SATELLITE
+* HYBRID
+* TERRAIN
+
+*Map Type Control*
+
+* off
+* DEFAULT
+* HORIZONTAL_BAR
+* DROPDOWN_MENU
+
+*Navigation Control*
+
+* off
+* DEFAULT
+* SMALL
+* ANDROID
+* ZOOM_PAN
 
 Check [the FAQ](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/faq/) and [support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10) if you have any questions.
 
@@ -85,6 +167,23 @@ Check [the FAQ](http://wordpress.org/extend/plugins/basic-google-maps-placemarks
 
 = How do I use the plugin? =
 Read the Basic Usage section of [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/) for instructions. If you still have questions, read this FAQ and check [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10).
+
+
+= How can I get help when I'm having a problem? =
+1. Read the Basic Usage and Advanced Usage sections of [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/).
+2. Read the answers on this page.
+3. Check [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10), because there's a good chance your problem has already been answered there.
+4. Check the [Other Notes](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/other_notes/) page for known conflicts with other plugins.
+
+If you still need help, then follow these instructions:
+
+1. Disable all other plugins and switch to the default theme, then check if the problem is still happening. 
+2. If it isn't, then the problem may actually be with your theme or other plugins you have installed.
+3. If the problem is still happening, then start a new thread in the forum with a **detailed description** of your problem and **the URL to the map on your site**. If you don't want to post the URL publically, then leave it out of your forums post and [send it to me privately](http://iandunn.name/contact), along with a link to the forums post.
+4. Tag the post with `basic-google-maps-placemarks` so that I get an e-mail notification. If you use the link above it'll automatically tag it for you.
+5. Check the 'Notify me of follow-up posts via e-mail' box so you won't miss any replies.
+
+I monitor the forums and respond to a lot of the requests. I do this in my spare time, though, and can't respond to all of them. I typically only have time to help with problems that are within the plugin's scope. That means that I probably won't respond if the issue is actually caused by your theme or another plugin, or if you're trying to modify the plugin to do something it doesn't natively do. It's still a good idea to post something on the forums, though, because other users may be able to help out when I can't.
 
 
 = The map doesn't look right. =
@@ -100,17 +199,18 @@ Also, make sure your theme is calling *[wp_footer()](http://codex.wordpress.org/
 = None of the placemarks are showing up on the map =
 If your theme is calling `add_theme_support( 'post-thumbnails' )` and passing in a specific list of post types -- rather than enabling support for all post types -- then it should check if some post types are already registered and include those as well. This only applies if it's hooking into `after_theme_setup` with a priority higher than 10. Contact your theme developer and ask them to fix their code.
 
+Also check the [Other Notes](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/other_notes/) page for known conflicts with other plugins.
 
 = Can I use coordinates to set the marker, instead of an address? =
 Yes. You can type anything into the Address field that you would type into a standard Google Maps search field, which includes coordinates. 
 
 If the plugin recognizes your input as coordinates then it will create the marker at that exact point on the map. If it doesn't, it will attempt to geocode them, which can sometimes result in a different location than you intended. To help the plugin recognize the coordinates, make sure they're in decimal notation (e.g. 48.61322,-123.3465) instead of minutes/seconds notation. The latitude and longitude must be separated by a comma and cannot contain any letters or symbols. If your input has been geocoded, you'll see a note next to the address field that gives the geocoded coordinates, and the plugin will use those to create the marker on the map; if you don't see that note then that means that your input was not geocoded and your exact coordates will be used to place the marker.
 
-If you're having a hard time getting a set of coordinates to work, try visiting <a href="http://www.itouchmap.com/latlong.html" title="Latitude and Longitude of a Point">this page</a> and using the coordinates they give you.
+If you're having a hard time getting a set of coordinates to work, try visiting <a href="http://www.itouchmap.com/latlong.html" title="Latitude and Longitude of a Point">this page</a> and use the coordinates they give you.
 
 
 = Can I change the default icon for all markers instead of setting the same featured image on each individual post? =
-Yes, if you want to replace the icon for all markers you can add this to your theme's functions.php:
+Yes, if you want to replace the icon for all markers you can add this to your theme's functions.php or a [functionality plugin](http://www.doitwithwp.com/create-functions-plugin/):
 
 `
 function setBGMPDefaultIcon( $iconURL )
@@ -137,11 +237,11 @@ The string you return needs to be the full URL to the new icon.
 
 
 = Can I embed more than one map on the same page? =
-No, the Google Maps JavaScript API can only support one map on a page.
+No, the Google Maps JavaScript API can only support one map on a page. You can have different maps on separate pages, though. See [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/) for instructions on making different maps have different center locations, display different sets of placemarks, etc.
 
 
 = How can I override the styles the plugin applies to the map? =
-The width/height of the map and marker information windows are always defined in the Settings, but you can override everything else by putting this code in your theme's functions.php file:
+The width/height of the map and marker information windows are always defined in the Settings, but you can override everything else by putting this code in your theme's functions.php file or a [functionality plugin](http://www.doitwithwp.com/create-functions-plugin/):
 
 `
 add_action('init', 'my_theme_name_bgmp_style');
@@ -156,37 +256,15 @@ function my_theme_name_bgmp_style()
 }
 `
 
-Then create a bgmp-style.css file inside your theme directory and put your styles there. If you'd prefer, you could also just make it an empty file and put the styles in your main style.css, but either way you need to register and enqueue a style with the `bgmp_style` handle, because the plugin checks to make sure the CSS and JavaScript files are loaded before embedding the map.
+Then create a bgmp-style.css file inside your theme directory or a [child theme](http://codex.wordpress.org/Child_Themes) and put your styles there. If you'd prefer, you could also just make it an empty file and put the styles in your main style.css, but either way you need to register and enqueue a style with the `bgmp_style` handle, because the plugin checks to make sure the CSS and JavaScript files are loaded before embedding the map.
 
 
 = I get an error when using do_shortcode() to call the map shortcode =
-For efficiency, the plugin only loads the required JavaScript, CSS and markup files on pages where it detects the map shortcode is being called. It's not possible to detect when [do_shortcode()](http://codex.wordpress.org/Function_Reference/do_shortcode) is used, so you need to manually let the plugin know to load the files by adding this code to your theme:
-
-`
-function my_theme_name_bgmp_shortcode_check()
-{
-	global $post;
-	
-	$shortcodePageSlugs = array(
-		'first-page-slug',
-		'second-page-slug',
-		'hello-world'
-	);
-	
-	if( $post )
-		if( in_array( $post->post_name, $shortcodePageSlugs ) )
-			add_filter( 'bgmp_map-shortcode-called', '__return_true' );
-}
-add_action( 'wp', 'my_theme_name_bgmp_shortcode_check' );
-`
-
-Copy and paste that into your theme's *functions.php* file, update the function names and filter arguments, and then add the slugs of any pages/posts containing the map to $shortcodePageSlugs. If you're using it on the home page, the slug will be 'home'.
-
-This only works if the file that calls do_shortcode() is [registered as a page template](http://codex.wordpress.org/Pages#Creating_Your_Own_Page_Templates) and assigned to a page.
+See the instructions on [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/).
 
 
 = How can I force the info. window width and height to always be the same size? =
-Add the following styles to your theme's style.css file:
+Add the following styles to your theme's style.css file or a [child theme](http://codex.wordpress.org/Child_Themes):
 
 `
 .bgmp_placemark
@@ -204,46 +282,36 @@ Yes. The plugin creates a [custom post type](http://codex.wordpress.org/Post_Typ
 = I upgraded to the latest version and now the map isn't working. =
 If you're running a caching plugin like WP Super Cache, make sure you delete the cache contents so that the latest files are loaded, and then refresh your browser.
 
-If you upgraded other plugins at the same time, it's possible that one of them is causing a JavaScript error that breaks the entire page or some other kind of conflict.
+If you upgraded other plugins at the same time, it's possible that one of them is causing a JavaScript error that breaks the entire page or some other kind of conflict. Check if the plugin works with the default theme and no other plugins activated.
 
 = Are there any hooks I can use to modify or extend the plugin? =
-Yes, I've tried to add filters for everything you might reasonably want, just browse the source code to look for them. If you need a filter or action that isn't there, let me know and I'll add it to the next version.
+Yes, I've tried to add filters for everything you might reasonably want, just browse the source code to look for them. If you need a filter or action that isn't there, make a request on [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10) and I'll add it to the next version.
 
 
-= How can I help with the plugin's development? =
+== Other Notes ==
+
+**Known conflicts**
+
+* The Post Types Order plugin can cause <a href="http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-shortcode-bgmp-list-not-returning-all-placemarks">the wrong placemarks to show up</a> in [bgmp-map] or [bgmp-list] results.
+* The [bgmp-map] and [bgmp-list] shortcodes <a href="http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-map-showing-all-placemarkers-no-filter">won't work in WP e-Commerce product post types</a>.
+* Also make sure that no other Google Maps plugins are activated, and that your theme isn't including the Maps API. You can view the page's source code and search for instances of "maps.google.com/maps/api/js". If there's more than one, then you're probably going to have issues.
+
+**How you can help with the plugin's development**
+
 * The thing I could really use some help with is answering questions on [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10). I don't have a lot of time to work on the plugin, so the time I spend answering questions reduces the amount of time I have to add new features. If you're familiar with the plugin and would like to help out, you can click the 'Subscribe to Emails for this Tag' link to get an e-mail whenever a new post is created.
 * Volunteer to test new versions before they're officially released. [Contact me](http://iandunn.name/contact) if you want to be put on the list.
 * If you find a bug, create a post on [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10) with as much information as possible. If you're a developer, create a patch and include a link to it in the post.
 * Check the TODO.txt file for features that need to be added and submit a patch.
 * Review the code for security vulnerabilities and best practices. If you find a security issue, please [contact me](http://iandunn.name/contact) privately so that I can release a patched version before the issue becomes public.
 
+**Donations**
 
-= Can I make a donation to support the plugin? =
 I do this as a way to give back to the WordPress community, so I don't want to take any donations, but if you'd like to give something I'd encourage you to make a donation to [Doctors Without Borders](http://www.doctorswithoutborders.org).
 
+**Customization**
 
-= How can I get help when I'm having a problem? =
-1. Read the Basic Usage and Advanced Usage sections of [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/).
-2. Read the answers on this page.
-3. Check [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10), because there's a good chance your problem has already been answered there.
+If you need to hire somebody to customize or extend the plugin to fit your specific needs, please [contact me](http://iandunn.name/contact) and we can discuss the details.
 
-If you still need help, then first follow these instructions:
-
-1. Disable all other plugins and switch to the default theme, then check if the problem is still happening. 
-2. If it isn't, then the problem may actually be with your theme or other plugins you have installed
-3. If the problem is still happening, then start a new thread in the forum with a **detailed description** of your problem and **the URL to the map on your site**. If you don't want to post the URL publically, then leave it out of your forums post and [send it to me privately](http://iandunn.name/contact), along with a link to the forums post.
-4. Tag the post with `basic-google-maps-placemarks` so that I get an e-mail notification. If you use the link above it'll automatically tag it for you.
-5. Check the 'Notify me of follow-up posts via e-mail' box so you won't miss any replies.
-
-I monitor the forums and respond to most requests, although I do this in my spare time, so please be patient if you're waiting for a reply. A lot of times I only have time to answer questions over the weekend.
-
-
-= How can I send feedback that isn't of a support nature? =
-If you need help with a problem, see the FAQ answer above, but if instead you'd like to send me feedback/comments/suggestions then you can use the [contact form](http://iandunn.name/contact) on my website, and I'll respond as my schedule permits. *Please **don't** use this if you're having trouble using the plugin;* use [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10) instead. **I only provide support using the forums, not over e-mail.**
-
-
-= Can I hire you to make custom modifications to the plugin? =
-Yes, please [contact me](http://iandunn.name/contact) and we can discuss the details.
 
 
 == Screenshots ==
@@ -257,7 +325,10 @@ Yes, please [contact me](http://iandunn.name/contact) and we can discuss the det
 == Changelog ==
 
 = 1.7 =
-* Replaced disabled latitude/longitude fields with added '(Geocoded to...)' note.
+* [bgmp-map] now [supports category, map center, zoom level and other parameters](http://wordpress.org/support/topic/basic-google-maps-placemarks-ok-but-only-1-map).
+* [bgmp-list] now [supports a category parameter](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-categories-feature-requests).
+* Replaced disabled latitude/longitude fields with '(Geocoded to...)' note.
+* Switched to using core small-text and regular-text CSS classes on the input fields in the settings and Add/Edit Placemark screens.
 
 = 1.6.1 =
 * Valid coordinates in the Address field will now [bypass geocoding](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-plugin-changes-the-coordinates).
@@ -353,7 +424,7 @@ Yes, please [contact me](http://iandunn.name/contact) and we can discuss the det
 == Upgrade Notice ==
 
 = 1.7 =
-x
+BGMP 1.7 adds support for category, map center, zoom level and other parameters in the [bgmp-map] and [bgmp-list] shortcodes.
 
 = 1.6.1 =
 BGMP 1.6.1 makes it easier to use coordinates for a placemark location instead of an address.
