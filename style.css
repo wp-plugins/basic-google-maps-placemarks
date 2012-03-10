@@ -47,7 +47,7 @@
 	{
 		width: auto !important;
 		max-width: none !important;
-		height: auto !important;
+		height: auto;
 		background: none !important;
 		border-width: 0;
 		padding: 0;

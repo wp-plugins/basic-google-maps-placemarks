@@ -113,7 +113,7 @@ if( !class_exists( 'BGMPSettings' ) )
 		 * @param array $links The links currently mapped to the plugin
 		 * @return array
 		 */
-		public function addSettingsLink($links)
+		public function addSettingsLink( $links )
 		{
 			array_unshift( $links, '<a href="http://wordpress.org/extend/plugins/basic-google-maps-placemarks/faq/">Help</a>' );
 			array_unshift( $links, '<a href="options-general.php?page='. self::PREFIX . 'settings">Settings</a>' );

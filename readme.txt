@@ -20,7 +20,7 @@ BGMP creates a [custom post type](http://codex.wordpress.org/Post_Types) for pla
 * Setup unique maps on different pages with their own placemarks, map types, center locations, etc.
 * Placemarks can be assigned to categories, and you can control which categories are displayed on a individual map.
 * Extra shortcode to output a text-based list of markers for mobile devices, search engines, etc.
-* Lots of filters so that developers to customize and extend the plugin.
+* Lots of filters so that developers can customize and extend the plugin.
 * Use HTML, images, etc inside the information window.
 * Compatible with WordPress MultiSite.
 
@@ -179,7 +179,7 @@ If you still need help, then follow these instructions:
 
 1. Disable all other plugins and switch to the default theme, then check if the problem is still happening. 
 2. If it isn't, then the problem may actually be with your theme or other plugins you have installed.
-3. If the problem is still happening, then start a new thread in the forum with a **detailed description** of your problem and **the URL to the map on your site**. If you don't want to post the URL publically, then leave it out of your forums post and [send it to me privately](http://iandunn.name/contact), along with a link to the forums post.
+3. If the problem is still happening, then start a new thread in the forum with a **detailed description** of your problem and **the URL to the map on your site**.
 4. Tag the post with `basic-google-maps-placemarks` so that I get an e-mail notification. If you use the link above it'll automatically tag it for you.
 5. Check the 'Notify me of follow-up posts via e-mail' box so you won't miss any replies.
 

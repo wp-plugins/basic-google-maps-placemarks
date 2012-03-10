@@ -3,7 +3,7 @@
 <table id="bgmp-placemark-coordinates">
 	<tbody>
 		<tr>
-			<th><label for="<?php echo self::PREFIX; ?>address">Address:</label></th>
+			<th><label for="<?php echo self::PREFIX; ?>address"><?php _e( 'Address', self::I18N_DOMAIN ); ?>:</label></th>
 			<td>
 				<input id="<?php echo self::PREFIX; ?>address" name="<?php echo self::PREFIX; ?>address" type="text" class="regular-text" value="<?php echo $address; ?>" />
 				

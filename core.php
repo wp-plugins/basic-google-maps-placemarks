@@ -7,9 +7,6 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 {
 	/**
 	 * A Wordpress plugin that adds a custom post type for placemarks and builds a Google Map with them
-	 * Requires PHP 5.2 because of filter_var()
-	 * Requires Wordpress 3.1 because of WP_Query[ 'tax_query' ] support
-	 *
 	 * @package BasicGoogleMapsPlacemarks
 	 * @author Ian Dunn <ian@iandunn.name>
 	 * @link http://wordpress.org/extend/plugins/basic-google-maps-placemarks/
@@ -18,10 +15,11 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 	{
 		// Declare variables and constants
 		protected $settings, $options, $updatedOptions, $userMessageCount, $mapShortcodeCalled, $mapShortcodeArguments;
-		const VERSION		= '1.7';
+		const VERSION		= '1.7.1a';
 		const PREFIX		= 'bgmp_';
 		const POST_TYPE		= 'bgmp';
 		const TAXONOMY		= 'bgmp-category';
+		const I18N_DOMAIN	= 'bgmp';
 		const DEBUG_MODE	= false;
 		
 		/**
@@ -42,6 +40,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			$this->settings							= new BGMPSettings( $this );
 			
 			// Register actions, filters and shortcodes
+			add_action( 'init',						array( $this, 'init' ), 9 );	// lower priority so it loads before other init callbacks
 			add_action( 'init',						array( $this, 'upgrade' ) );
 			add_action( 'init',						array( $this, 'createPostType' ) );
 			add_action( 'init',						array( $this, 'createCategoryTaxonomy' ) );
@@ -61,6 +60,17 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			add_shortcode( 'bgmp-list',				array( $this, 'listShortcode') );
 			
 			register_activation_hook( dirname(__FILE__) . '/basic-google-maps-placemarks.php', array( $this, 'networkActivate') );
+		}
+		
+		/**
+		 * Performs various initialization functions
+		 * @author Ian Dunn <ian@iandunn.name>
+		 */
+		public function init()
+		{
+			// @todo - move all variable init here
+
+			load_plugin_textdomain( self::I18N_DOMAIN, false, basename( dirname( __FILE__ ) ) . '/languages' );
 		}
 		
 		/**
