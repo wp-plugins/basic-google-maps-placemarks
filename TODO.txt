@@ -20,11 +20,59 @@ version x.y.z
 	z = Bug fixes, minor tweaks, small feature additions
 
 	
-1.7.1
-	fixed style bug w/ google logo
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-google-logo-is-zoomed-and-ipad-safari-cant-zoom-the-page?replies=4#post-2676873
-		done
+
+1.7.1	
+	internatinoalization
+		do functions.js? maybe in later release
+		need to escape translated strings?
 		
+		make translations
+			use marcel bootsman's code to start dutch one. see email on 9/19/2011. 
+				add to other notes list w/ credit to him
+				email him to let him know you used his stuff, mention he can send in new po/mo files if he improves it
+				add to changelog
+			
+		automate it - http://www.technomancy.org/language/apertium-auto-translate-gettext/ ?
+			also http://djangosnippets.org/snippets/2679/
+			
+			blog about it if it works
+			chinese
+			french
+			german
+			japanese
+			russian
+			spanish
+			
+			later
+				arabic
+				czech
+				danish
+				dutch
+				hebrew
+				hindi
+				irish
+				italian
+				korean
+				malay
+				polish
+				portegues
+				serbian
+				swahili
+				thai
+				turkish
+				ukranian
+				vietnamiese
+			
+			
+		add updated localization files to TODO list for each release. will need translators to update their files as well. start mailing list? or just do bablefish?
+			also generate new pot file and update header values?
+			will have to send to translators, wait for them to send back pomo files, then commit?
+			cd to wordpress-i18n-tools dir
+			php makepot.php wp-plugin ../wp/wp-content/plugins/basic-google-maps-placemarks/
+			cp basic-google-maps-placemarks.pot ../wp/wp-content/plugins/basic-google-maps-placemarks/languages/
+
+			
+1.7.2
 	bgmpdata can be output inside shortcode funciton
 		this would simplify things a lot, wouldn't have to parse out anymore
 		wouldn't have to use filters to insert args with do_shortcode - updatge readme
@@ -35,29 +83,12 @@ version x.y.z
 		Ridgididgi - help on forums, link to profile?
 		guy who contributed code - check changelog
 		
-	add note to readme for do_shortcode() bit. if want to show up on all pages, just do this...
-		add_filter( 'bgmp_map-shortcode-called', '__return_true' );
-		
 	change to mpango contact form instead of iandunn for customizations?
 		or just remove it entirely? they're all small jobs.
 		
-	use "@deprecated" instead of just "deprecated"
+	use "@deprecated" instead of just "deprecated" or @todo
 	
 	
-1.7.2
-	internatinoalization
-		do bgmp.php, core.php, settings.php, views, etc
-		do functions.js? maybe in later release
-		
-		
-		use marcel bootsman's code to start dutch one. see email on 9/19/2011. add to credits list also
-		use bablefish to make crappy translations for common languages. 
-		add list of transatlions to readme
-			say 'contact me' to help out w/ translation	- add to 'how can i help w/ plugin development' list in readme
-			link to http://codex.wordpress.org/I18n_for_WordPress_Developers or some other document to give htem instructions
-		add to list of features on description page
-		add updated localization files to TODO list for each release. will need translators to update their files as well. start mailing list? or just do bablefish?
-
 		
 	
 1.7.3
@@ -96,7 +127,8 @@ version x.y.z
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-possibility-to-show-a-single-placemark?replies=1#post-2554004
 	
 	move variable init from __construct() to init hook callback. nothing but action registrations in constuct()
-	
+		same for settings class
+		
 	savecustomfields() should use $postid that was passed in instead of global $post->id ?
 	
 	ensure filtered varaable data types don't change, like you did for ODCG
@@ -115,6 +147,8 @@ version x.y.z
 1.minor
 	infowinder not rounded anymore?
 		b/c of image styles? try turning off stylesheet and see what happens
+		no, b/c google changed it -- http://stackoverflow.com/questions/6570490/modern-rectangular-infowindow-on-maps-google-com
+		can use infobubble, but that's a bunch of overhead for something small?
 	
 	close infobox when click anywhere outside infobox
 		$(map).click( function()
@@ -130,6 +164,8 @@ version x.y.z
 		
 2.0
 	rewrite as MVC and better OO?
+		break core.php up into smaller files for each class
+			core, geocode, etc
 		all the models should be unit-testable
 		controllers should be?
 		http://wordpress.tv/2010/04/24/blair-williams-wordpress-plugins-oc10/

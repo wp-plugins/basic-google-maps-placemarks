@@ -23,6 +23,7 @@ BGMP creates a [custom post type](http://codex.wordpress.org/Post_Types) for pla
 * Lots of filters so that developers can customize and extend the plugin.
 * Use HTML, images, etc inside the information window.
 * Compatible with WordPress MultiSite.
+* Internationalized (see [Other Notes](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/other_notes/) for a current list of supported languages)
 
 You can see a live example of the plugin running at [washingtonhousechurches.net](http://washingtonhousechurches.net).
 
@@ -290,6 +291,13 @@ Yes, I've tried to add filters for everything you might reasonably want, just br
 
 == Other Notes ==
 
+**Localizations**
+
+* French (machine translated)
+
+If there isn't a translation for your language (or it is incomplete/inaccurate) please consider making one and contributing it to the plugin. You can learn how by reading [Translating WordPress](http://codex.wordpress.org/Translating_WordPress) and [How to Create a .po Language Translation](http://www.wdmac.com/how-to-create-a-po-language-translation). The .pot file you'll need is inside the *languages* directory in the plugin's folder. Once you're done, just [contact me](http://iandunn.name/contact) and send me the .po and .mo files, and I'll add them to the plugin.
+
+
 **Known conflicts**
 
 * The Post Types Order plugin can cause <a href="http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-shortcode-bgmp-list-not-returning-all-placemarks">the wrong placemarks to show up</a> in [bgmp-map] or [bgmp-list] results.
@@ -299,6 +307,7 @@ Yes, I've tried to add filters for everything you might reasonably want, just br
 **How you can help with the plugin's development**
 
 * The thing I could really use some help with is answering questions on [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10). I don't have a lot of time to work on the plugin, so the time I spend answering questions reduces the amount of time I have to add new features. If you're familiar with the plugin and would like to help out, you can click the 'Subscribe to Emails for this Tag' link to get an e-mail whenever a new post is created.
+* Translate the plugin into your language. See the *Localizations* section above for details.
 * Volunteer to test new versions before they're officially released. [Contact me](http://iandunn.name/contact) if you want to be put on the list.
 * If you find a bug, create a post on [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10) with as much information as possible. If you're a developer, create a patch and include a link to it in the post.
 * Check the TODO.txt file for features that need to be added and submit a patch.
@@ -323,6 +332,12 @@ If you need to hire somebody to customize or extend the plugin to fit your speci
 
 
 == Changelog ==
+
+= 1.7.1 =
+* Added internationalization support and a French localization
+* Fixed [Google logo size bug](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-google-logo-is-zoomed-and-ipad-safari-cant-zoom-the-page).
+* Replaced inline markup in bgmp_requirementsNotMet() and BasicGoogleMapsPlacemarks::printMessages() with views/message.php
+* Changed all instances of self::PREFIX to BasicGoogleMapsPlacemarks::PREFIX in settings.php.
 
 = 1.7 =
 * [bgmp-map] now [supports category, map center, zoom level and other parameters](http://wordpress.org/support/topic/basic-google-maps-placemarks-ok-but-only-1-map).
@@ -422,6 +437,10 @@ If you need to hire somebody to customize or extend the plugin to fit your speci
 
 
 == Upgrade Notice ==
+
+= 1.7.1 =
+* BGMP 1.7.1 adds internationalization
+*************************************************and french? and fixes bug?
 
 = 1.7 =
 BGMP 1.7 adds support for category, map center, zoom level and other parameters in the [bgmp-map] and [bgmp-list] shortcodes.
