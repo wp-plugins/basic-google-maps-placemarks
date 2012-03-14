@@ -19,7 +19,6 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		const PREFIX		= 'bgmp_';
 		const POST_TYPE		= 'bgmp';
 		const TAXONOMY		= 'bgmp-category';
-		const I18N_DOMAIN	= 'bgmp';
 		const ZOOM_MIN		= 0;
 		const ZOOM_MAX		= 21;
 		const DEBUG_MODE	= false;
@@ -29,20 +28,8 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function __construct()
-		{
-			require_once( dirname(__FILE__) . '/settings.php' );
-			
-			// Initialize variables
-			$defaultOptions							= array( 'updates' => array(), 'errors' => array(), 'dbVersion' => '0' );
-			$this->options							= array_merge( $defaultOptions, get_option( self::PREFIX . 'options', array() ) );
-			$this->userMessageCount					= array( 'updates' => count( $this->options['updates'] ), 'errors' => count( $this->options['errors'] )	);
-			$this->updatedOptions					= false;
-			$this->mapShortcodeCalled				= false;
-			$this->mapShortcodeCategories			= null;
-			$this->settings							= new BGMPSettings( $this );
-			
-			// Register actions, filters and shortcodes
-			add_action( 'init',						array( $this, 'init' ), 9 );	// lower priority so that variables defined here will be available to other init callbacks
+		{	
+			add_action( 'init',						array( $this, 'init' ), 8 );	// lower priority so that variables defined here will be available to BGMPSettings class and other init callbacks
 			add_action( 'init',						array( $this, 'upgrade' ) );
 			add_action( 'init',						array( $this, 'createPostType' ) );
 			add_action( 'init',						array( $this, 'createCategoryTaxonomy' ) );
@@ -62,6 +49,9 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			add_shortcode( 'bgmp-list',				array( $this, 'listShortcode') );
 			
 			register_activation_hook( dirname(__FILE__) . '/basic-google-maps-placemarks.php', array( $this, 'networkActivate') );
+			
+			require_once( dirname(__FILE__) . '/settings.php' );
+			$this->settings = new BGMPSettings();
 		}
 		
 		/**
@@ -70,9 +60,20 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		 */
 		public function init()
 		{
-			// @todo - move all variable init here
+			$defaultOptions					= array( 'updates' => array(), 'errors' => array(), 'dbVersion' => '0' );
+			$this->options					= array_merge( $defaultOptions, get_option( self::PREFIX . 'options', array() ) );
 			
-			load_plugin_textdomain( self::I18N_DOMAIN, false, basename( dirname( __FILE__ ) ) . '/languages' );
+			if( !is_array( $this->options ) )
+				$this->options = $defaultOptions;
+			if( !is_array( $this->options[ 'updates' ] ) )
+				$this->options[ 'updates' ] = array();
+			if( !is_array( $this->options[ 'errors' ] ) )
+				$this->options[ 'errors' ] = array();
+				
+			$this->userMessageCount			= array( 'updates' => count( $this->options['updates'] ), 'errors' => count( $this->options['errors'] )	);
+			$this->updatedOptions			= false;
+			$this->mapShortcodeCalled		= false;
+			$this->mapShortcodeCategories	= null;
 		}
 		
 		/**
@@ -93,7 +94,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 					$mediaButtons[ 'image' ] = 1;
 					update_site_option( 'mu_media_buttons', $mediaButtons );
 					$this->enqueueMessage( sprintf(
-						__( '%s has enabled uploading images network-wide so that placemark icons can be set.', self::I18N_DOMAIN ),		// @todo - give more specific message, test. enqueue for network admin but not regular admins
+						__( '%s has enabled uploading images network-wide so that placemark icons can be set.', 'bgmp' ),		// @todo - give more specific message, test. enqueue for network admin but not regular admins
 						BGMP_NAME
 					) );
 				}
@@ -130,7 +131,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			if( !get_option( self::PREFIX . 'map-height' ) )
 				add_option( self::PREFIX . 'map-height', 400 );
 			if( !get_option( self::PREFIX . 'map-address' ) )
-				add_option( self::PREFIX . 'map-address', __( 'Seattle', self::I18N_DOMAIN ) );
+				add_option( self::PREFIX . 'map-address', __( 'Seattle', 'bgmp' ) );
 			if( !get_option( self::PREFIX . 'map-latitude' ) )
 				add_option( self::PREFIX . 'map-latitude', 47.6062095 );
 			if( !get_option( self::PREFIX . 'map-longitude' ) )
@@ -230,7 +231,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				if( !array_key_exists( 'image', $mediaButtons ) || !$mediaButtons[ 'image' ] )
 				{
 					$this->enqueueMessage( sprintf(
-						__( "%s requires the Images media button setting to be enabled in order to use custom icons on markers, but it's currently turned off. If you'd like to use custom icons you can enable it on the <a href=\"%s\">Network Settings</a> page, in the Upload Settings section.", self::I18N_DOMAIN ),
+						__( "%s requires the Images media button setting to be enabled in order to use custom icons on markers, but it's currently turned off. If you'd like to use custom icons you can enable it on the <a href=\"%s\">Network Settings</a> page, in the Upload Settings section.", 'bgmp' ),
 						BGMP_NAME,
 						network_admin_url() . 'settings.php'
 					), 'error' );
@@ -294,7 +295,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 					{
 						unset( $arguments[ 'categories' ][ $index ] );	// Note - This will leave holes in the key sequence, but it doesn't look like that's a problem with the way we're using it.
 						$this->enqueueMessage( sprintf(
-							__( '%s shortcode error: %s is not a valid category.', self::I18N_DOMAIN ),
+							__( '%s shortcode error: %s is not a valid category.', 'bgmp' ),
 							BGMP_NAME,
 							$term
 						), 'error' );
@@ -311,7 +312,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				else
 				{
 					$this->enqueueMessage( sprintf(
-						__( '%s shortcode error: %s is not a valid width.', self::I18N_DOMAIN ),
+						__( '%s shortcode error: %s is not a valid width.', 'bgmp' ),
 						BGMP_NAME,
 						$arguments[ 'width' ]
 					), 'error' );
@@ -328,7 +329,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				else
 				{
 					$this->enqueueMessage( sprintf(
-						__( '%s shortcode error: %s is not a valid height.', self::I18N_DOMAIN ),
+						__( '%s shortcode error: %s is not a valid height.', 'bgmp' ),
 						BGMP_NAME,
 						$arguments[ 'height' ]
 					), 'error' );
@@ -353,7 +354,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				if( !is_numeric( $arguments[ 'zoom' ] ) || $arguments[ 'zoom' ] < self::ZOOM_MIN || $arguments[ 'zoom' ] > self::ZOOM_MAX )
 				{
 					$this->enqueueMessage( sprintf(
-						__( '%s shortcode error: %s is not a valid zoom level.', self::I18N_DOMAIN ),
+						__( '%s shortcode error: %s is not a valid zoom level.', 'bgmp' ),
 						BGMP_NAME,
 						$arguments[ 'zoom' ]
 					), 'error' );
@@ -369,7 +370,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				if( !array_key_exists( $arguments[ 'type' ], $this->settings->mapTypes ) )
 				{
 					$this->enqueueMessage( sprintf(
-						__( '%s shortcode error: %s is not a valid map type.', self::I18N_DOMAIN ),
+						__( '%s shortcode error: %s is not a valid map type.', 'bgmp' ),
 						BGMP_NAME,
 						$arguments[ 'type' ]
 					), 'error' );
@@ -528,24 +529,24 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			{
 				$labels = array
 				(
-					'name'					=> __( 'Placemarks', self::I18N_DOMAIN ),
-					'singular_name'			=> __( 'Placemark', self::I18N_DOMAIN ),
-					'add_new'				=> __( 'Add New' ),
-					'add_new_item'			=> __( 'Add New Placemark', self::I18N_DOMAIN ),
-					'edit'					=> __( 'Edit' ),
-					'edit_item'				=> __( 'Edit Placemark', self::I18N_DOMAIN ),
-					'new_item'				=> __( 'New Placemark', self::I18N_DOMAIN ),
-					'view'					=> __( 'View Placemark', self::I18N_DOMAIN ),
-					'view_item'				=> __( 'View Placemark', self::I18N_DOMAIN ),
-					'search_items'			=> __( 'Search Placemarks', self::I18N_DOMAIN ),
-					'not_found'				=> __( 'No Placemarks found', self::I18N_DOMAIN ),
-					'not_found_in_trash'	=> __( 'No Placemarks found in Trash', self::I18N_DOMAIN ),
-					'parent'				=> __( 'Parent Placemark', self::I18N_DOMAIN )
+					'name'					=> __( 'Placemarks', 'bgmp' ),
+					'singular_name'			=> __( 'Placemark', 'bgmp' ),
+					'add_new'				=> __( 'Add New', 'bgmp' ),
+					'add_new_item'			=> __( 'Add New Placemark', 'bgmp' ),
+					'edit'					=> __( 'Edit', 'bgmp' ),
+					'edit_item'				=> __( 'Edit Placemark', 'bgmp' ),
+					'new_item'				=> __( 'New Placemark', 'bgmp' ),
+					'view'					=> __( 'View Placemark', 'bgmp' ),
+					'view_item'				=> __( 'View Placemark', 'bgmp' ),
+					'search_items'			=> __( 'Search Placemarks', 'bgmp' ),
+					'not_found'				=> __( 'No Placemarks found', 'bgmp' ),
+					'not_found_in_trash'	=> __( 'No Placemarks found in Trash', 'bgmp' ),
+					'parent'				=> __( 'Parent Placemark', 'bgmp' )
 				);
 				
 				$postTypeParams = array(
 					'labels'			=> $labels,
-					'singular_label'	=> __( 'Placemarks', self::I18N_DOMAIN ),
+					'singular_label'	=> __( 'Placemarks', 'bgmp' ),
 					'public'			=> true,
 					'menu_position'		=> 20,
 					'hierarchical'		=> false,
@@ -571,8 +572,8 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			if( !taxonomy_exists( self::TAXONOMY ) )
 			{
 				$taxonomyParams = array(
-					'label'					=> __( 'Category' ),
-					'labels'				=> array( 'name' => __( 'Categories' ), 'singular_name' => __( 'Category' ) ),
+					'label'					=> __( 'Category', 'bgmp' ),
+					'labels'				=> array( 'name' => __( 'Categories', 'bgmp' ), 'singular_name' => __( 'Category', 'bgmp' ) ),
 					'hierarchical'			=> true,
 					'rewrite'				=> array( 'slug' => self::TAXONOMY ),
 					'update_count_callback'	=> '_update_post_term_count'
@@ -609,8 +610,8 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		 */
 		public function addMetaBoxes()
 		{
-			add_meta_box( self::PREFIX . 'placemark-address', __( 'Placemark Address', self::I18N_DOMAIN ), array($this, 'markupAddressFields'), self::POST_TYPE, 'normal', 'high' );
-			add_meta_box( self::PREFIX . 'placemark-zIndex', __( 'Stacking Order', self::I18N_DOMAIN ), array($this, 'markupZIndexField'), self::POST_TYPE, 'side', 'low' );
+			add_meta_box( self::PREFIX . 'placemark-address', __( 'Placemark Address', 'bgmp' ), array($this, 'markupAddressFields'), self::POST_TYPE, 'normal', 'high' );
+			add_meta_box( self::PREFIX . 'placemark-zIndex', __( 'Stacking Order', 'bgmp' ), array($this, 'markupZIndexField'), self::POST_TYPE, 'side', 'low' );
 		}
 		
 		/**
@@ -687,7 +688,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			if( filter_var( $_POST[ self::PREFIX . 'zIndex'], FILTER_VALIDATE_INT ) === FALSE )
 			{
 				update_post_meta( $post->ID, self::PREFIX . 'zIndex', 0 );
-				$this->enqueueMessage( __( 'The stacking order has to be an integer.', self::I18N_DOMAIN ), 'error' );
+				$this->enqueueMessage( __( 'The stacking order has to be an integer.', 'bgmp' ), 'error' );
 			}	
 			else
 				update_post_meta( $post->ID, self::PREFIX . 'zIndex', $_POST[ self::PREFIX . 'zIndex'] );
@@ -712,7 +713,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			if( is_wp_error( $geocodeResponse ) )
 			{
 				$this->enqueueMessage( sprintf(
-					 __( '%s geocode error: %s', self::I18N_DOMAIN ),
+					 __( '%s geocode error: %s', 'bgmp' ),
 					 BGMP_NAME,
 					 implode( '<br />', $geocodeResponse->get_error_messages() )
 				 ), 'error' );
@@ -724,7 +725,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			if( !isset( $geocodeResponse[ 'response' ][ 'code' ] ) || !isset( $geocodeResponse[ 'response' ][ 'message' ] ) )
 			{
 				$this->enqueueMessage( sprintf(
-					__( '%s geocode error: Response code not present', self::I18N_DOMAIN ),
+					__( '%s geocode error: Response code not present', 'bgmp' ),
 					BGMP_NAME
 				), 'error' );
 				 
@@ -742,7 +743,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				*/
 				
 				$this->enqueueMessage( sprintf(
-					__( '<p>%s geocode error: %d %s</p> <p>Response: %s</p>', self::I18N_DOMAIN ),
+					__( '<p>%s geocode error: %d %s</p> <p>Response: %s</p>', 'bgmp' ),
 					BGMP_NAME,
 					$geocodeResponse[ 'response' ][ 'code' ],
 					$geocodeResponse[ 'response' ][ 'message' ],
@@ -759,19 +760,19 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			{
 				// @todo - Once PHP 5.3+ is more widely adopted, remove the function_exists() check here and just bump the PHP requirement to 5.3
 				
-				$this->enqueueMessage( sprintf( __( '%s geocode error: Response was not formatted in JSON.', self::I18N_DOMAIN ), BGMP_NAME ), 'error' );
+				$this->enqueueMessage( sprintf( __( '%s geocode error: Response was not formatted in JSON.', 'bgmp' ), BGMP_NAME ), 'error' );
 				return false;
 			}
 			
 			if( isset( $coordinates->status ) && $coordinates->status == 'REQUEST_DENIED' )
 			{
-				$this->enqueueMessage( sprintf( __( '%s geocode error: Request Denied.', self::I18N_DOMAIN ), BGMP_NAME ), 'error' );
+				$this->enqueueMessage( sprintf( __( '%s geocode error: Request Denied.', 'bgmp' ), BGMP_NAME ), 'error' );
 				return false;
 			}
 				
 			if( !isset( $coordinates->results ) || empty( $coordinates->results ) )
 			{
-				$this->enqueueMessage( __( "That address couldn't be geocoded, please make sure that it's correct.", self::I18N_DOMAIN ), "error" );
+				$this->enqueueMessage( __( "That address couldn't be geocoded, please make sure that it's correct.", 'bgmp' ), "error" );
 				return false;
 			}
 			
@@ -841,7 +842,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			if( !wp_script_is( 'googleMapsAPI', 'queue' ) || !wp_script_is( 'bgmp', 'queue' ) || !wp_style_is( self::PREFIX .'style', 'queue' ) )
 			{
 				$error = sprintf(
-					__( '<p class="error">%s error: JavaScript and/or CSS files aren\'t loaded. If you\'re using do_shortcode() you need to add a filter to your theme first. See <a href="%s">the FAQ</a> for details.</p>', self::I18N_DOMAIN ),
+					__( '<p class="error">%s error: JavaScript and/or CSS files aren\'t loaded. If you\'re using do_shortcode() you need to add a filter to your theme first. See <a href="%s">the FAQ</a> for details.</p>', 'bgmp' ),
 					BGMP_NAME,
 					'http://wordpress.org/extend/plugins/basic-google-maps-placemarks/faq/'
 				);
@@ -853,8 +854,8 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			
 			$output = sprintf('
 				<div id="%smap-canvas">
-					<p>'. __( 'Loading map...', self::I18N_DOMAIN ) .'</p>
-					<p><img src="%s" alt="'. __( 'Loading', self::I18N_DOMAIN ) .'" /></p>
+					<p>'. __( 'Loading map...', 'bgmp' ) .'</p>
+					<p><img src="%s" alt="'. __( 'Loading', 'bgmp' ) .'" /></p>
 				</div>',
 				self::PREFIX,
 				plugins_url( 'images/loading.gif', __FILE__ )
@@ -929,7 +930,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			}
 			
 			else
-				return __( 'No Placemarks found', self::I18N_DOMAIN );
+				return __( 'No Placemarks found', 'bgmp' );
 		}
 		
 		/**
@@ -1048,7 +1049,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		{
 			if( !is_string( $message ) )
 				return false;
-			
+				
 			array_push( $this->options[ $type .'s' ], array(
 				'message'	=> $message,
 				'type'		=> $type,
@@ -1108,11 +1109,11 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 					%s: <br /><blockquote><pre>%s</pre></blockquote>
 				</p>',
 				( $message ? 'Message: '. $message .'<br />' : '' ),
-				__( 'Type', self::I18N_DOMAIN ),
+				__( 'Type', 'bgmp' ),
 				$type,
-				__( 'Length', self::I18N_DOMAIN ),
+				__( 'Length', 'bgmp' ),
 				$length,
-				__( 'Content', self::I18N_DOMAIN ),
+				__( 'Content', 'bgmp' ),
 				htmlspecialchars( $data )
 			);
 			

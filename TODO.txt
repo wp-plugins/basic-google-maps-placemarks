@@ -26,17 +26,13 @@ version x.y.z
 		do functions.js? maybe in later release
 		need to escape translated strings?
 		
-		make translations
-			use marcel bootsman's code to start dutch one. see email on 9/19/2011. 
-				add to other notes list w/ credit to him
-				email him to let him know you used his stuff, mention he can send in new po/mo files if he improves it
-				add to changelog
+		add credit on other notes page if anybody sends in pomos from forums post
+			chinese - http://wordpress.org/support/profile/yzqiang
 			
 		automate it - http://www.technomancy.org/language/apertium-auto-translate-gettext/ ?
 			also http://djangosnippets.org/snippets/2679/
 			
 			blog about it if it works
-			chinese
 			french
 			german
 			japanese
@@ -71,11 +67,31 @@ version x.y.z
 			php makepot.php wp-plugin ../wp/wp-content/plugins/basic-google-maps-placemarks/
 			cp basic-google-maps-placemarks.pot ../wp/wp-content/plugins/basic-google-maps-placemarks/languages/
 
-			
+	changed a lot of stuff around w/ __construct() in both classes, etc, so do some good testing of basic stuff that you assume works b/c it always has
+		
+	add placemark default icon by category example to readme
+		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-categories-feature-requests?replies=16#post-2562891
+		test it out first
+		
+	change all instance of "bgmp_" in FAQ to BasicGoogleMapsPlacemarks::PREFIX ?
+		also post type, category, etc
+		test out first
+			both in theme and functionality plugin that loads before bgmp
+	
+	move variable init from __construct() to init hook callback. nothing but action registrations in constuct()
+		same for settings class
+		done, but need to do testing
+		unit tests failing b/c can't access protected variable. need function to access it, then call $this->settings->init() in each unit test function
+		
+	this should be 1.8 b/c localization is big and lots of internal changes that could break compatiblility/cause bugs?
+	
+	
+		
 1.7.2
 	bgmpdata can be output inside shortcode funciton
 		this would simplify things a lot, wouldn't have to parse out anymore
-		wouldn't have to use filters to insert args with do_shortcode - updatge readme
+		wouldn't have to use filters to insert args with do_shortcode
+			updatge readme
 		still peek ahead to tell if shortcode called or not, and enqueue functions.js based on that, but don't need to do that for data
 	
 	add credits section to other notes
@@ -106,9 +122,6 @@ version x.y.z
 	if( !get_option( self::PREFIX . 'map-width' ) ), etc should be necessary in singleActivate(). add_option() already checks if it exists
 		remove and test
 		
-	add placemark default icon by category example to readme
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-categories-feature-requests?replies=16#post-2562891
-		test it out first
 		
 	add other notes section to readme?
 		filters
@@ -125,9 +138,6 @@ version x.y.z
 		add to list shortcode also?
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-placemark-page-with-just-one-placemarks
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-possibility-to-show-a-single-placemark?replies=1#post-2554004
-	
-	move variable init from __construct() to init hook callback. nothing but action registrations in constuct()
-		same for settings class
 		
 	savecustomfields() should use $postid that was passed in instead of global $post->id ?
 	
@@ -160,7 +170,11 @@ version x.y.z
 	add column on View page for category, address, icon
 		
 		
-		
+	better style options
+		turn default stylesheet on/off
+		enter URL for custom stylesheet
+		have textbox to enter styles directly? (don't like this b/c have to print inline)
+		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-set-the-default-info-window-font-style-in-the-configuration-page?replies=1#post-2679560
 		
 2.0
 	rewrite as MVC and better OO?
@@ -320,8 +334,6 @@ version x.y.z
 	add px units to $('#bgmp_map-canvas').css('width', response.width ); etc ?
 		probably, just need to test
 		check the rest of the file for other places
-	better method of setting style defaults than the current one? want to let users easily override widht/height w/ their css or code
-		maybe just add filter before sending to json, but that still doesn't feel right
 	add support forum link to plugin page
 	uninstall script
 		take wpms into account
@@ -378,6 +390,8 @@ user requests. implement if enough people ask
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-possibility-to-show-a-single-placemark?replies=1
 	1 - geolocate ip and use as addr for placemark
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-automatic-location?replies=1#post-2566677
+	1 - configuration option to upload/link to new default marker, instead of having to use filter
+		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-upload-placemark-logo-in-configuration-page?replies=1#post-2679597
 	
 future/maybe
 	list shortcode sorting

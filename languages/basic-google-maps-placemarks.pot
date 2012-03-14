@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Basic Google Maps Placemarks 1.7.1a\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/basic-google-maps-placemarks\n"
-"POT-Creation-Date: 2012-03-10 21:14:31+00:00\n"
+"POT-Creation-Date: 2012-03-14 06:54:01+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -29,17 +29,17 @@ msgid ""
 "Upgrading_WordPress\">the Codex</a>."
 msgstr ""
 
-#: core.php:96
+#: core.php:97
 msgid ""
 "%s has enabled uploading images network-wide so that placemark icons can be "
 "set."
 msgstr ""
 
-#: core.php:133
+#: core.php:134 settings.php:42
 msgid "Seattle"
 msgstr ""
 
-#: core.php:233
+#: core.php:234
 msgid ""
 "%s requires the Images media button setting to be enabled in order to use "
 "custom icons on markers, but it's currently turned off. If you'd like to use "
@@ -47,186 +47,202 @@ msgid ""
 "page, in the Upload Settings section."
 msgstr ""
 
-#: core.php:297
+#: core.php:298
 msgid "%s shortcode error: %s is not a valid category."
 msgstr ""
 
-#: core.php:314
+#: core.php:315
 msgid "%s shortcode error: %s is not a valid width."
 msgstr ""
 
-#: core.php:331
+#: core.php:332
 msgid "%s shortcode error: %s is not a valid height."
 msgstr ""
 
-#: core.php:356
+#: core.php:357
 msgid "%s shortcode error: %s is not a valid zoom level."
 msgstr ""
 
-#: core.php:372
+#: core.php:373
 msgid "%s shortcode error: %s is not a valid map type."
 msgstr ""
 
-#: core.php:531 core.php:548
+#: core.php:532 core.php:549
 msgid "Placemarks"
 msgstr ""
 
-#: core.php:532
+#: core.php:533
 msgid "Placemark"
 msgstr ""
 
-#: core.php:533
+#: core.php:534
 msgid "Add New"
 msgstr ""
 
-#: core.php:534
+#: core.php:535
 msgid "Add New Placemark"
 msgstr ""
 
-#: core.php:535
+#: core.php:536
 msgid "Edit"
 msgstr ""
 
-#: core.php:536
+#: core.php:537
 msgid "Edit Placemark"
 msgstr ""
 
-#: core.php:537
+#: core.php:538
 msgid "New Placemark"
 msgstr ""
 
-#: core.php:538 core.php:539
+#: core.php:539 core.php:540
 msgid "View Placemark"
 msgstr ""
 
-#: core.php:540
+#: core.php:541
 msgid "Search Placemarks"
 msgstr ""
 
-#: core.php:541 core.php:932
+#: core.php:542 core.php:933
 msgid "No Placemarks found"
 msgstr ""
 
-#: core.php:542
+#: core.php:543
 msgid "No Placemarks found in Trash"
 msgstr ""
 
-#: core.php:543
+#: core.php:544
 msgid "Parent Placemark"
 msgstr ""
 
-#: core.php:574 core.php:575
+#: core.php:575 core.php:576
 msgid "Category"
 msgstr ""
 
-#: core.php:575
+#: core.php:576
 msgid "Categories"
 msgstr ""
 
-#: core.php:612
+#: core.php:613
 msgid "Placemark Address"
 msgstr ""
 
-#: core.php:613
+#: core.php:614
 msgid "Stacking Order"
 msgstr ""
 
-#: core.php:690
+#: core.php:691
 msgid "The stacking order has to be an integer."
 msgstr ""
 
-#: core.php:715
+#: core.php:716
 msgid "%s geocode error: %s"
 msgstr ""
 
-#: core.php:727
+#: core.php:728
 msgid "%s geocode error: Response code not present"
 msgstr ""
 
-#: core.php:745
+#: core.php:746
 msgid "<p>%s geocode error: %d %s</p> <p>Response: %s</p>"
 msgstr ""
 
-#: core.php:762
+#: core.php:763
 msgid "%s geocode error: Response was not formatted in JSON."
 msgstr ""
 
-#: core.php:768
+#: core.php:769
 msgid "%s geocode error: Request Denied."
 msgstr ""
 
-#: core.php:774
+#: core.php:775
 msgid "That address couldn't be geocoded, please make sure that it's correct."
 msgstr ""
 
-#: core.php:844
+#: core.php:845
 msgid ""
 "<p class=\"error\">%s error: JavaScript and/or CSS files aren't loaded. If "
 "you're using do_shortcode() you need to add a filter to your theme first. "
 "See <a href=\"%s\">the FAQ</a> for details.</p>"
 msgstr ""
 
-#: core.php:856
+#: core.php:857
 msgid "Loading map..."
 msgstr ""
 
-#: core.php:857
+#: core.php:858
 msgid "Loading"
 msgstr ""
 
-#: core.php:1111
+#: core.php:1112
 msgid "Type"
 msgstr ""
 
-#: core.php:1113
+#: core.php:1114
 msgid "Length"
 msgstr ""
 
-#: core.php:1115
+#: core.php:1116
 msgid "Content"
 msgstr ""
 
-#: settings.php:117
+#: settings.php:49
+msgid "Street Map"
+msgstr ""
+
+#: settings.php:50
+msgid "Satellite Images"
+msgstr ""
+
+#: settings.php:51
+msgid "Hybrid"
+msgstr ""
+
+#: settings.php:52
+msgid "Terrain"
+msgstr ""
+
+#: settings.php:129
 msgid "Help"
 msgstr ""
 
-#: settings.php:118
+#: settings.php:130
 msgid "Settings"
 msgstr ""
 
-#: settings.php:133
+#: settings.php:145
 msgid "Map Width"
 msgstr ""
 
-#: settings.php:134
+#: settings.php:146
 msgid "Map Height"
 msgstr ""
 
-#: settings.php:135
+#: settings.php:147
 msgid "Map Center Address"
 msgstr ""
 
-#: settings.php:136
+#: settings.php:148
 msgid "Zoom"
 msgstr ""
 
-#: settings.php:137
+#: settings.php:149
 msgid "Map Type"
 msgstr ""
 
-#: settings.php:138
+#: settings.php:150
 msgid "Type Control"
 msgstr ""
 
-#: settings.php:139
+#: settings.php:151
 msgid "Navigation Control"
 msgstr ""
 
-#: settings.php:140
+#: settings.php:152
 msgid "Info. Window Maximum Width"
 msgstr ""
 
-#: settings.php:160
+#: settings.php:172
 msgid ""
 "The map(s) will use these settings as defaults, but you can override them on "
 "individual maps using shortcode arguments. See <a href=\"http://wordpress."
@@ -234,60 +250,60 @@ msgid ""
 "Installation page</a> for details."
 msgstr ""
 
-#: settings.php:170 settings.php:180 settings.php:264
+#: settings.php:182 settings.php:192 settings.php:276
 msgid "pixels"
 msgstr ""
 
-#: settings.php:192
+#: settings.php:204
 msgid "Geocoded to:"
 msgstr ""
 
-#: settings.php:195 views/meta-address.php:14
+#: settings.php:207 views/meta-address.php:14
 msgid "(Error geocoding address. Please make sure it's correct and try again.)"
 msgstr ""
 
-#: settings.php:197
+#: settings.php:209
 msgid ""
 "You can type in anything that you would type into a Google Maps search "
 "field, from a full address to an intersection, landmark, city, zip code or "
 "latitude/longitude coordinates."
 msgstr ""
 
-#: settings.php:207
+#: settings.php:219
 msgid "%d (farthest) to %d (closest)"
 msgstr ""
 
-#: settings.php:231 settings.php:247
+#: settings.php:243 settings.php:259
 msgid "Off"
 msgstr ""
 
-#: settings.php:232 settings.php:248
+#: settings.php:244 settings.php:260
 msgid "Automatic"
 msgstr ""
 
-#: settings.php:233
+#: settings.php:245
 msgid "Horizontal Bar"
 msgstr ""
 
-#: settings.php:234
+#: settings.php:246
 msgid "Dropdown Menu"
 msgstr ""
 
-#: settings.php:237 settings.php:254
+#: settings.php:249 settings.php:266
 msgid ""
 " \"Automatic\" will automatically switch to the appropriate control based on "
 "the window size and other factors."
 msgstr ""
 
-#: settings.php:249
+#: settings.php:261
 msgid "Small"
 msgstr ""
 
-#: settings.php:250
+#: settings.php:262
 msgid "Android"
 msgstr ""
 
-#: settings.php:251
+#: settings.php:263
 msgid "Zoom/Pan"
 msgstr ""
 

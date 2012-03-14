@@ -30,8 +30,8 @@ License: GPL2
 if( $_SERVER['SCRIPT_FILENAME'] == __FILE__ )
 	die("Access denied.");
 
-// Note: BasicGoogleMapsPlacemarks::I18N_DOMAIN isn't defined yet, so need to manually sync all instances of it in this file if it changes
-
+load_plugin_textdomain( 'bgmp', false, basename( dirname( __FILE__ ) ) . '/languages' );
+	
 define( 'BGMP_NAME', __( 'Basic Google Maps Placemarks', 'bgmp' ) );
 define( 'BGMP_REQUIRED_PHP_VERSION', '5.2' );	// because of filter_var()
 define( 'BGMP_REQUIRED_WP_VERSION', '3.1' );	// because of WP_Query[ 'tax_query' ] support
@@ -64,7 +64,7 @@ function bgmp_requirementsNotMet()
 	
 	$class = 'error';
 	$message = sprintf(
-		__( '%s <strong>requires PHP %s</strong> and <strong>WordPress %s</strong> in order to work. You\'re running PHP %s and WordPress %s. You\'ll need to upgrade in order to use this plugin. If you\'re not sure how to <a href="http://codex.wordpress.org/Switching_to_PHP5">upgrade to PHP 5</a> you can ask your hosting company for assistance, and if you need help upgrading WordPress you can refer to <a href="http://codex.wordpress.org/Upgrading_WordPress">the Codex</a>.', 'bgmp' ),	// BasicGoogleMapsPlacemarks::I18N_DOMAIN not defined yet, so need to manually sync this if it changes
+		__( '%s <strong>requires PHP %s</strong> and <strong>WordPress %s</strong> in order to work. You\'re running PHP %s and WordPress %s. You\'ll need to upgrade in order to use this plugin. If you\'re not sure how to <a href="http://codex.wordpress.org/Switching_to_PHP5">upgrade to PHP 5</a> you can ask your hosting company for assistance, and if you need help upgrading WordPress you can refer to <a href="http://codex.wordpress.org/Upgrading_WordPress">the Codex</a>.', 'bgmp' ),
 		BGMP_NAME,
 		BGMP_REQUIRED_PHP_VERSION,
 		BGMP_REQUIRED_WP_VERSION,

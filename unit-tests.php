@@ -51,9 +51,19 @@ class bgmpCoreUnitTests extends UnitTestCase
 	/*
 	 * getShortcodes()
 	 */
+	public function testInit()
+	{
+		// make sure it gracefully handles bad data in option field
+	}
+	
+	/*
+	 * getShortcodes()
+	 */
 	public function testGetShortcodes()
 	{
 		$bgmp = new BasicGoogleMapsPlacemarks();
+		$bgmp->init();
+		
 		$getShortcodes = self::getHiddenMethod( 'getShortcodes' );
 		
 		// detects presence of [bgmp-list]
@@ -72,6 +82,8 @@ class bgmpCoreUnitTests extends UnitTestCase
 	public function testCleanMapShortcodeArguments()
 	{
 		$bgmp = new BasicGoogleMapsPlacemarks();
+		$bgmp->init();
+		$bgmp->settings->init();
 		$cleanMapShortcodeArguments = self::getHiddenMethod( 'cleanMapShortcodeArguments' );
 		
 		// Should always get an array back
@@ -137,11 +149,14 @@ class bgmpCoreUnitTests extends UnitTestCase
 		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'zoom' => '' ) ) );
 		$this->assertFalse( isset( $cleaned[ 'zoom' ] ) );
 		
-		// Type
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'type' => 'ROADMAP' ) ) );
-		$this->assertTrue( isset( $cleaned[ 'type' ] ) && $cleaned[ 'type' ] == 'ROADMAP' );
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'type' => 'roadmap' ) ) );
-		$this->assertTrue( isset( $cleaned[ 'type' ] ) && $cleaned[ 'type' ] == 'ROADMAP' );
+		// Type		
+		if( defined( WPLANG ) && WPLANG == '' )
+		{
+			$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'type' => 'ROADMAP' ) ) );
+			$this->assertTrue( isset( $cleaned[ 'type' ] ) && $cleaned[ 'type' ] == 'ROADMAP' );
+			$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'type' => 'roadmap' ) ) );
+			$this->assertTrue( isset( $cleaned[ 'type' ] ) && $cleaned[ 'type' ] == 'ROADMAP' );
+		}
 		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'type' => 'dafsda' ) ) );
 		$this->assertFalse( isset( $cleaned[ 'type' ] ) );
 		
@@ -189,6 +204,7 @@ class bgmpCoreUnitTests extends UnitTestCase
 	public function testGeocode()
 	{
 		$bgmp = new BasicGoogleMapsPlacemarks();
+		$bgmp->init();
 		
 		$this->assertFalse( $bgmp->geocode( 'fjal39802afjl;fsdjfalsdf329jfas;' ) );
 		
@@ -206,6 +222,7 @@ class bgmpCoreUnitTests extends UnitTestCase
 	public function testValidateCoordinatesSucceedsWithValidCoordinates()
 	{
 		$bgmp = new BasicGoogleMapsPlacemarks();
+		$bgmp->init();
 		$validateCoordinates = self::getHiddenMethod( 'validateCoordinates' );
   
 		$this->assertTrue( is_array( $validateCoordinates->invokeArgs( $bgmp, array( '-4.915833,-157.5' ) ) ) );
@@ -222,6 +239,7 @@ class bgmpCoreUnitTests extends UnitTestCase
 	public function testValidateCoordinatesFailsWithEuropeanNotation()
 	{
 		$bgmp = new BasicGoogleMapsPlacemarks();
+		$bgmp->init();
 		$validateCoordinates = self::getHiddenMethod( 'validateCoordinates' );
   
 		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( '39,7589478.-84,1916069' ) ) );
@@ -231,6 +249,7 @@ class bgmpCoreUnitTests extends UnitTestCase
 	public function testValidateCoordinatesFailsWithMinutesSecondsNotation()
 	{
 		$bgmp = new BasicGoogleMapsPlacemarks();
+		$bgmp->init();
 		$validateCoordinates = self::getHiddenMethod( 'validateCoordinates' );
   
 		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( '38°53\'23"N,77°00\'27"W' ) ) );
@@ -239,6 +258,7 @@ class bgmpCoreUnitTests extends UnitTestCase
 	public function testValidateCoordinatesFailsWithEmptyCoordinates()
 	{
 		$bgmp = new BasicGoogleMapsPlacemarks();
+		$bgmp->init();
 		$validateCoordinates = self::getHiddenMethod( 'validateCoordinates' );
   
 		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( null ) ) );
@@ -249,6 +269,7 @@ class bgmpCoreUnitTests extends UnitTestCase
 	public function testValidateCoordinatesFailsWithAddressString()
 	{
 		$bgmp = new BasicGoogleMapsPlacemarks();
+		$bgmp->init();
 		$validateCoordinates = self::getHiddenMethod( 'validateCoordinates' );
   
 		// want to vary the number of commas
@@ -260,6 +281,7 @@ class bgmpCoreUnitTests extends UnitTestCase
 	public function testValidateCoordinatesFailsWhenLatitudeLongitudeOutOfBounds()
 	{
 		$bgmp = new BasicGoogleMapsPlacemarks();
+		$bgmp->init();
 		$validateCoordinates = self::getHiddenMethod( 'validateCoordinates' );
   
 		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( '90.1,-84.1916069' ) ) );
@@ -276,6 +298,7 @@ class bgmpCoreUnitTests extends UnitTestCase
 	public function testReverseGeocode()
 	{
 		$bgmp = new BasicGoogleMapsPlacemarks();
+		$bgmp->init();
 		$reverseGeocode = self::getHiddenMethod( 'reverseGeocode' );
 		
 		$this->assertFalse( $reverseGeocode->invokeArgs( $bgmp, array( '23432.324', 'tomato' ) ) );
@@ -304,6 +327,7 @@ class bgmpCoreUnitTests extends UnitTestCase
 	public function testGetPlacemarksReturnsPopulatedArrayWhenPostsExist()
 	{
 		$bgmp = new BasicGoogleMapsPlacemarks();
+		$bgmp->init();
 		$markers = $bgmp->getMapPlacemarks();
 		
 		// @todo - insert a test post to ensure at least 1 exists

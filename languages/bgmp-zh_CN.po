@@ -1,0 +1,333 @@
+# Copyright (C) 2012 Basic Google Maps Placemarks
+# This file is distributed under the same license as the Basic Google Maps Placemarks package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Basic Google Maps Placemarks 1.7.1a\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/basic-google-maps-placemarks\n"
+"POT-Creation-Date: 2012-03-10 21:14:31+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2012-03-12 12:09+0800\n"
+"Last-Translator: 强大大 <yzqiang@gmail.com>\n"
+"Language-Team: Jony Yin <yzqiang@gmail.com>\n"
+"X-Poedit-Language: Chinese\n"
+"X-Poedit-Country: CHINA\n"
+"X-Poedit-SourceCharset: utf-8\n"
+
+#. #-#-#-#-#  basic-google-maps-placemarks.pot (Basic Google Maps Placemarks 1.7.1a)  #-#-#-#-#
+#. Plugin Name of the plugin/theme
+#: basic-google-maps-placemarks.php:35
+msgid "Basic Google Maps Placemarks"
+msgstr "谷歌地图地点"
+
+#: basic-google-maps-placemarks.php:67
+msgid "%s <strong>requires PHP %s</strong> and <strong>WordPress %s</strong> in order to work. You're running PHP %s and WordPress %s. You'll need to upgrade in order to use this plugin. If you're not sure how to <a href=\"http://codex.wordpress.org/Switching_to_PHP5\">upgrade to PHP 5</a> you can ask your hosting company for assistance, and if you need help upgrading WordPress you can refer to <a href=\"http://codex.wordpress.org/Upgrading_WordPress\">the Codex</a>."
+msgstr "%s <strong>需要PHP %s</strong>和<strong>WordPress %s</strong>进行工作。你正在运行PHP %s和WordPress %s。你需要升级以便使用本插件。如果不确定如何<a href=\"http://codex.wordpress.org/Switching_to_PHP5\">升级到PHP 5</a>你可以咨询你的主机托管商寻求支持，如果你需要获取升级WordPress的帮助，你可以参考<a href=\"http://codex.wordpress.org/Upgrading_WordPress\">the Codex</a>。"
+
+#: core.php:96
+msgid "%s has enabled uploading images network-wide so that placemark icons can be set."
+msgstr "%s已经启用上传图像带宽以便设置标注图标。"
+
+#: core.php:133
+msgid "Seattle"
+msgstr "美国华盛顿州西雅图"
+
+#: core.php:233
+msgid "%s requires the Images media button setting to be enabled in order to use custom icons on markers, but it's currently turned off. If you'd like to use custom icons you can enable it on the <a href=\"%s\">Network Settings</a> page, in the Upload Settings section."
+msgstr "%s需要启用图像媒体按钮设置，以便在标注上使用自定义图标，但是该设置目前在关闭状态。如果你愿意使用自定义图标，你需要进入<a href=\"%s\">网络设置</a>页面的上传设置区域启用该设置。"
+
+#: core.php:297
+msgid "%s shortcode error: %s is not a valid category."
+msgstr "%s代码错误: %s不是有效的分类。"
+
+#: core.php:314
+msgid "%s shortcode error: %s is not a valid width."
+msgstr "%s代码错误: %s不是有效的宽度。"
+
+#: core.php:331
+msgid "%s shortcode error: %s is not a valid height."
+msgstr "%s代码错误: %s不是有效的高度。"
+
+#: core.php:356
+msgid "%s shortcode error: %s is not a valid zoom level."
+msgstr "%s代码错误: %s不是有效的缩放级别。"
+
+#: core.php:372
+msgid "%s shortcode error: %s is not a valid map type."
+msgstr "%s代码错误: %s不是有效的地图类型。"
+
+#: core.php:531
+#: core.php:548
+msgid "Placemarks"
+msgstr "地点"
+
+#: core.php:532
+msgid "Placemark"
+msgstr "地点"
+
+#: core.php:533
+msgid "Add New"
+msgstr "创建"
+
+#: core.php:534
+msgid "Add New Placemark"
+msgstr "创建新地点"
+
+#: core.php:535
+msgid "Edit"
+msgstr "编辑"
+
+#: core.php:536
+msgid "Edit Placemark"
+msgstr "编辑地点"
+
+#: core.php:537
+msgid "New Placemark"
+msgstr "新地点"
+
+#: core.php:538
+#: core.php:539
+msgid "View Placemark"
+msgstr "查看地点"
+
+#: core.php:540
+msgid "Search Placemarks"
+msgstr "查找地点"
+
+#: core.php:541
+#: core.php:932
+msgid "No Placemarks found"
+msgstr "没有找到任何地点"
+
+#: core.php:542
+msgid "No Placemarks found in Trash"
+msgstr "没有在回收站中找到任何地点"
+
+#: core.php:543
+msgid "Parent Placemark"
+msgstr "上层地点"
+
+#: core.php:574
+#: core.php:575
+msgid "Category"
+msgstr "分类"
+
+#: core.php:575
+msgid "Categories"
+msgstr "分类"
+
+#: core.php:612
+msgid "Placemark Address"
+msgstr "地点地址"
+
+#: core.php:613
+msgid "Stacking Order"
+msgstr "叠放次序"
+
+#: core.php:690
+msgid "The stacking order has to be an integer."
+msgstr "叠放次序必须为数字。"
+
+#: core.php:715
+msgid "%s geocode error: %s"
+msgstr "%s经纬度错误: %s"
+
+#: core.php:727
+msgid "%s geocode error: Response code not present"
+msgstr "%s经纬度错误:返回编码不存在"
+
+#: core.php:745
+msgid "<p>%s geocode error: %d %s</p> <p>Response: %s</p>"
+msgstr "<p>%s经纬度错误: %d %s</p> <p>返回: %s</p>"
+
+#: core.php:762
+msgid "%s geocode error: Response was not formatted in JSON."
+msgstr "%s经纬度错误:返回的不是JSON格式。"
+
+#: core.php:768
+msgid "%s geocode error: Request Denied."
+msgstr "%s经纬度错误:请求被拒绝。"
+
+#: core.php:774
+msgid "That address couldn't be geocoded, please make sure that it's correct."
+msgstr "地址无法找到经纬度，请确认地址是正确的。"
+
+#: core.php:844
+msgid "<p class=\"error\">%s error: JavaScript and/or CSS files aren't loaded. If you're using do_shortcode() you need to add a filter to your theme first. See <a href=\"%s\">the FAQ</a> for details.</p>"
+msgstr "<p class=\"error\">%s错误: JavaScript和/或CSS文件未被加载。如果你在使用do_shortcode()代码，你需要在主题中先增加一个过滤器。查看<a href=\"%s\">常见问题</a>查找详细信息。</p>"
+
+#: core.php:856
+msgid "Loading map..."
+msgstr "正在加载地图..."
+
+#: core.php:857
+msgid "Loading"
+msgstr "加载中"
+
+#: core.php:1111
+msgid "Type"
+msgstr "类型"
+
+#: core.php:1113
+msgid "Length"
+msgstr "长度"
+
+#: core.php:1115
+msgid "Content"
+msgstr "内容"
+
+#: settings.php:117
+msgid "Help"
+msgstr "帮助"
+
+#: settings.php:118
+msgid "Settings"
+msgstr "设置"
+
+#: settings.php:133
+msgid "Map Width"
+msgstr "地图宽度"
+
+#: settings.php:134
+msgid "Map Height"
+msgstr "地图高度"
+
+#: settings.php:135
+msgid "Map Center Address"
+msgstr "地图中心地址"
+
+#: settings.php:136
+msgid "Zoom"
+msgstr "缩放"
+
+#: settings.php:137
+msgid "Map Type"
+msgstr "地图类型"
+
+#: settings.php:138
+msgid "Type Control"
+msgstr "类型控制"
+
+#: settings.php:139
+msgid "Navigation Control"
+msgstr "导航控制"
+
+#: settings.php:140
+msgid "Info. Window Maximum Width"
+msgstr "信息窗口最大宽度"
+
+#: settings.php:160
+msgid "The map(s) will use these settings as defaults, but you can override them on individual maps using shortcode arguments. See <a href=\"http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/\">the Installation page</a> for details."
+msgstr "这些地图将使用这些设置作为缺省值，但是你可以使用代码变量来覆盖其中的一部分。查看<a href=\"http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/\">安装页面</a>查找详细信息。"
+
+#: settings.php:170
+#: settings.php:180
+#: settings.php:264
+msgid "pixels"
+msgstr "像素"
+
+#: settings.php:192
+msgid "Geocoded to:"
+msgstr "经纬度:"
+
+#: settings.php:195
+#: views/meta-address.php:14
+msgid "(Error geocoding address. Please make sure it's correct and try again.)"
+msgstr "(错误的经纬度地址。请确认它是正确的然后重试。)"
+
+#: settings.php:197
+msgid "You can type in anything that you would type into a Google Maps search field, from a full address to an intersection, landmark, city, zip code or latitude/longitude coordinates."
+msgstr "你可以在谷歌地图搜索字段中输入任何值，从一个完整的十字路口、地标、城市的地址，也可以是用逗号分隔的经纬度。"
+
+#: settings.php:207
+msgid "%d (farthest) to %d (closest)"
+msgstr "%d (最远)到%d(最近)"
+
+#: settings.php:231
+#: settings.php:247
+msgid "Off"
+msgstr "关闭"
+
+#: settings.php:232
+#: settings.php:248
+msgid "Automatic"
+msgstr "自动"
+
+#: settings.php:233
+msgid "Horizontal Bar"
+msgstr "垂直滚动条"
+
+#: settings.php:234
+msgid "Dropdown Menu"
+msgstr "下拉菜单"
+
+#: settings.php:237
+#: settings.php:254
+msgid " \"Automatic\" will automatically switch to the appropriate control based on the window size and other factors."
+msgstr " \"自动\"将自动根据窗口大小和其它因素转换为合适的控制。"
+
+#: settings.php:249
+msgid "Small"
+msgstr "小"
+
+#: settings.php:250
+msgid "Android"
+msgstr "安卓"
+
+#: settings.php:251
+msgid "Zoom/Pan"
+msgstr "缩放/放平"
+
+#: views/front-end-head.php:1
+msgid "Begin Basic Google Map Placemarks head"
+msgstr "开始谷歌地图指向"
+
+#: views/front-end-head.php:3
+msgid "End Basic Google Map Placemarks head"
+msgstr "结束谷歌地图指向"
+
+#: views/meta-address.php:1
+msgid "Enter the address of the placemark. You can type in anything that you would type into a Google Maps search field, from a full address to an intersection, landmark, city or just a zip code."
+msgstr "输入位置地址。你可以在谷歌地图搜索字段中输入任何值，从一个完整的十字路口、地标、城市的地址，到一个邮政编码。"
+
+#: views/meta-address.php:6
+msgid "Address:"
+msgstr "地址:"
+
+#: views/meta-address.php:11
+msgid "(Geocoded to: %f, %f)"
+msgstr "(经纬度位置: %f, %f)"
+
+#: views/meta-z-index.php:1
+msgid "When two markers overlap, the marker with the higher stacking order will be on top. The Default is 0."
+msgstr "当两个标注重叠时，有更高叠放顺序的标注在上方。缺省值是0。"
+
+#: views/meta-z-index.php:4
+msgid "Stacking Order:"
+msgstr "叠放次序:"
+
+#: views/settings.php:3
+msgid "%s Settings"
+msgstr "%s设置"
+
+#: views/settings.php:9
+msgid "Save Changes"
+msgstr "保存变化"
+
+#. Plugin URI of the plugin/theme
+msgid "http://wordpress.org/extend/plugins/basic-google-maps-placemarks/"
+msgstr "http://wordpress.org/extend/plugins/basic-google-maps-placemarks/"
+
+#. Description of the plugin/theme
+msgid "Embeds a Google Map into your site and lets you add map markers with custom icons and information windows. Each marker can have a different icon."
+msgstr "在你的网站中嵌入谷歌地图，可以让你使用自定义图标加入地图标注和信息窗口。每个标注可以使用不同的图标。"
+
+#. Author of the plugin/theme
+msgid "Ian Dunn"
+msgstr "邓音"
+
+#. Author URI of the plugin/theme
+msgid "http://iandunn.name"
+msgstr "http://iandunn.name"
+

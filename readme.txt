@@ -92,7 +92,7 @@ Basic instructions are on [the Installation page](http://wordpress.org/extend/pl
 For efficiency, the plugin only loads the required JavaScript, CSS and markup files on pages where it detects the map shortcode is being called. It's not possible to detect when [do_shortcode()](http://codex.wordpress.org/Function_Reference/do_shortcode) is used, so you need to manually let the plugin know to load the files by adding this code to your theme:
 
 `
-function my_theme_name_bgmp_shortcode_check()
+function bgmpShortcodeCalled()
 {
 	global $post;
 	
@@ -106,7 +106,7 @@ function my_theme_name_bgmp_shortcode_check()
 		if( in_array( $post->post_name, $shortcodePageSlugs ) )
 			add_filter( 'bgmp_map-shortcode-called', '__return_true' );
 }
-add_action( 'wp', 'my_theme_name_bgmp_shortcode_check' );
+add_action( 'wp', 'bgmpShortcodeCalled' );
 `
 
 Copy and paste that into your theme's *functions.php* file or a [functionality plugin](http://www.doitwithwp.com/create-functions-plugin/), update the function names and filter arguments, and then add the slugs of any pages/posts containing the map to $shortcodePageSlugs. If you're using it on the home page, the slug will be 'home'.
@@ -210,8 +210,8 @@ If the plugin recognizes your input as coordinates then it will create the marke
 If you're having a hard time getting a set of coordinates to work, try visiting <a href="http://www.itouchmap.com/latlong.html" title="Latitude and Longitude of a Point">this page</a> and use the coordinates they give you.
 
 
-= Can I change the default icon for all markers instead of setting the same featured image on each individual post? =
-Yes, if you want to replace the icon for all markers you can add this to your theme's functions.php or a [functionality plugin](http://www.doitwithwp.com/create-functions-plugin/):
+= Can I change the default icon? =
+Yes, if you want to use the same custom icon for all markers by default, instead of having to set it on each individual placemark, you can add this to your theme's functions.php or a [functionality plugin](http://www.doitwithwp.com/create-functions-plugin/):
 
 `
 function setBGMPDefaultIcon( $iconURL )
@@ -221,12 +221,31 @@ function setBGMPDefaultIcon( $iconURL )
 add_filter( 'bgmp_default-icon', 'setBGMPDefaultIcon' );
 `
 
+The string you return needs to be the full URL to the new icon.
+
+= How can I set the default icon by category or other condition? =
 If you only want to replace the default marker under certain conditions (e.g., when the marker is assigned to a specific category), then you can using something like this:
 
 `
-function setBGMPDefaultIcon( $iconURL, $placemarkID )
+function setBGMPDefaultIconByCategory( $iconURL, $placemarkID )
 {
-	if( $placemarkID == 352 ) // change this to be whatever condition you want
+	$placemarkCategories = wp_get_object_terms( $placemarkID, 'bgmp-category' );
+
+	foreach( $placemarkCategories as $pc )
+		if( $pc->slug == 'restaurants' )
+			$iconURL = get_bloginfo( 'stylesheet_directory' ) . '/images/bgmp-default-icon.png';
+
+    return $iconURL;
+}
+add_filter( 'bgmp_default-icon', 'setBGMPDefaultIcon', 10, 2 );
+`
+
+Here's another example to uses the placemark's ID:
+
+`
+function setBGMPDefaultIconByID( $iconURL, $placemarkID )
+{
+	if( $placemarkID == 352 )
 		$iconURL = get_bloginfo( 'stylesheet_directory' ) . '/images/bgmp-default-icon.png';
 		
 	return $iconURL;
@@ -245,8 +264,7 @@ No, the Google Maps JavaScript API can only support one map on a page. You can h
 The width/height of the map and marker information windows are always defined in the Settings, but you can override everything else by putting this code in your theme's functions.php file or a [functionality plugin](http://www.doitwithwp.com/create-functions-plugin/):
 
 `
-add_action('init', 'my_theme_name_bgmp_style');
-function my_theme_name_bgmp_style()
+function setBGMPStyle()
 {
 	wp_deregister_style( 'bgmp_style' );
 	wp_register_style(
@@ -255,6 +273,7 @@ function my_theme_name_bgmp_style()
 	);
 	wp_enqueue_style( 'bgmp_style' );
 }
+add_action('init', 'setBGMPStyle');
 `
 
 Then create a bgmp-style.css file inside your theme directory or a [child theme](http://codex.wordpress.org/Child_Themes) and put your styles there. If you'd prefer, you could also just make it an empty file and put the styles in your main style.css, but either way you need to register and enqueue a style with the `bgmp_style` handle, because the plugin checks to make sure the CSS and JavaScript files are loaded before embedding the map.
@@ -293,6 +312,7 @@ Yes, I've tried to add filters for everything you might reasonably want, just br
 
 **Localizations**
 
+* Chinese (thanks to [yzqiang](http://wordpress.org/support/profile/yzqiang))
 * French (machine translated)
 
 If there isn't a translation for your language (or it is incomplete/inaccurate) please consider making one and contributing it to the plugin. You can learn how by reading [Translating WordPress](http://codex.wordpress.org/Translating_WordPress) and [How to Create a .po Language Translation](http://www.wdmac.com/how-to-create-a-po-language-translation). The .pot file you'll need is inside the *languages* directory in the plugin's folder. Once you're done, just [contact me](http://iandunn.name/contact) and send me the .po and .mo files, and I'll add them to the plugin.
@@ -311,7 +331,7 @@ If there isn't a translation for your language (or it is incomplete/inaccurate) 
 * Volunteer to test new versions before they're officially released. [Contact me](http://iandunn.name/contact) if you want to be put on the list.
 * If you find a bug, create a post on [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10) with as much information as possible. If you're a developer, create a patch and include a link to it in the post.
 * Check the TODO.txt file for features that need to be added and submit a patch.
-* Review the code for security vulnerabilities and best practices. If you find a security issue, please [contact me](http://iandunn.name/contact) privately so that I can release a patched version before the issue becomes public.
+* Review the code for security vulnerabilities and best practices. If you find a security issue, please [contact me](http://iandunn.name/contact) privately so that I can release a patched version before the issue is publicly disclosed.
 
 **Donations**
 
@@ -338,6 +358,7 @@ If you need to hire somebody to customize or extend the plugin to fit your speci
 * Fixed [Google logo size bug](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-google-logo-is-zoomed-and-ipad-safari-cant-zoom-the-page).
 * Replaced inline markup in bgmp_requirementsNotMet() and BasicGoogleMapsPlacemarks::printMessages() with views/message.php
 * Changed all instances of self::PREFIX to BasicGoogleMapsPlacemarks::PREFIX in settings.php.
+* Moved variables from __construct() to init() in BasicGoogleMapsPlacemarks and BGMPSettings classes.
 
 = 1.7 =
 * [bgmp-map] now [supports category, map center, zoom level and other parameters](http://wordpress.org/support/topic/basic-google-maps-placemarks-ok-but-only-1-map).
@@ -439,8 +460,7 @@ If you need to hire somebody to customize or extend the plugin to fit your speci
 == Upgrade Notice ==
 
 = 1.7.1 =
-* BGMP 1.7.1 adds internationalization
-*************************************************and french? and fixes bug?
+* BGMP 1.7.1 is internationalized and includes French and Chinese localizations.
 
 = 1.7 =
 BGMP 1.7 adds support for category, map center, zoom level and other parameters in the [bgmp-map] and [bgmp-list] shortcodes.
