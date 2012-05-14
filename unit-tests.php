@@ -83,7 +83,8 @@ class bgmpCoreUnitTests extends UnitTestCase
 	{
 		$bgmp = new BasicGoogleMapsPlacemarks();
 		$bgmp->init();
-		$bgmp->settings->init();
+		$settings = &$bgmp->getSettings();
+		$settings->init();
 		$cleanMapShortcodeArguments = self::getHiddenMethod( 'cleanMapShortcodeArguments' );
 		
 		// Should always get an array back

@@ -1,3 +1,3 @@
-<div id="message" class="<?php echo $class; ?>">
+<div id="bgmp_message" class="<?php echo $class; ?>">
 	<p><?php echo $message; ?></p>
 </div>

@@ -1,6 +1,6 @@
 <p><?php _e( 'Enter the address of the placemark. You can type in anything that you would type into a Google Maps search field, from a full address to an intersection, landmark, city or just a zip code.', 'bgmp' ); ?></p>
 
-<table id="bgmp-placemark-coordinates">
+<table id="bgmp-placemark-coordinates">	<?php // @todo should use self::PREFIX, but too late b/c users already styling w/ this ?>
 	<tbody>
 		<tr>
 			<th><label for="<?php echo self::PREFIX; ?>address"><?php _e( 'Address:', 'bgmp' ); ?></label></th>

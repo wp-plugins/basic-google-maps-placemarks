@@ -63,3 +63,26 @@
 		height: auto;
 		overflow: auto;
 	}
+	
+	
+/*
+ * Back end
+ */
+#bgmp_settings-fields
+{
+	float: left;	
+	width: 70%;
+	
+	/* @todo try to make this exand to fill screen if meta box gone - try to use WP core styles more */
+}
+
+#bgmp_settings-meta-boxes
+{
+	 float: left;
+	 margin-left: 15px;
+}
+	
+	#bgmp_settings-meta-boxes .postbox
+	{
+		 width: 286px;
+	}

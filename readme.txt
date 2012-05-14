@@ -1,9 +1,9 @@
 === Basic Google Maps Placemarks ===
 Contributors: iandunn
 Donate link: http://www.doctorswithoutborders.org
-Tags: google map, map, embed, marker, placemark, icon, geocode
+Tags: google map, map, embed, marker, placemark, icon, geocode, multisite
 Requires at least: 3.1
-Tested up to: 3.3.1
+Tested up to: 3.3.2
 Stable tag: 1.7
 License: GPL2
 
@@ -89,7 +89,7 @@ Basic instructions are on [the Installation page](http://wordpress.org/extend/pl
 
 *Using [bgmp-map] in a template file with do_shortcode():*
 
-For efficiency, the plugin only loads the required JavaScript, CSS and markup files on pages where it detects the map shortcode is being called. It's not possible to detect when [do_shortcode()](http://codex.wordpress.org/Function_Reference/do_shortcode) is used, so you need to manually let the plugin know to load the files by adding this code to your theme:
+For efficiency, the plugin only loads the required JavaScript, CSS and markup files on pages where it detects the map shortcode is being called. It's not practical to detect when [do_shortcode()](http://codex.wordpress.org/Function_Reference/do_shortcode) is used in a template, so you need to manually let the plugin know to load the files by adding this code to your theme:
 
 `
 function bgmpShortcodeCalled()
@@ -353,9 +353,11 @@ If you need to hire somebody to customize or extend the plugin to fit your speci
 
 == Changelog ==
 
-= 1.7.1 =
-* Added internationalization support and a French localization
+= 1.8 =
+* Added internationalization support
+* Added localizations for Chinese and French
 * Fixed [Google logo size bug](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-google-logo-is-zoomed-and-ipad-safari-cant-zoom-the-page).
+* Added plug for [Re-Abolish Slavery Ribbon](http://wordpress.org/extend/plugins/re-abolish-slavery-ribbon/) plugin on Settings page.
 * Replaced inline markup in bgmp_requirementsNotMet() and BasicGoogleMapsPlacemarks::printMessages() with views/message.php
 * Changed all instances of self::PREFIX to BasicGoogleMapsPlacemarks::PREFIX in settings.php.
 * Moved variables from __construct() to init() in BasicGoogleMapsPlacemarks and BGMPSettings classes.

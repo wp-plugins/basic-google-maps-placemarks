@@ -15,7 +15,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 	{
 		// Declare variables and constants
 		protected $settings, $options, $updatedOptions, $userMessageCount, $mapShortcodeCalled, $mapShortcodeArguments;
-		const VERSION		= '1.7.1a';
+		const VERSION		= '1.8-alpha1';
 		const PREFIX		= 'bgmp_';
 		const POST_TYPE		= 'bgmp';
 		const TAXONOMY		= 'bgmp-category';
@@ -33,10 +33,11 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			add_action( 'init',						array( $this, 'upgrade' ) );
 			add_action( 'init',						array( $this, 'createPostType' ) );
 			add_action( 'init',						array( $this, 'createCategoryTaxonomy' ) );
-			add_action( 'after_setup_theme',		array( $this, 'addFeaturedImageSupport' ), 11 );
+			add_action( 'after_setup_theme',		array( $this, 'addFeaturedImageSupport' ), 11 );		// @todo add note explaining why higher priority
 			add_action( 'admin_init',				array( $this, 'addMetaBoxes' ) );
 			add_action( 'wp',						array( $this, 'getMapShortcodeArguments' ) );
-			add_action( 'wp',						array( $this, 'loadResources' ), 11 );				// @todo - should be wp_enqueue_scripts instead?
+			add_action( 'wp',						array( $this, 'loadResources' ), 11 );				// @todo - should be wp_enqueue_scripts instead?	// @todo add note explaining why higher priority
+			add_action( 'admin_enqueue_scripts',	array( $this, 'loadResources' ), 11 );
 			add_action( 'wp_head',					array( $this, 'outputHead' ) );
 			add_action( 'admin_notices',			array( $this, 'printMessages' ) );
 			add_action( 'save_post',				array( $this, 'saveCustomFields' ) );
@@ -70,10 +71,19 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			if( !is_array( $this->options[ 'errors' ] ) )
 				$this->options[ 'errors' ] = array();
 				
-			$this->userMessageCount			= array( 'updates' => count( $this->options['updates'] ), 'errors' => count( $this->options['errors'] )	);
+			$this->userMessageCount			= array( 'updates' => count( $this->options[ 'updates' ] ), 'errors' => count( $this->options[ 'errors' ] )	);
 			$this->updatedOptions			= false;
 			$this->mapShortcodeCalled		= false;
 			$this->mapShortcodeCategories	= null;
+		}
+		
+		/**
+		 * Getter method for instance of the BGMPSettings class, used for unit testing
+		 * @author Ian Dunn <ian@iandunn.name>
+		 */
+		public function &getSettings()
+		{
+			return $this->settings;
 		}
 		
 		/**
@@ -100,7 +110,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				}
 				
 				// Activate the plugin across the network if requested
-				if( array_key_exists( 'networkwide', $_GET ) && ( $_GET['networkwide'] == 1) )
+				if( array_key_exists( 'networkwide', $_GET ) && ( $_GET[ 'networkwide' ] == 1 ) )
 				{
 					$blogs = $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs" );
 					
@@ -491,6 +501,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			
 			$this->mapShortcodeCalled = $this->mapShortcodeCalled();
 			
+			// Load front-end resources
 			if( !is_admin() && $this->mapShortcodeCalled )
 			{
 				wp_enqueue_script( 'googleMapsAPI' );
@@ -507,6 +518,14 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			
 			if( $this->mapShortcodeCalled )
 				wp_enqueue_style( self::PREFIX . 'style' );
+				
+			
+			// Load meta box resources for settings page
+			if( isset( $_GET['page'] ) && $_GET['page'] == self::PREFIX . 'settings' )	// @todo better way than $_GET ?
+			{
+				wp_enqueue_style( self::PREFIX . 'style' );
+				wp_enqueue_script( 'dashboard' );
+			}
 		}
 		
 		/**
@@ -610,8 +629,8 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		 */
 		public function addMetaBoxes()
 		{
-			add_meta_box( self::PREFIX . 'placemark-address', __( 'Placemark Address', 'bgmp' ), array($this, 'markupAddressFields'), self::POST_TYPE, 'normal', 'high' );
-			add_meta_box( self::PREFIX . 'placemark-zIndex', __( 'Stacking Order', 'bgmp' ), array($this, 'markupZIndexField'), self::POST_TYPE, 'side', 'low' );
+			add_meta_box( self::PREFIX . 'placemark-address', __( 'Placemark Address', 'bgmp' ), array( $this, 'markupAddressFields' ), self::POST_TYPE, 'normal', 'high' );
+			add_meta_box( self::PREFIX . 'placemark-zIndex', __( 'Stacking Order', 'bgmp' ), array( $this, 'markupZIndexField' ), self::POST_TYPE, 'side', 'low' );
 		}
 		
 		/**
@@ -625,7 +644,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			$address			= get_post_meta( $post->ID, self::PREFIX . 'address', true );
 			$latitude			= get_post_meta( $post->ID, self::PREFIX . 'latitude', true );
 			$longitude			= get_post_meta( $post->ID, self::PREFIX . 'longitude', true );
-			$showGeocodeResults = ( $address && !$this->validateCoordinates( $address ) && $latitude && $longitude ) ? true : false;
+			$showGeocodeResults = ( $address && !self::validateCoordinates( $address ) && $latitude && $longitude ) ? true : false;
 			$showGeocodeError	= ( $address && ( !$latitude || !$longitude ) ) ? true : false;
 			
 			require_once( dirname(__FILE__) . '/views/meta-address.php' );
@@ -702,7 +721,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		public function geocode( $address )
 		{
 			// Bypass geocoding if already have valid coordinates
-			$coordinates = $this->validateCoordinates( $address );
+			$coordinates = self::validateCoordinates( $address );
 			if( is_array( $coordinates ) )
 				return $coordinates;
 			
@@ -787,7 +806,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		 * @param string $coordinates
 		 * @return mixed false if any of the tests fails | an array with 'latitude' and 'longitude' keys/value pairs if all of the tests succeed 
 		 */
-		public function validateCoordinates( $coordinates )
+		public static function validateCoordinates( $coordinates )
 		{
 			// @todo - some languages swap the roles of the commas and decimal point. this assumes english.
 			

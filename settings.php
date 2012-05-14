@@ -104,6 +104,7 @@ if( !class_exists( 'BGMPSettings' ) )
 		public function addSettingsPage()
 		{
 			add_options_page( BGMP_NAME .' Settings', BGMP_NAME, 'manage_options', BasicGoogleMapsPlacemarks::PREFIX . 'settings', array( $this, 'markupSettingsPage' ) );
+			add_meta_box( BasicGoogleMapsPlacemarks::PREFIX . 'rasr-plug', __( 'Re-Abolish Slavery', 'bgmp' ), array( $this, 'markupRASRMetaBox' ), 'settings_page_' . BasicGoogleMapsPlacemarks::PREFIX .'settings', 'side' );
 		}
 		
 		/**
@@ -112,10 +113,26 @@ if( !class_exists( 'BGMPSettings' ) )
 		 */
 		public function markupSettingsPage()
 		{
+			$rasrMetaBoxID = BasicGoogleMapsPlacemarks::PREFIX . 'rasr-plug';
+			$rasrMetaBoxPage = BasicGoogleMapsPlacemarks::PREFIX . 'settings';	// @todo better var name
+			$hidden = get_hidden_meta_boxes( $rasrMetaBoxPage );
+			$hidden_class = in_array( $rasrMetaBoxPage, $hidden ) ? ' hide-if-js' : '';
+			
+			// @todo some of above may not be needed
+			
 			if( current_user_can( 'manage_options' ) )
 				require_once( dirname(__FILE__) . '/views/settings.php' );
 			else
 				wp_die( 'Access denied.' );
+		}
+		
+		/**
+		 * Creates the markup for the Re-Abolish Slavery Ribbon meta box
+		 * @author Ian Dunn <ian@iandunn.name>
+		 */
+		public function markupRASRMetaBox()
+		{
+			require_once( dirname(__FILE__) . '/views/meta-re-abolish-slavery.php' );
 		}
 		
 		/**
@@ -200,7 +217,7 @@ if( !class_exists( 'BGMPSettings' ) )
 		{
 			echo '<input id="'. BasicGoogleMapsPlacemarks::PREFIX .'map-address" name="'. BasicGoogleMapsPlacemarks::PREFIX .'map-address" type="text" value="'. $this->mapAddress .'" class="regular-text" />';
 			
-			if( $this->mapAddress && !$this->bgmp->validateCoordinates( $this->mapAddress ) && $this->mapLatitude && $this->mapLongitude )
+			if( $this->mapAddress && !BasicGoogleMapsPlacemarks::validateCoordinates( $this->mapAddress ) && $this->mapLatitude && $this->mapLongitude )
 				echo ' <em>('. __( 'Geocoded to:', 'bgmp' ) .' '. $this->mapLatitude .', '. $this->mapLongitude .')</em>';
 				
 			elseif( $this->mapAddress && ( !$this->mapLatitude || !$this->mapLongitude ) )
