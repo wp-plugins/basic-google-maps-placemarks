@@ -65,14 +65,17 @@ function bgmp_wrapper( $ )
 			try
 			{
 				map = new google.maps.Map( bgmp.canvas, mapOptions );
-				bgmp.addPlacemarks( map );
 			}
 			catch( e )
 			{
 				$( bgmp.canvas ).html( bgmp.name + " error: couln't build map." );
 				if( window.console )
 					console.log( 'bgmp_buildMap: '+ e );
+					
+				return;
 			}
+			
+			bgmp.addPlacemarks( map );
 		},
 		
 		/**
@@ -195,14 +198,14 @@ function bgmp_wrapper( $ )
 			{
 				//$( bgmp.canvas ).append( '<p>' + bgmp.name + " error: couldn't add map placemarks.</p>");		// add class for making red? other places need this too?	// @todo - need to figure out a good way to alert user that placemarks couldn't be added
 				if( window.console )
-					console.log('bgmp_createMarker: '+ e);
+					console.log( 'bgmp_createMarker: '+ e );
 			}
 		}
 	} // end bgmp
 	
 	// Kick things off...
-	$(document).ready( bgmp.init );
+	$( document ).ready( bgmp.init );
 	
 } // end bgmp_wrapper()
 
-bgmp_wrapper(jQuery);
+bgmp_wrapper( jQuery );

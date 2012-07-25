@@ -29,7 +29,7 @@ License: GPL2
  */
 
 if( $_SERVER['SCRIPT_FILENAME'] == __FILE__ )
-	die("Access denied.");
+	die( 'Access denied.' );
 
 load_plugin_textdomain( 'bgmp', false, basename( dirname( __FILE__ ) ) . '/languages' );
 	

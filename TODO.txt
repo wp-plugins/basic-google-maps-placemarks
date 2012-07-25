@@ -5,7 +5,7 @@
  * @link http://wordpress.org/extend/plugins/basic-google-maps-placemarks/
  */
 
- 
+
 ** New release checklist **
 	Update development installations to latest WP version
 	Develop on WP single site
@@ -31,30 +31,37 @@
 	Download .zip file and test extracting
 	Respond to any relevant open forum posts, and mark as resolved where appropriate
 
-	
-** Version numbering scheme ** 
+
+** Version numbering scheme **
 	Basic Google Maps Placemarks x.y.z
 	x = Major, fundamental changes, possibly breaking backwards compatability. Will probably never do a 2.0 unless WP makes some fundamental change to custom post types, Google releases v4 of the API, or you rewrite the whole plugin from scratch to use better OO patterns
 	y = New features or other significant changes. Things that average users would want enough to upgrade.
 	z = Bug fixes, minor tweaks, small feature additions
 
-	
+
 ** Roadmap **
 
+
 1.8
+	http://core.trac.wordpress.org/ticket/20995#comment:5
+	You'll need to patch 1.7, commit that, and then integrate the changes in 1.8-alpha1
+
+
 	add an unobtrusive, dismissable note promoting re-ablish slavery plugin
 		requires 3.3? instead of bumping requirement, just wrap whole thing in "if wp_version > 3.3" block
 			don't think it does. wp_screen is new in 3.3, but probalby had other way to do it in past. maybe test on a 3.0 build just to be safe
-		
+
 	internatinoalization
 		need to escape translated strings?
+		3.4 changes -- http://wppolyglots.wordpress.com/important-changes-for-wordpress-3-4/
+			3 pot files now - so, need to require 3.4?
 
 	changed a lot of stuff around w/ __construct() in both classes, etc, so do some good testing of basic stuff that you assume works b/c it always has
-	
+
 	add placemark default icon by category example to readme
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-categories-feature-requests?replies=16#post-2562891
 		test it out first
-	
+
 	move variable init from __construct() to init hook callback. nothing but action registrations in constuct()
 		same for settings class
 		done, but need to do testing
@@ -65,110 +72,137 @@
 				NOTICE: wp-content/plugins/nordstrom-store-events/core.php:850 - Undefined index: updates
 				NOTICE: wp-content/plugins/nordstrom-store-events/core.php:850 - Undefined index: errors
 				no, i think it's just b/c NSE had init fire on mu_loaded, which doesn't run on single wp?
-			
+
 	update $bgmp->geocode() references in readme now that it's static?
 		but it's not static. i thought i made it static, maybe screwed up source control at some point? maybe look at forums post to remind what happened
 
 	find replacement for 'how to check for javascript errors' link
-	
+
 	test on 3.4 release candidates, update compatable tag to latest
-	
-	admin messages refactoring
-		take the <p> tags out of the message view, put them in the $message var instead. because may want to have muliple <p> or <ul>, etc someday
-	
+
 	commit rc1, add forums post like 1.7rc1
 	email translators
-	commit updated pomo files for 
-	
+	commit updated pomo files for
+
 	update forums
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-google-logo-is-zoomed-and-ipad-safari-cant-zoom-the-page?replies=4	
+		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-google-logo-is-zoomed-and-ipad-safari-cant-zoom-the-page?replies=4
+
+	refactored buildMap() a little bit, test it out
+		took addplacemarks() outside the try{} b/c it has has it made the error less clear and it has it's own try{} later on
+		add note to changelog?
 	
-	
-	
+	refactored if( !post ) segments, need to test that can still call shortcode from templates (with and without $post) without problems
+		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-can-i-use-the-shortcode-on-any-php-without-assign-it-in-functionphp?replies=3
+
 1.8.1
+	column sorting broken
+		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-sortable-columns-broken?replies=1#post-2851834
+
 	bgmpdata can be output inside shortcode funciton
 		this would simplify things a lot, wouldn't have to parse out anymore
 		wouldn't have to use filters to insert args with do_shortcode
 			updatge readme
 		still peek ahead to tell if shortcode called or not, and enqueue functions.js based on that, but don't need to do that for data
-	
+
+	show map on single placemark page that only shows that individual marker
+		add "placemarks" param to bgmp-map shortcode. e.g., [bgmp-map placemarks="13,93,234"]. pass in post ids
+		add to list shortcode also?
+		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-placemark-page-with-just-one-placemarks
+		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-possibility-to-show-a-single-placemark?replies=1#post-2554004
+
 	enqueuemessage() bug - adds it twice for coordinates error, probably for everything else too
 		i think this is because the hook that enqueueMessage() is called from fires multiple times on page load. some times it may even fire AFTER the messages have been printed, so it'll add ones to the next page load
 		shouldn't be using hooks that fire multiple times anywya b/c of performance?
 			right, but there isn't a practical way around that?
 			did_action()
 		posts_selection hook fires twice before admin_notices and once after
-		
+
 		problem 1 - messages added multiple times before being printed/cleared
 			check if emssage already exists and don't enqueue if it does
 				might want to add message multiple times, but don't have existing test case for this, so maybe go w/ this until need to do multiple
-			
+
 		problem 2 - adding messages after already printed/cleared
 			clear them at shutdown() instead of immediately after printing?
 				no, b/c then could never add them for the next page
 			if being called AFTER admin_notices, then return instead of adding the message?
 				is there any way to detect that?
 				even if there is, there are valid situations where you want to add message after admin_notices. that's normal, in fact.
-		
+
 		did_action checking fixed both problems? look at nordstrom-store-events
 			add it to all callback functions, not just saveCustomFields()
-		
+
+	documentation hard for non-technical people to follow
+		try to clarify some things
+		add a faq entry w/ links to resources for begining PHP stuff, and a note saying that not everyone will be able to make mods so hire a developer if needed
+			begining php tutorials
+			beginginer wp plugin dev tutorials
+		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-using-bgmp-map-in-a-template-file-with-do_shortcode?replies=3
+
+	use id-admin-notices class instead of having it internal
+
+	add filter to each placemarks in the foreach loop in getMapPlacemarks(), so that people can modify the individual fields as they're created, instead of having to loop through the entire thing after it's been generated
+		also add ID field to the placemarks
+		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-how-to-open-the-placemark-url-in-the-info-window?replies=1#post-2816596
+
 1.8.2
 	add credits section to other notes
 		list people who've contributed code, helped out in forums, translators in future
 		Ridgididgi - help on forums, link to profile?
 		guy who contributed code - check changelog
-		
+
 	change all instance of "bgmp_" in FAQ to BasicGoogleMapsPlacemarks::PREFIX ?
 		also post type, category, etc
 		test out first
 			both in theme and functionality plugin that loads before bgmp
-	
+
 	change to mpango contact form instead of iandunn for customizations?
-		
+
 	use "@deprecated" instead of just "deprecated" or @todo
-	
+
 	uninstall script
 		take wpms into account
 		uninstall settings but not data. note that on the installation page under an 'uninstall' section
 		removed the infowindow height and renamed the infowindow width (to maxwidth) option in v1.2.1 or 1.3. remember that you still need to remove from db here
 
 	shouuld be using $this::PREFIX instead of self::PREFIX ?
-	
+
 	if( !is_array( $mediaButtons ) || !array_key_exists( 'image', $mediaButtons ) || !$mediaButtons[ 'image' ] )
 		have to add check if mediabuttons is an array first. test
 		do in networkactivate() and addfeatruedimagesupport()
-		
+
 	bgmp add filter for gmaps url so guy can do language=no w/out moding core
-		what was forum url? add to list below 
+		what was forum url? add to list below
 
 	wpms media buttons have changed now? not on network settings menu anymore?
 		if so, update link
 		might need to do an -- if( version == x.y ) link = "...", etc
 		it was just removed? seems to work w/out it
-		
-	add nomte to upgrade hook to explian why it's priroty 11 instead of 10
-		
-		
 
-	
-	
+	add nomte to upgrade hook to explian why it's priroty 11 instead of 10
+
+	add archive
+		has_archive in cpt reg
+		upgrade() has to flush rewrite rules
+		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-how-to-access-placemarks-list-archive-directly?replies=1
+
+	remove the faq text that says 'make sure tagged with `basic-google-maps-placemarks` b/c not accurate anymore?
+
 1.8.3
 	internationalize functions.js
-	
+
 	add more machine language translations
-	
+
 	automate it - http://www.technomancy.org/language/apertium-auto-translate-gettext/ ?
 			also http://djangosnippets.org/snippets/2679/
 			http://potranslate.prabhatgupta.com/ - see email
-			
+
 			blog about it if it works
 			french
 			german
 			japanese
 			russian
 			spanish
-			
+
 			later
 				arabic
 				czech
@@ -188,26 +222,26 @@
 				turkish
 				ukranian
 				vietnamiese
-	
+
 1.8.4
 	output buffering for shortcode views instead of inline html
-	
+
 	inline documentation
 		add 3.3 pointers for intro to main things the first time they install
 		add inline docu for reference - http://wpdevel.wordpress.com/2011/12/06/help-and-screen-api-changes-in-3-3/
 			add pointer to the help tab, since people don't normally think about it. (the way that 'simple facebook connect' does it)
-	
+
 	parse shortcodes inside the info window. (would have to parse it before passed to js)
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-including-shortcodes-in-info-box?replies=1#post-2522736
-		in getPlacemarks(), just pass $pp->post_content through do_shortcode() ?	
-			
-	cleanup, refactor stuff?	
+		in getPlacemarks(), just pass $pp->post_content through do_shortcode() ?
+
+	cleanup, refactor stuff?
 		lots of TODOs in code
-		
+
 	if( !get_option( self::PREFIX . 'map-width' ) ), etc should be necessary in singleActivate(). add_option() already checks if it exists
 		remove and test
-		
-		
+
+
 	add other notes section to readme?
 		filters
 		TODO list and/or feature requests
@@ -216,45 +250,39 @@
 			leave faqs for troubleshooting-ish things, "other notes" for the rest?
 			make note in faqs to see "other notes" and visa-versa
 		basic/advanced usage moved from installation to other notes?
-		
+
 	check js file for unnecessary $( this ) calls -- http://whattheheadsaid.com/2010/10/utilizing-the-awesome-power-of-jquery-to-access-properties-of-an-element
-		
+
 1.8.5
-	show map on single placemark page that only shows that individual marker
-		add "placemarks" param to bgmp-map shortcode. e.g., [bgmp-map placemarks="13,93,234"]. pass in post ids
-		add to list shortcode also?
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-placemark-page-with-just-one-placemarks
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-possibility-to-show-a-single-placemark?replies=1#post-2554004
-		
 	savecustomfields() should use $postid that was passed in instead of global $post->id ?
-	
+
 	ensure filtered varaable data types don't change, like you did for ODCG
 		return is_array( $postMeta ) ? $postMeta : array();
-	
+
 	add notes on automatic upgrading to installation page
-	
+
 	ditch the conditional javascript loading so map arguments and do_shortcode can function like normal?
 		give user option to turn off scripts except for a whitelisted list of pages or something?
-		
+
 	refactor bgmp/settings classes?
 		http://stackoverflow.com/questions/8688738/wordpress-plugin-how-do-i-avoid-tight-coupling
 		but bgmp needs to be defined before settings? maybe pass bgmp to settings rather than other way around, like it's doing now
 		or just make static accessor/gettor functions in bgmp class?
-	
+
 	use wp trac for feature requests and bugs, and forums only for support?
-	
+
 	add note to insatll page for multisite. tell them it can be network-activated, or activated only on dividual sites. both will work
-	
+
 	refactor geocode() error checking into multiple functions, like nordlocal remoteGetSuccessful()
-	
-	
-	
+
+
+
 1.minor
 	infowinder not rounded anymore?
 		b/c of image styles? try turning off stylesheet and see what happens
 		no, b/c google changed it -- http://stackoverflow.com/questions/6570490/modern-rectangular-infowindow-on-maps-google-com
 		can use infobubble, but that's a bunch of overhead for something small?
-	
+
 	close infobox when click anywhere outside infobox
 		$(map).click( function()
 		{
@@ -263,14 +291,15 @@
 		} );
 
 	add column on View page for category, address, icon
-		
-		
+		check out pastebin linked from http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-sortable-columns-broken?replies=1#post-2851834
+
+
 	better style options
 		turn default stylesheet on/off
 		enter URL for custom stylesheet
 		have textbox to enter styles directly? (don't like this b/c have to print inline)
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-set-the-default-info-window-font-style-in-the-configuration-page?replies=1#post-2679560
-		
+
 2.0
 	rewrite as MVC and better OO?
 		look at mir-trips plugin (or whatever latest incarnation) to see how you're doing it now
@@ -282,7 +311,7 @@
 		look at http://wordpress.org/extend/plugins/wp-mvc/, http://wordpress.org/extend/plugins/tina-mvc/, Churro: @ wordpress.org extend /plugins /churro [not to use, just to get ideas]
 		http://www.jessehanson.com/2011/01/02/mvc-based-wordpress-plugins/
 		do other research
-		
+
 2.0.minor
 	finish setting up unit testing
 		add to 'before each new release' list
@@ -296,26 +325,26 @@
 			fireunit? kinda old, but most of the newer ones seem to require eclipse or something else
 			http://www.slideshare.net/aaronjorbin/dont-repeat-your-mistakes-javascript-unit-testing
 				look for wordpress.tv video of it from wrdcamp sf 2011
-		
+
 		maybe make this 2.0 if you need to rewrite everything to be more MVC and testable. probably not worth the effort, unless you just want to do it to learn
 			could abstract out the hooks, api interaction etc in the constructors, and have the models all accept/return variables so they'd be testable. supposed to test controllers instead of models, though?
 
-	
+
 1.major.x
-	change localize_script() to wp_add_script_data when that's added 
+	change localize_script() to wp_add_script_data when that's added
 		may not need to manually json_encode() once you do this. it might do it for you
 		wp 3.3 localize_script supports arrays now, so don't need separate map and marker variables in js? can just output a single bgmpdata array?
-	
+
 	switch to wp_add_script_before if it comes out in wp 3.4. wait until 3.5 is out, though, to give people time to upgrade.
-	
+
 1.major.x
 	switch to using add_meta_boxes_{$page} hook
 		http://wpdevel.wordpress.com/2011/12/07/do-not-include-wp-adminincludestemplate-php-to-get-add_meta_box/
 
 1.major.x
-	
+
 	add current_user_can() in places -- http://wordpress.tv/2011/09/07/mark-jaquith-jon-cave-brad-williams-plugin-security-showdown/ 11:30
-	
+
 	map covers dropdowns bug
 		http://wordpress.org/support/topic/google-map-covering-dropdown-menus?replies=2#post-2300994
 		http://stackoverflow.com/questions/506984/how-can-i-place-a-html-div-over-the-google-earth-plugin-involves-wmode-i-imagin
@@ -323,16 +352,16 @@
 		http://earth-api-samples.googlecode.com/svn/trunk/demos/customcontrols/index.html
 		http://code.google.com/p/earth-api-samples/issues/detail?id=9&colspec=ID%20
 		http://maps.myosotissp.com/demos/popups.html
-	
+
 	can't call enqueueMessage() in settings.php - http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-that-address-couldnt-be-geocoded-fatal-error?replies=5
 		fixed w/ temp workaround, but need better solution
 		just make enqueuemssage public?
-	
-	
+
+
 1.major.x
 	run tests on memory consumption, etc. see if you can find any areas of code that would significantly benefit from optimization
 		ask for advice on wordpress answers for tips on how to test
-	
+
 	wahc doesn't work as demo anymore since not current version. setup wpms playground blog as new demo, populate w/ sample content. update link in readme. make sure to update w/ new releases (add to list above). don't use to test, only as pristine demo.
 
 	redo enqueuemessage,etc to use WP_Error objects instead of just strings?
@@ -341,7 +370,7 @@
 	look for all @todo comments in code, and move them here. clean them up before moving on to next 1.major version
 
 	update readme filter examples w/ http://wpengineer.com/2319/advent-calendar-predefined-callback-functions-for-filters/
-			
+
 
 1.major.minor
 	add icon next to name in list shortcode
@@ -356,7 +385,7 @@
 		don't forget settings.php, views, etc. probably shouldn't be any in views, only in models/controllers
 	try to detect if theme is loading google maps api, and then don't do it?
 		e.g., http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-broken-map-with-dk-template?replies=1#post-2522633
-		
+
 1.major.minor
 	do shortcode bit only works with 'front page setting', not straight home.php template
 		Home.php would have to setup a custom $post variable with query_posts() or WP_Query() in order to access the content, but there's no way to pass that version of $post to the shortcode check function.
@@ -372,7 +401,7 @@
 	maybe break messages and describe into Toolbelt class
 		give it it's own name not related to bgmp, a version number toos
 
-		
+
 1.major.minor
 	http://code.google.com/p/gmaps-api-issues/issues/detail?id=1724 workaround
 		didn't work. file a new bug report for the issue. setup a test page
@@ -380,7 +409,7 @@
 	errors shouldn't overwrite the map unless the map can't be loaded anyway
 		map may load fine, but then error with placemarks. don't want to kill map just b/c placemark didn't load.
 		log to console instead
-			only if a ?bgmp_debug parameter is passed in, so you don't clutter the console 
+			only if a ?bgmp_debug parameter is passed in, so you don't clutter the console
 		also add error to page. create a new empty <p> under map for messages
 		create a bgmp.log() that's a wrapper for if(window.console) console.log
 	width px and % -- http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-how-to-tweak-the-code-to-get-width-instead-of-fixed-px?replies=4#post-2242249
@@ -391,7 +420,7 @@
 		add 'echo' behavior, and return another option
 			already copy/pasted, but need to test
 		make it a switch instead of if else ifelse
-		
+
 1.major.minor
 	loadresources isn't specifiying a version number for the maps api. if they switch to v4 i don't want to plugin to automatically do it
 		see if you can specify v3
@@ -403,7 +432,7 @@
 	test to make sure wp action actually is working for essages. i don't think it runs on edit-page, so wouldn't get notice of geocode error
 		check out wp_enqueue_scripts
 		if works, update wpse question. also add it and admin_enqueue_scripts to codex list in the appropriate order
-	
+
 1.major.minor
 	double check that everything is sanitized
 	give everything a once over, check comments, empty phpdoc lines, etc
@@ -423,39 +452,40 @@
 	add option to disable the 'image media button disabled' warning. would have to be site-wide option?
 		update error message to let them know they can disable it
 	organize FAQ page into sections?
-	
-	
+
+
 1.major.minor
 	add px units to $('#bgmp_map-canvas').css('width', response.width ); etc ?
 		probably, just need to test
 		check the rest of the file for other places
 	add support forum link to plugin page
-	
+
 1.major
 	remove the 'upgrade to 1.0 addresses' activation bit - no longer needed for most users
 	mobile support
 	mobile placemark bug
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-i-cant-see-the-placemark-on-my-mobile-phone?replies=1#post-2201681
 		read through code, try to think of what may cause it
-		try googling for answer	
-		
+		try googling for answer
+
 1.major.minor
 	look into http://docs.jquery.com/Plugins/Authoring to see if you should do things that way
-		
-	
+
+
 1.major.major
 	some things may only need to run on the admin side, or only on the front end. check for that and handle appropriatly
 		keep in mind http:codex.wordpress.org/AJAX_in_Plugins note 3 about being inside is_admin()
 	custom icon for placemarks menu. maybe a pinpoint? (similar to default google maps icon, but not exact same b/c of copyright)
-	
-	
-	
+
+
+
 ** Feature Requests **
 	8 - javascript to toggle categories on map dynamically
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-turn-onoff-category-display?replies=1#post-2760224
 		http://templatic.com/demos/?theme=geoplaces4
+		http://www.geocodezip.com/v3_MW_example_categories.html
 		a bunch of others
-	6 - have links in [bgmp-list] open repsective info on map. 
+	6 - have links in [bgmp-list] open repsective info on map.
 		would also be nice if arbitary links could do the same (e.g., links generated by the user, not bgmp)
 		would have to have a settings to flag whether or not it's active, so that the list could still be independent of the map
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-place-marker-links?replies=1#post-2554607
@@ -477,7 +507,7 @@
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-directions?replies=2#post-2494522
 		one other?
 	2 - option to have placemark info window open when map loads.
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-placemark-show-by-default?replies=3#post-2519181	
+		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-placemark-show-by-default?replies=3#post-2519181
 		at least 1 other?
 	1 - separate role for placemarks, so users can add placemarks but not regular posts
 	1 - user supplied text for map link on list shortcode
@@ -490,8 +520,11 @@
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-possibility-to-show-a-single-placemark?replies=1
 	1 - configuration option to upload/link to new default marker, instead of having to use filter
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-upload-placemark-logo-in-configuration-page?replies=1#post-2679597
-	
-	
+	1 - add a filter taxonomy
+		maybe add options to control what the CPT 'supports' pamameter has in it, and have lots off by default
+		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-filter-placemarks?replies=3#post-2826743
+
+
 ** Future considerations **
 	list shortcode sorting
 		order by alphabetical - this already posible b/c of filter?

@@ -27,7 +27,7 @@ BGMP creates a [custom post type](http://codex.wordpress.org/Post_Types) for pla
 
 You can see a live example of the plugin running at [washingtonhousechurches.net](http://washingtonhousechurches.net).
 
-Basic instructions are on [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/). Check [the FAQ](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/faq/) and [support forums](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10) for help.
+Basic instructions are on [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/). Check [the FAQ](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/faq/) and [support forums](http://wordpress.org/support/plugin/basic-google-maps-placemarks) for help.
 
 == Installation ==
 
@@ -161,19 +161,19 @@ These are the valid arguments for map type, type control and navigation control.
 * ANDROID
 * ZOOM_PAN
 
-Check [the FAQ](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/faq/) and [support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10) if you have any questions.
+Check [the FAQ](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/faq/) and [support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks) if you have any questions.
 
 
 == Frequently Asked Questions ==
 
 = How do I use the plugin? =
-Read the Basic Usage section of [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/) for instructions. If you still have questions, read this FAQ and check [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10).
+Read the Basic Usage section of [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/) for instructions. If you still have questions, read this FAQ and check [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks).
 
 
 = How can I get help when I'm having a problem? =
 1. Read the Basic Usage and Advanced Usage sections of [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/).
 2. Read the answers on this page.
-3. Check [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10), because there's a good chance your problem has already been answered there.
+3. Check [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks), because there's a good chance your problem has already been answered there.
 4. Check the [Other Notes](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/other_notes/) page for known conflicts with other plugins.
 
 If you still need help, then follow these instructions:
@@ -181,10 +181,18 @@ If you still need help, then follow these instructions:
 1. Disable all other plugins and switch to the default theme, then check if the problem is still happening. 
 2. If it isn't, then the problem may actually be with your theme or other plugins you have installed.
 3. If the problem is still happening, then start a new thread in the forum with a **detailed description** of your problem and **the URL to the map on your site**.
-4. Tag the post with `basic-google-maps-placemarks` so that I get an e-mail notification. If you use the link above it'll automatically tag it for you.
+4. Tag the post with `basic-google-maps-placemarks` so that I get an e-mail notification.
 5. Check the 'Notify me of follow-up posts via e-mail' box so you won't miss any replies.
 
 I monitor the forums and respond to a lot of the requests. I do this in my spare time, though, and can't respond to all of them. I typically only have time to help with problems that are within the plugin's scope. That means that I probably won't respond if the issue is actually caused by your theme or another plugin, or if you're trying to modify the plugin to do something it doesn't natively do. It's still a good idea to post something on the forums, though, because other users may be able to help out when I can't.
+
+
+= Does the plugin support [non-standard feature]? / How can I get the plugin to do [non-standard feature]? =
+All of the features that the plugin supports are documented on these pages. If you don't see a feature mentioned, then that means that the plugin doesn't support it. You'll need to write the extra code yourself if you want to add that feature to the plugin. There are filters throughout the core code to support customization. If you need a hook or filter that doesn't currently exist, add a post to [the support forums](http://wordpress.org/support/plugin/basic-google-maps-placemarks) to request it and I'll add it to the next version.
+
+You can also try searching [the support forums](http://wordpress.org/support/plugin/basic-google-maps-placemarks) in case others have already worked out a way to do it.
+
+If you do get it working with your custom code, please share it on [the support forums](http://wordpress.org/support/plugin/basic-google-maps-placemarks) so that others can benefit from your work.
 
 
 = The map doesn't look right. =
@@ -305,7 +313,7 @@ If you're running a caching plugin like WP Super Cache, make sure you delete the
 If you upgraded other plugins at the same time, it's possible that one of them is causing a JavaScript error that breaks the entire page or some other kind of conflict. Check if the plugin works with the default theme and no other plugins activated.
 
 = Are there any hooks I can use to modify or extend the plugin? =
-Yes, I've tried to add filters for everything you might reasonably want, just browse the source code to look for them. If you need a filter or action that isn't there, make a request on [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10) and I'll add it to the next version.
+Yes, I've tried to add filters for everything you might reasonably want, just browse the source code to look for them. If you need a filter or action that isn't there, make a request on [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks) and I'll add it to the next version.
 
 
 == Other Notes ==
@@ -320,16 +328,17 @@ If there isn't a translation for your language (or it is incomplete/inaccurate) 
 
 **Known conflicts**
 
-* The Post Types Order plugin can cause <a href="http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-shortcode-bgmp-list-not-returning-all-placemarks">the wrong placemarks to show up</a> in [bgmp-map] or [bgmp-list] results.
+* The [Post Types Order](http://wordpress.org/extend/plugins/post-types-order/) plugin can cause <a href="http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-shortcode-bgmp-list-not-returning-all-placemarks">the wrong placemarks to show up</a> in [bgmp-map] or [bgmp-list] results. Try disabling the *AutoSort* feature.
+* The [Better WP Security](http://wordpress.org/extend/plugins/better-wp-security/) plugin may [break the Google Maps API](http://wordpress.org/support/topic/plugin-better-wp-security-google-maps-api) if the "Display random version number" option is enabled.
 * The [bgmp-map] and [bgmp-list] shortcodes <a href="http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-map-showing-all-placemarkers-no-filter">won't work in WP e-Commerce product post types</a>.
 * Also make sure that no other Google Maps plugins are activated, and that your theme isn't including the Maps API. You can view the page's source code and search for instances of "maps.google.com/maps/api/js". If there's more than one, then you're probably going to have issues.
 
 **How you can help with the plugin's development**
 
-* The thing I could really use some help with is answering questions on [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10). I don't have a lot of time to work on the plugin, so the time I spend answering questions reduces the amount of time I have to add new features. If you're familiar with the plugin and would like to help out, you can click the 'Subscribe to Emails for this Tag' link to get an e-mail whenever a new post is created.
+* The thing I could really use some help with is answering questions on [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks). I don't have a lot of time to work on the plugin, so the time I spend answering questions reduces the amount of time I have to add new features. If you're familiar with the plugin and would like to help out, you can click the 'Subscribe to Emails for this Tag' link to get an e-mail whenever a new post is created.
 * Translate the plugin into your language. See the *Localizations* section above for details.
 * Volunteer to test new versions before they're officially released. [Contact me](http://iandunn.name/contact) if you want to be put on the list.
-* If you find a bug, create a post on [the support forum](http://wordpress.org/tags/basic-google-maps-placemarks?forum_id=10) with as much information as possible. If you're a developer, create a patch and include a link to it in the post.
+* If you find a bug, create a post on [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks) with as much information as possible. If you're a developer, create a patch and include a link to it in the post.
 * Check the TODO.txt file for features that need to be added and submit a patch.
 * Review the code for security vulnerabilities and best practices. If you find a security issue, please [contact me](http://iandunn.name/contact) privately so that I can release a patched version before the issue is publicly disclosed.
 

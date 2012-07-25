@@ -1,7 +1,7 @@
 <?php
 
 if( $_SERVER['SCRIPT_FILENAME'] == __FILE__ )
-	die("Access denied.");
+	die( 'Access denied.' );
 
 if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 {
@@ -14,7 +14,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 	class BasicGoogleMapsPlacemarks
 	{
 		// Declare variables and constants
-		protected $settings, $options, $updatedOptions, $userMessageCount, $mapShortcodeCalled, $mapShortcodeArguments;
+		protected $settings, $options, $updatedOptions, $userMessageCount, $mapShortcodeCalled, $mapShortcodeArguments, $mapShortcodeCategories;
 		const VERSION		= '1.8-alpha1';
 		const PREFIX		= 'bgmp_';
 		const POST_TYPE		= 'bgmp';
@@ -263,7 +263,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		 * Gets all of the shortcodes in the current post
 		 * @author Ian Dunn <ian@iandunn.name>
 		 * @param string $content
-		 * return mixed false | array
+		 * @return mixed false | array
 		 */
 		protected function getShortcodes( $content )
 		{
@@ -444,20 +444,21 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		/**
 		 * Checks the current posts to see if they contain the map shortcode
 		 * @author Ian Dunn <ian@iandunn.name>
+		 * @link http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-can-i-use-the-shortcode-on-any-php-without-assign-it-in-functionphp
 		 * @return bool
 		 */
 		protected function mapShortcodeCalled()
 		{
 			global $post;
-			
-			if( !$post )
-				return false;
 				
 			$this->mapShortcodeCalled = apply_filters( self::PREFIX .'mapShortcodeCalled', $this->mapShortcodeCalled );		// @todo - deprecated b/c not consistent w/ shortcode naming scheme. need a way to notify people
 			$this->mapShortcodeCalled = apply_filters( self::PREFIX .'map-shortcode-called', $this->mapShortcodeCalled );
 			
 			if( $this->mapShortcodeCalled )
 				return true;
+			
+			if( !$post )		// note: this needs to run after the above code, so that templates can call do_shortcode(...) from templates that don't have $post, like 404.php. See link in phpDoc for background.
+				return false;
 			
 			setup_postdata( $post );
 			$shortcodes = $this->getShortcodes( get_the_content() );
@@ -479,7 +480,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			wp_register_script(
 				'googleMapsAPI',
 				'http'. ( is_ssl() ? 's' : '' ) .'://maps.google.com/maps/api/js?sensor=false',
-				false,
+				array(),
 				false,
 				true
 			);
@@ -717,6 +718,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		 * Geocodes an address
 		 * @param string $address
 		 * @author Ian Dunn <ian@iandunn.name>
+		 * @return mixed
 		 */
 		public function geocode( $address )
 		{
@@ -1067,6 +1069,9 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		protected function enqueueMessage( $message, $type = 'update', $mode = 'user' )
 		{
 			if( !is_string( $message ) )
+				return false;
+				
+			if( !isset( $this->options[ $type .'s' ] ) )
 				return false;
 				
 			array_push( $this->options[ $type .'s' ], array(

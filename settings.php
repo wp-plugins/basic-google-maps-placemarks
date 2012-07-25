@@ -1,7 +1,7 @@
 <?php
 
 if( $_SERVER['SCRIPT_FILENAME'] == __FILE__ )
-	die("Access denied.");
+	die( 'Access denied.' );
 
 if( !class_exists( 'BGMPSettings' ) )
 {
