@@ -15,7 +15,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 	{
 		// Declare variables and constants
 		protected $settings, $options, $updatedOptions, $userMessageCount, $mapShortcodeCalled, $mapShortcodeArguments, $mapShortcodeCategories;
-		const VERSION		= '1.8-alpha1';
+		const VERSION		= '1.8-rc1';
 		const PREFIX		= 'bgmp_';
 		const POST_TYPE		= 'bgmp';
 		const TAXONOMY		= 'bgmp-category';
@@ -89,28 +89,33 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		/**
 		 * Handles extra activation tasks for MultiSite installations
 		 * @author Ian Dunn <ian@iandunn.name>
+		 * @param bool $networkWide True if the activation was network-wide
 		 */
-		public function networkActivate()
+		public function networkActivate( $networkWide )
 		{
-			global $wpdb;
+			global $wpdb, $wp_version;
 			
 			if( function_exists( 'is_multisite' ) && is_multisite() )
 			{
 				// Enable image uploads so the 'Set Featured Image' meta box will be available
 				$mediaButtons = get_site_option( 'mu_media_buttons' );
 				
-				if( !array_key_exists( 'image', $mediaButtons ) || !$mediaButtons[ 'image' ] )
+				if( version_compare( $wp_version, '3.3', "<=" ) && ( !array_key_exists( 'image', $mediaButtons ) || !$mediaButtons[ 'image' ] ) )
 				{
 					$mediaButtons[ 'image' ] = 1;
 					update_site_option( 'mu_media_buttons', $mediaButtons );
+					
+					/*
+					@todo enqueueMessage() needs $this->options to be set, but as of v1.8 that doesn't happen until the init hook, which is after activation. It doesn't really matter anymore, though, because mu_media_buttons was removed in 3.3. http://core.trac.wordpress.org/ticket/17578 
 					$this->enqueueMessage( sprintf(
 						__( '%s has enabled uploading images network-wide so that placemark icons can be set.', 'bgmp' ),		// @todo - give more specific message, test. enqueue for network admin but not regular admins
 						BGMP_NAME
 					) );
+					*/
 				}
 				
 				// Activate the plugin across the network if requested
-				if( array_key_exists( 'networkwide', $_GET ) && ( $_GET[ 'networkwide' ] == 1 ) )
+				if( $networkWide )
 				{
 					$blogs = $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs" );
 					
@@ -155,7 +160,9 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			if( !get_option( self::PREFIX . 'map-navigation-control' ) )
 				add_option( self::PREFIX . 'map-navigation-control', 'DEFAULT' );
 			if( !get_option( self::PREFIX . 'map-info-window-width' ) )
-				add_option( self::PREFIX . 'map-info-window-width', 500 );	// @todo - this isn't DRY, same values in BGMPSettings::__construct() and upgrade()
+				add_option( self::PREFIX . 'map-info-window-width', 500 );
+				
+			// @todo - this isn't DRY, same values in BGMPSettings::__construct() and upgrade()
 		}
 		
 		/**
@@ -233,11 +240,15 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		 */
 		public function addFeaturedImageSupport()
 		{
+			global $wp_version;
+			
 			// We enabled image media buttons for MultiSite on activation, but the admin may have turned it back off
-			if( is_admin() && function_exists( 'is_multisite' ) && is_multisite() )
+			if( version_compare( $wp_version, '3.3', "<=" ) && is_admin() && function_exists( 'is_multisite' ) && is_multisite() )
 			{
-				$mediaButtons = get_site_option( 'mu_media_buttons' );
+				// @todo this isn't DRY, similar code in networkActivate()
 				
+				$mediaButtons = get_site_option( 'mu_media_buttons' );
+		
 				if( !array_key_exists( 'image', $mediaButtons ) || !$mediaButtons[ 'image' ] )
 				{
 					$this->enqueueMessage( sprintf(
@@ -722,6 +733,8 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		 */
 		public function geocode( $address )
 		{
+			// @todo - this should be static, or better yet, broken out into an Address class
+			
 			// Bypass geocoding if already have valid coordinates
 			$coordinates = self::validateCoordinates( $address );
 			if( is_array( $coordinates ) )

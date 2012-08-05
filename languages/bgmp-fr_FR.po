@@ -4,294 +4,294 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Basic Google Maps Placemarks 1.7.1a\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/basic-google-maps-placemarks\n"
-"POT-Creation-Date: 2012-03-14 05:42:37+00:00\n"
-"PO-Revision-Date: 2012-03-13 22:42-0800\n"
+"POT-Creation-Date: 2012-08-05 05:28:07+00:00\n"
+"PO-Revision-Date: 2012-08-04 22:29-0800\n"
 "Last-Translator: Ian Dunn <ian@iandunn.name>\n"
 "Language-Team: Ian Dunn <ian@iandunn.name>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Language: French\n"
 
-#. #-#-#-#-#  basic-google-maps-placemarks.pot (Basic Google Maps Placemarks 1.7.1a)  #-#-#-#-#
+#. #-#-#-#-#  basic-google-maps-placemarks.pot (Basic Google Maps Placemarks 1.8-rc1)  #-#-#-#-#
 #. Plugin Name of the plugin/theme
-#: basic-google-maps-placemarks.php:33
-#: basic-google-maps-placemarks.php:34
+#: basic-google-maps-placemarks.php:36
 msgid "Basic Google Maps Placemarks"
 msgstr "Google Maps de base Placemarks"
 
-#: basic-google-maps-placemarks.php:66
+#: basic-google-maps-placemarks.php:68
 msgid "%s <strong>requires PHP %s</strong> and <strong>WordPress %s</strong> in order to work. You're running PHP %s and WordPress %s. You'll need to upgrade in order to use this plugin. If you're not sure how to <a href=\"http://codex.wordpress.org/Switching_to_PHP5\">upgrade to PHP 5</a> you can ask your hosting company for assistance, and if you need help upgrading WordPress you can refer to <a href=\"http://codex.wordpress.org/Upgrading_WordPress\">the Codex</a>."
 msgstr "%s exige de PHP %s et WordPress %s afin de fonctionner. You' ; PHP re %s et WordPress %s. You' de fonctionnement ; le besoin de ll d'améliorer afin d'employer ceci embrochable. Si you' ; re pas sure comment améliorer à PHP que 5 vous peuvent demander votre à compagnie de accueil l'aide, et si vous avez besoin de l'aide améliorant WordPress vous peut se rapporter au codex."
 
-#: core.php:95
-msgid "%s has enabled uploading images network-wide so that placemark icons can be set."
-msgstr "%s a permis des images de chargement à l'ensemble du réseau de sorte que des icônes de placemark puissent être placées.s"
-
-#: core.php:132
-#: settings.php:30
+#: core.php:149
+#: settings.php:42
 msgid "Seattle"
 msgstr "Seattle"
 
-#: core.php:232
+#: core.php:255
 msgid "%s requires the Images media button setting to be enabled in order to use custom icons on markers, but it's currently turned off. If you'd like to use custom icons you can enable it on the <a href=\"%s\">Network Settings</a> page, in the Upload Settings section."
 msgstr "%s exige le bouton de médias d'images plaçant pour être permis afin d'employer les icônes faites sur commande sur des marqueurs, mais it' ; s actuellement arrêté. Si you' ; d aiment employer les icônes faites sur commande que vous pouvez le permettre à la page d'arrangements de réseau, dans la section d'arrangements de téléchargement."
 
-#: core.php:296
+#: core.php:319
 msgid "%s shortcode error: %s is not a valid category."
 msgstr "erreur de shortcode de %s : %s n'est pas une catégorie valide."
 
-#: core.php:313
+#: core.php:336
 msgid "%s shortcode error: %s is not a valid width."
 msgstr "erreur de shortcode de %s : %s n'est pas une largeur valide."
 
-#: core.php:330
+#: core.php:353
 msgid "%s shortcode error: %s is not a valid height."
 msgstr "erreur de shortcode de %s : %s n'est pas une taille valide."
 
-#: core.php:355
+#: core.php:378
 msgid "%s shortcode error: %s is not a valid zoom level."
 msgstr "erreur de shortcode de %s : %s n'est pas un niveau valide de bourdonnement."
 
-#: core.php:371
+#: core.php:394
 msgid "%s shortcode error: %s is not a valid map type."
 msgstr "erreur de shortcode de %s : %s n'est pas un type valide de carte de bourdonnement."
 
-#: core.php:530
-#: core.php:547
+#: core.php:563
+#: core.php:580
 msgid "Placemarks"
 msgstr "Placemarks"
 
-#: core.php:531
+#: core.php:564
 msgid "Placemark"
 msgstr "Placemark"
 
-#: core.php:532
+#: core.php:565
 msgid "Add New"
 msgstr "Ajoutez nouveau"
 
-#: core.php:533
+#: core.php:566
 msgid "Add New Placemark"
 msgstr "Ajoutez nouveau Placemark"
 
-#: core.php:534
+#: core.php:567
 msgid "Edit"
 msgstr "Éditez"
 
-#: core.php:535
+#: core.php:568
 msgid "Edit Placemark"
 msgstr "Éditez Placemark"
 
-#: core.php:536
+#: core.php:569
 msgid "New Placemark"
 msgstr "Nouveau Placemark"
 
-#: core.php:537
-#: core.php:538
+#: core.php:570
+#: core.php:571
 msgid "View Placemark"
 msgstr "Vue Placemark"
 
-#: core.php:539
+#: core.php:572
 msgid "Search Placemarks"
 msgstr "Recherche Placemarks"
 
-#: core.php:540
-#: core.php:931
+#: core.php:573
+#: core.php:967
 msgid "No Placemarks found"
 msgstr "Aucun Placemarks n'a trouvé"
 
-#: core.php:541
+#: core.php:574
 msgid "No Placemarks found in Trash"
 msgstr "Aucun Placemarks trouvé dans le détritus"
 
-#: core.php:542
+#: core.php:575
 msgid "Parent Placemark"
 msgstr "Parent Placemark"
 
-#: core.php:573
-#: core.php:574
+#: core.php:606
+#: core.php:607
 msgid "Category"
 msgstr "Catégorie"
 
-#: core.php:574
+#: core.php:607
 msgid "Categories"
 msgstr "Catégories"
 
-#: core.php:611
+#: core.php:644
 msgid "Placemark Address"
 msgstr "Adresse de Placemark"
 
-#: core.php:612
+#: core.php:645
 msgid "Stacking Order"
 msgstr "Empilement de l'ordre"
 
-#: core.php:689
+#: core.php:722
 msgid "The stacking order has to be an integer."
 msgstr "L'ordre de empilement doit être un nombre entier."
 
-#: core.php:714
+#: core.php:750
 msgid "%s geocode error: %s"
 msgstr "erreur de geocode de %s : %s"
 
-#: core.php:726
+#: core.php:762
 msgid "%s geocode error: Response code not present"
 msgstr "erreur de geocode de %s : Code de réponse non actuel"
 
-#: core.php:744
+#: core.php:780
 msgid "<p>%s geocode error: %d %s</p> <p>Response: %s</p>"
 msgstr "erreur de geocode de %s : réponse de %d %s : %s"
 
-#: core.php:761
+#: core.php:797
 msgid "%s geocode error: Response was not formatted in JSON."
 msgstr "erreur de geocode de %s : La réponse n'a pas été composée dans JSON."
 
-#: core.php:767
+#: core.php:803
 msgid "%s geocode error: Request Denied."
 msgstr "erreur de geocode de %s : Demande niée."
 
-#: core.php:773
+#: core.php:809
 msgid "That address couldn't be geocoded, please make sure that it's correct."
 msgstr "Cette adresse couldn' ; t soit geocoded, s'assurent svp qu'it' ; s correct."
 
-#: core.php:843
+#: core.php:879
 msgid "<p class=\"error\">%s error: JavaScript and/or CSS files aren't loaded. If you're using do_shortcode() you need to add a filter to your theme first. See <a href=\"%s\">the FAQ</a> for details.</p>"
 msgstr "erreur de %s : Javascript et/ou dossiers aren' de CSS ; t a chargé. Si you' ; Re utilisant le do_shortcode () que vous devez ajouter un filtre à votre thème d'abord. Voyez le FAQ pour des détails."
 
-#: core.php:855
+#: core.php:891
 msgid "Loading map..."
 msgstr "Carte de chargement…"
 
-#: core.php:856
+#: core.php:892
 msgid "Loading"
 msgstr "Chargement"
 
-#: core.php:1110
+#: core.php:1149
 msgid "Type"
 msgstr "Type"
 
-#: core.php:1112
+#: core.php:1151
 msgid "Length"
 msgstr "Longueur"
 
-#: core.php:1114
+#: core.php:1153
 msgid "Content"
 msgstr "Contenu"
 
-#: settings.php:36
+#: settings.php:49
 msgid "Street Map"
 msgstr "Plan de ville"
 
-#: settings.php:37
+#: settings.php:50
 msgid "Satellite Images"
 msgstr "Images satellites"
 
-#: settings.php:38
+#: settings.php:51
 msgid "Hybrid"
 msgstr "Hybride"
 
-#: settings.php:39
+#: settings.php:52
 msgid "Terrain"
 msgstr "Terrain"
 
-#: settings.php:119
+#: settings.php:109
+msgid "Re-Abolish Slavery"
+msgstr "Re-Abolish de l'esclavage"
+
+#: settings.php:148
 msgid "Help"
 msgstr "Aide"
 
-#: settings.php:120
+#: settings.php:149
 msgid "Settings"
 msgstr "Arrangements"
 
-#: settings.php:135
+#: settings.php:164
 msgid "Map Width"
 msgstr "Largeur de carte"
 
-#: settings.php:136
+#: settings.php:165
 msgid "Map Height"
 msgstr "Taille de carte"
 
-#: settings.php:137
+#: settings.php:166
 msgid "Map Center Address"
 msgstr "Adresse de centre de carte"
 
-#: settings.php:138
+#: settings.php:167
 msgid "Zoom"
 msgstr "Bourdonnement"
 
-#: settings.php:139
+#: settings.php:168
 msgid "Map Type"
 msgstr "Type de carte"
 
-#: settings.php:140
+#: settings.php:169
 msgid "Type Control"
 msgstr "Dactylographiez la commande"
 
-#: settings.php:141
+#: settings.php:170
 msgid "Navigation Control"
 msgstr "Commande de navigation"
 
-#: settings.php:142
+#: settings.php:171
 msgid "Info. Window Maximum Width"
 msgstr "Largeur de maximum de fenêtre de l'information"
 
-#: settings.php:162
+#: settings.php:191
 msgid "The map(s) will use these settings as defaults, but you can override them on individual maps using shortcode arguments. See <a href=\"http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/\">the Installation page</a> for details."
 msgstr "Les cartes emploieront ces arrangements en tant que défauts, mais vous pouvez les dépasser sur différentes cartes utilisant des arguments de shortcode. Voyez la page d'installation pour des détails."
 
-#: settings.php:172
-#: settings.php:182
-#: settings.php:266
+#: settings.php:201
+#: settings.php:211
+#: settings.php:295
 msgid "pixels"
 msgstr "pixels"
 
-#: settings.php:194
+#: settings.php:223
 msgid "Geocoded to:"
 msgstr "Geocoded à:"
 
-#: settings.php:197
+#: settings.php:226
 #: views/meta-address.php:14
 msgid "(Error geocoding address. Please make sure it's correct and try again.)"
 msgstr "(Adresse geocoding d'erreur. Veuillez s'assurer it' ; s correct et essai encore.)"
 
-#: settings.php:199
+#: settings.php:228
 msgid "You can type in anything that you would type into a Google Maps search field, from a full address to an intersection, landmark, city, zip code or latitude/longitude coordinates."
 msgstr "Vous pouvez saisir tout ce que vous dactylographieriez dans un champ de recherche de Google Maps, d'une adresse complète à une intersection, à une borne limite, à une ville, à un code postal ou à une latitude/à coordonnées de longitude."
 
-#: settings.php:209
+#: settings.php:238
 msgid "%d (farthest) to %d (closest)"
 msgstr "%d (les plus lointains) à %d (le plus étroit)"
 
-#: settings.php:233
-#: settings.php:249
+#: settings.php:262
+#: settings.php:278
 msgid "Off"
 msgstr "Outre de"
 
-#: settings.php:234
-#: settings.php:250
+#: settings.php:263
+#: settings.php:279
 msgid "Automatic"
 msgstr "Automatique"
 
-#: settings.php:235
+#: settings.php:264
 msgid "Horizontal Bar"
 msgstr "Barre horizontale"
 
-#: settings.php:236
+#: settings.php:265
 msgid "Dropdown Menu"
 msgstr "Menu Dropdown"
 
-#: settings.php:239
-#: settings.php:256
+#: settings.php:268
+#: settings.php:285
 msgid " \"Automatic\" will automatically switch to the appropriate control based on the window size and other factors."
 msgstr "\"Automatique\" commutera automatiquement à la commande appropriée basée sur la taille de fenêtre et d'autres facteurs."
 
-#: settings.php:251
+#: settings.php:280
 msgid "Small"
 msgstr "Petit"
 
-#: settings.php:252
+#: settings.php:281
 msgid "Android"
 msgstr "Androïde"
 
-#: settings.php:253
+#: settings.php:282
 msgid "Zoom/Pan"
 msgstr "Bourdonnement/casserole"
 
@@ -315,6 +315,10 @@ msgstr "Adresse:"
 msgid "(Geocoded to: %f, %f)"
 msgstr "(Geocoded à : %f, %f)"
 
+#: views/meta-re-abolish-slavery.php:1
+msgid "Please check out <a href=\"http://wordpress.org/extend/plugins/re-abolish-slavery-ribbon/\">the Re-Abolish Slavery plugin</a> if you'd like to use your website to help raise awareness about modern-day forms of slavery, like forced labor and sex trafficking."
+msgstr "Veuillez consulter <a href=\"http://wordpress.org/extend/plugins/re-abolish-slavery-ribbon/\">, comme le plugin de l'esclavage Re-Abolish</a> si vous désirez utiliser votre site Web pour aider à sensibiliser les formes modernes d'esclavage, travail forcé et trafic de sexe."
+
 #: views/meta-z-index.php:1
 msgid "When two markers overlap, the marker with the higher stacking order will be on top. The Default is 0."
 msgstr "Quand deux marqueurs recouvrent, le marqueur avec l'ordre supérieur de empilement sera sur le dessus. Le défaut est 0."
@@ -323,11 +327,11 @@ msgstr "Quand deux marqueurs recouvrent, le marqueur avec l'ordre supérieur de 
 msgid "Stacking Order:"
 msgstr "Empilement de l'ordre :"
 
-#: views/settings.php:3
+#: views/settings.php:5
 msgid "%s Settings"
 msgstr "arrangements de %s"
 
-#: views/settings.php:9
+#: views/settings.php:14
 msgid "Save Changes"
 msgstr "Changements d'économies"
 
@@ -347,3 +351,9 @@ msgstr "Ian Dunn"
 msgid "http://iandunn.name"
 msgstr "http://iandunn.name"
 
+#~ msgid ""
+#~ "%s has enabled uploading images network-wide so that placemark icons can "
+#~ "be set."
+#~ msgstr ""
+#~ "%s a permis des images de chargement à l'ensemble du réseau de sorte que "
+#~ "des icônes de placemark puissent être placées.s"

@@ -23,12 +23,12 @@ if( !class_exists( 'BGMPSettings' ) )
 		 */
 		public function __construct()
 		{
-			add_action( 'init',				array( $this, 'init' ), 9 );	// lower priority so that variables defined here will be available to other init callbacks
-			add_action( 'init',				array( $this, 'updateMapCoordinates' ) );
-			add_action( 'admin_menu',		array( $this, 'addSettingsPage' ) );
-			add_action( 'admin_init',		array( $this, 'addSettings') );			// @todo - this may need to fire after admin_menu
+			add_action( 'init',			array( $this, 'init' ), 9 );	// lower priority so that variables defined here will be available to other init callbacks
+			add_action( 'init',			array( $this, 'updateMapCoordinates' ) );
+			add_action( 'admin_menu',	array( $this, 'addSettingsPage' ) );
+			add_action( 'admin_init',	array( $this, 'addSettings') );			// @todo - this may need to fire after admin_menu
 			
-			add_filter( 'plugin_action_links_basic-google-maps-placemarks/basic-google-maps-placemarks.php', array($this, 'addSettingsLink') );
+			add_filter( 'plugin_action_links_basic-google-maps-placemarks/basic-google-maps-placemarks.php', array( $this, 'addSettingsLink' ) );
 		}		
 		
 		/**
@@ -54,8 +54,9 @@ if( !class_exists( 'BGMPSettings' ) )
 			
 			$this->mapTypeControl			= get_option( BasicGoogleMapsPlacemarks::PREFIX . 'map-type-control',		'off' );
 			$this->mapNavigationControl		= get_option( BasicGoogleMapsPlacemarks::PREFIX . 'map-navigation-control',	'DEFAULT' );
-			$this->mapInfoWindowMaxWidth	= get_option( BasicGoogleMapsPlacemarks::PREFIX . 'map-info-window-width',	500 );	// @todo - this isn't DRY, same values in BGMP::singleActivate() and upgrade()
+			$this->mapInfoWindowMaxWidth	= get_option( BasicGoogleMapsPlacemarks::PREFIX . 'map-info-window-width',	500 );
 			
+			// @todo - this isn't DRY, same values in BGMP::singleActivate() and upgrade()
 		}
 		
 		/**
@@ -67,6 +68,7 @@ if( !class_exists( 'BGMPSettings' ) )
 		public function updateMapCoordinates()
 		{
 			// @todo - this could be done during a settings validation callback?
+			global $bgmp;
 			
 			$haveCoordinates = true;
 			
@@ -76,7 +78,7 @@ if( !class_exists( 'BGMPSettings' ) )
 					$haveCoordinates = false;
 				else
 				{
-					$coordinates = $this->bgmp->geocode( $_POST[ BasicGoogleMapsPlacemarks::PREFIX . 'map-address'] );
+					$coordinates = $bgmp->geocode( $_POST[ BasicGoogleMapsPlacemarks::PREFIX . 'map-address'] );
 				
 					if( !$coordinates )
 						$haveCoordinates = false;

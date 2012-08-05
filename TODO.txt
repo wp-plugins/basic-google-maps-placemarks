@@ -14,19 +14,19 @@
 	Update readme changelog and upgrade notice
 	Update PHP/WP version requirements in basic-google-maps-placemarks.php comment and core.php constant
 	Test on WPMS playground
-	Test on washingtonhousechurches.net
-	Update final version numbers in both places in code
+	Update final version numbers in basic-google-maps-placemarks.php comment and core.php constant
 	Update readme stable tag
 	Remove any notes from TODO for current release
 	Update localizations
 		Generate new .pot file and update header values inside it
-			cd to wordpress-i18n-tools dir
+			cd wordpress-i18n-tools
 			php makepot.php wp-plugin ../wp/wp-content/plugins/basic-google-maps-placemarks/
-			cp basic-google-maps-placemarks.pot ../wp/wp-content/plugins/basic-google-maps-placemarks/languages/
+			mv basic-google-maps-placemarks.pot ../wp/wp-content/plugins/basic-google-maps-placemarks/languages/
+		Update French translation yourself until a native speaker takes it over
 		Commit to trunk (but don't tag or update readme.txt Stable tag yet)
 		E-mail translators links to latest .pot and complete .zip files
-		Update French translation yourself until a native speaker takes it over
 		Add updated POMO files from translators to local working copy
+	If major changes, commit release candidate and add message on forums asking for testing/feedback
 	Commit to repository with 'Committing [version]' and 'Tagging [version]'
 	Download .zip file and test extracting
 	Respond to any relevant open forum posts, and mark as resolved where appropriate
@@ -34,65 +34,12 @@
 
 ** Version numbering scheme **
 	Basic Google Maps Placemarks x.y.z
-	x = Major, fundamental changes, possibly breaking backwards compatability. Will probably never do a 2.0 unless WP makes some fundamental change to custom post types, Google releases v4 of the API, or you rewrite the whole plugin from scratch to use better OO patterns
+	x = Major, fundamental changes, possibly breaking backwards compatability. Will probably never do a 2.0 unless WP makes some fundamental change to custom post types, Google releases v4 of the API, or you rewrite the whole plugin from scratch to use better OO/MVC patterns
 	y = New features or other significant changes. Things that average users would want enough to upgrade.
 	z = Bug fixes, minor tweaks, small feature additions
 
 
 ** Roadmap **
-
-
-1.8
-	http://core.trac.wordpress.org/ticket/20995#comment:5
-	You'll need to patch 1.7, commit that, and then integrate the changes in 1.8-alpha1
-
-
-	add an unobtrusive, dismissable note promoting re-ablish slavery plugin
-		requires 3.3? instead of bumping requirement, just wrap whole thing in "if wp_version > 3.3" block
-			don't think it does. wp_screen is new in 3.3, but probalby had other way to do it in past. maybe test on a 3.0 build just to be safe
-
-	internatinoalization
-		need to escape translated strings?
-		3.4 changes -- http://wppolyglots.wordpress.com/important-changes-for-wordpress-3-4/
-			3 pot files now - so, need to require 3.4?
-
-	changed a lot of stuff around w/ __construct() in both classes, etc, so do some good testing of basic stuff that you assume works b/c it always has
-
-	add placemark default icon by category example to readme
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-categories-feature-requests?replies=16#post-2562891
-		test it out first
-
-	move variable init from __construct() to init hook callback. nothing but action registrations in constuct()
-		same for settings class
-		done, but need to do testing
-		need to call $settings->init() in each unit test function
-		make sure $options is defined before networkactivate() runs b/c of the enqueuemessage in there
-			hook to 'muplugins_loaded' instead of init? see nordstrom-store-events plugin. if so, copy comment on add_action line over as well.
-			but got noticed from nse plugin on WP standalone. default options not set on first install now b/c moved from __construct()?
-				NOTICE: wp-content/plugins/nordstrom-store-events/core.php:850 - Undefined index: updates
-				NOTICE: wp-content/plugins/nordstrom-store-events/core.php:850 - Undefined index: errors
-				no, i think it's just b/c NSE had init fire on mu_loaded, which doesn't run on single wp?
-
-	update $bgmp->geocode() references in readme now that it's static?
-		but it's not static. i thought i made it static, maybe screwed up source control at some point? maybe look at forums post to remind what happened
-
-	find replacement for 'how to check for javascript errors' link
-
-	test on 3.4 release candidates, update compatable tag to latest
-
-	commit rc1, add forums post like 1.7rc1
-	email translators
-	commit updated pomo files for
-
-	update forums
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-google-logo-is-zoomed-and-ipad-safari-cant-zoom-the-page?replies=4
-
-	refactored buildMap() a little bit, test it out
-		took addplacemarks() outside the try{} b/c it has has it made the error less clear and it has it's own try{} later on
-		add note to changelog?
-	
-	refactored if( !post ) segments, need to test that can still call shortcode from templates (with and without $post) without problems
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-can-i-use-the-shortcode-on-any-php-without-assign-it-in-functionphp?replies=3
 
 1.8.1
 	column sorting broken
@@ -104,11 +51,14 @@
 			updatge readme
 		still peek ahead to tell if shortcode called or not, and enqueue functions.js based on that, but don't need to do that for data
 
+	need to escape translated strings?
+	
 	show map on single placemark page that only shows that individual marker
 		add "placemarks" param to bgmp-map shortcode. e.g., [bgmp-map placemarks="13,93,234"]. pass in post ids
 		add to list shortcode also?
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-placemark-page-with-just-one-placemarks
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-possibility-to-show-a-single-placemark?replies=1#post-2554004
+		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-how-to-have-the-info-window-popup-when-the-map-is-shown?replies=1#post-3020406
 
 	enqueuemessage() bug - adds it twice for coordinates error, probably for everything else too
 		i think this is because the hook that enqueueMessage() is called from fires multiple times on page load. some times it may even fire AFTER the messages have been printed, so it'll add ones to the next page load

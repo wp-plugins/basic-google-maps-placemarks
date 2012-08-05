@@ -3,7 +3,7 @@ Contributors: iandunn
 Donate link: http://www.doctorswithoutborders.org
 Tags: google map, map, embed, marker, placemark, icon, geocode, multisite
 Requires at least: 3.1
-Tested up to: 3.3.2
+Tested up to: 3.4.1
 Stable tag: 1.7
 License: GPL2
 
@@ -171,6 +171,9 @@ Read the Basic Usage section of [the Installation page](http://wordpress.org/ext
 
 
 = How can I get help when I'm having a problem? =
+
+**Don't e-mail me. I automatically delete any support requests that come in over e-mail. Follow the steps below instead.**
+
 1. Read the Basic Usage and Advanced Usage sections of [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/).
 2. Read the answers on this page.
 3. Check [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks), because there's a good chance your problem has already been answered there.
@@ -180,7 +183,7 @@ If you still need help, then follow these instructions:
 
 1. Disable all other plugins and switch to the default theme, then check if the problem is still happening. 
 2. If it isn't, then the problem may actually be with your theme or other plugins you have installed.
-3. If the problem is still happening, then start a new thread in the forum with a **detailed description** of your problem and **the URL to the map on your site**.
+3. If the problem is still happening, then start a new thread in the forum with a **detailed description** of your problem and **the URL to the page on your site where you placed the map**.
 4. Tag the post with `basic-google-maps-placemarks` so that I get an e-mail notification.
 5. Check the 'Notify me of follow-up posts via e-mail' box so you won't miss any replies.
 
@@ -200,7 +203,7 @@ This is probably because some rules from your theme's stylesheet are being appli
 
 
 = The page says 'Loading map...', but the map never shows up. =
-[Check to see if there are any Javascript errors](http://www.cmsmarket.com/resources/dev-corner/92-how-to-check-for-javascript-errors) caused by your theme or other plugins, because an error by any script can prevent all the other scripts from running.
+Check to see if there are any Javascript errors by [opening the JavaScript console](http://webmasters.stackexchange.com/q/8525/16266) in your web browser. An error caused by other plugins or your theme can prevent BGMP from working. You'll need to fix the errors, or switch to a different plugin/theme.
 
 Also, make sure your theme is calling *[wp_footer()](http://codex.wordpress.org/Function_Reference/wp_footer)* right before the closing *body* tag in footer.php. 
 
@@ -365,11 +368,13 @@ If you need to hire somebody to customize or extend the plugin to fit your speci
 = 1.8 =
 * Added internationalization support
 * Added localizations for Chinese and French
-* Fixed [Google logo size bug](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-google-logo-is-zoomed-and-ipad-safari-cant-zoom-the-page).
-* Added plug for [Re-Abolish Slavery Ribbon](http://wordpress.org/extend/plugins/re-abolish-slavery-ribbon/) plugin on Settings page.
+* Removed height:auto CSS rule because it was [distorting the Google logo](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-google-logo-is-zoomed-and-ipad-safari-cant-zoom-the-page) and [prevented info. windows with images from sizing properly](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-placemarks-content-to-display-fully).
+* Added shameless plug for [Re-Abolish Slavery Ribbon](http://wordpress.org/extend/plugins/re-abolish-slavery-ribbon/) plugin on Settings page.
 * Replaced inline markup in bgmp_requirementsNotMet() and BasicGoogleMapsPlacemarks::printMessages() with views/message.php
 * Changed all instances of self::PREFIX to BasicGoogleMapsPlacemarks::PREFIX in settings.php.
 * Moved variables from __construct() to init() in BasicGoogleMapsPlacemarks and BGMPSettings classes.
+* Switched to using [$networkWide parameter for activation callback](http://core.trac.wordpress.org/ticket/20995).
+* Moved addPlacemarks() call outside the try/catch block in buildMap to keep error messages more clear
 
 = 1.7 =
 * [bgmp-map] now [supports category, map center, zoom level and other parameters](http://wordpress.org/support/topic/basic-google-maps-placemarks-ok-but-only-1-map).
@@ -470,8 +475,8 @@ If you need to hire somebody to customize or extend the plugin to fit your speci
 
 == Upgrade Notice ==
 
-= 1.7.1 =
-* BGMP 1.7.1 is internationalized and includes French and Chinese localizations.
+= 1.8 =
+* BGMP 1.8 is internationalized and includes French and Chinese localizations.
 
 = 1.7 =
 BGMP 1.7 adds support for category, map center, zoom level and other parameters in the [bgmp-map] and [bgmp-list] shortcodes.

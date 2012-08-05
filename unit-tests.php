@@ -96,6 +96,7 @@ class bgmpCoreUnitTests extends UnitTestCase
 		$this->assertEqual( $emptyArray, $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( 234 ) ) );
 		
 		// Categories
+		// @todo insert categories before test, then delete after?
 		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'categories' => 'parks,restaurants,shopping-malls' ) ) );
 		$this->assertTrue( in_array( 'parks', $cleaned[ 'categories' ] ) );
 		$this->assertTrue( in_array( 'restaurants', $cleaned[ 'categories' ] ) );
@@ -213,7 +214,7 @@ class bgmpCoreUnitTests extends UnitTestCase
 		$this->assertEqual( $address['latitude'], '47.6062095' );
 	
 		$address = $bgmp->geocode( "111 Chelsea Street, Boston, MA 02128" );
-		$this->assertEqual( $address['longitude'], '-71.035377' );
+		$this->assertEqual( $address['longitude'], -71.0354582 );
 	}
 	
 	
@@ -253,7 +254,7 @@ class bgmpCoreUnitTests extends UnitTestCase
 		$bgmp->init();
 		$validateCoordinates = self::getHiddenMethod( 'validateCoordinates' );
   
-		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( '38°53\'23"N,77°00\'27"W' ) ) );
+		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( '38Â°53\'23"N,77Â°00\'27"W' ) ) );
 	}
 	
 	public function testValidateCoordinatesFailsWithEmptyCoordinates()
