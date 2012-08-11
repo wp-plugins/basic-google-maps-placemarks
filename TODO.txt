@@ -11,13 +11,17 @@
 	Checkout SVN trunk to playground/wp 
 	Update alpha version numbers in basic-google-maps-placemarks.php comment and core.php constant
 	Update readme compatible tag to latest WP version
-	Update readme changelog and upgrade notice
-	Update PHP/WP version requirements in basic-google-maps-placemarks.php comment and core.php constant
-	Work on a single feature/bug fix/etc at a time, test and commit to SVN trunk
+	Work on a single feature/bug fix/etc at a time
+		Update readme changelog and upgrade notice
+		Update PHP/WP version requirements in basic-google-maps-placemarks.php comment and core.php constant
+		Test and commit to SVN trunk
 	
 	Upgrade playground/wpms to latest WordPress release
 	Checkout SVN trunk to playground/wpms
 	Test latest commits
+	Update final version numbers in basic-google-maps-placemarks.php comment and core.php constant
+	Update readme stable tag
+	
 	Update localizations
 		Generate new .pot file and update header values inside it
 			cd wordpress-i18n-tools
@@ -28,8 +32,6 @@
 		E-mail translators links to latest .pot and complete .zip files
 		Add updated POMO files from translators to local working copy
 	
-	Update final version numbers in basic-google-maps-placemarks.php comment and core.php constant
-	Update readme stable tag
 	Remove any notes from TODO for current release
 	If major changes, commit release candidate
 		Update version to x.x-rc1
@@ -65,16 +67,18 @@
 		
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-using-markerclusterer-with-bgmp-plugin?replies=2
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-many-markers-behavior?replies=1#post-2778964
+		
 	
-1.9.1
-	column sorting broken
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-sortable-columns-broken?replies=1#post-2851834
-
 	bgmpdata can be output inside shortcode funciton
 		this would simplify things a lot, wouldn't have to parse out anymore
 		wouldn't have to use filters to insert args with do_shortcode
 			updatge readme
 		still peek ahead to tell if shortcode called or not, and enqueue functions.js based on that, but don't need to do that for data
+
+	
+1.9.1
+	column sorting broken
+		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-sortable-columns-broken?replies=1#post-2851834
 
 	need to escape translated strings?
 	
@@ -141,26 +145,15 @@
 
 	shouuld be using $this::PREFIX instead of self::PREFIX ?
 
-	if( !is_array( $mediaButtons ) || !array_key_exists( 'image', $mediaButtons ) || !$mediaButtons[ 'image' ] )
-		have to add check if mediabuttons is an array first. test
-		do in networkactivate() and addfeatruedimagesupport()
-
 	bgmp add filter for gmaps url so guy can do language=no w/out moding core
 		what was forum url? add to list below
 
-	wpms media buttons have changed now? not on network settings menu anymore?
-		if so, update link
-		might need to do an -- if( version == x.y ) link = "...", etc
-		it was just removed? seems to work w/out it
-
-	add nomte to upgrade hook to explian why it's priroty 11 instead of 10
+	add note to upgrade hook to explian why it's priroty 11 instead of 10
 
 	add archive
 		has_archive in cpt reg
 		upgrade() has to flush rewrite rules
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-how-to-access-placemarks-list-archive-directly?replies=1
-
-	remove the faq text that says 'make sure tagged with `basic-google-maps-placemarks` b/c not accurate anymore?
 
 1.9.3
 	internationalize functions.js
@@ -258,6 +251,8 @@
 		maybe only keep it in the WP settings menu for existing installs? new installs would only have it in the Placemarks menu
 		update documentation
 
+	mapShortcode()
+		shouldn't check for stylesheet here? only really need the two scripts, so removing stylesheet check would let users dequeue stylesheet and use their own w/out having to keep same name. update readme
 
 1.minor
 	infowinder not rounded anymore?

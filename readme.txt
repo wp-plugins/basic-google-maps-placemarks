@@ -366,6 +366,11 @@ If you just need some minor customizations or are looking for someone with a low
 
 == Changelog ==
 
+= 1.9 =
+* markerclustere
+* bgmpdata movedf to do_shortcode
+* new view for map shortcode
+
 = 1.8 =
 * Added internationalization support
 * Added localizations for Chinese and French
@@ -476,8 +481,11 @@ If you just need some minor customizations or are looking for someone with a low
 
 == Upgrade Notice ==
 
+= 1.9 =
+BGMP 1.9 includes the MarkerClusterer library
+
 = 1.8 =
-* BGMP 1.8 is internationalized and includes French and Chinese localizations.
+BGMP 1.8 is internationalized and includes French and Chinese localizations.
 
 = 1.7 =
 BGMP 1.7 adds support for category, map center, zoom level and other parameters in the [bgmp-map] and [bgmp-list] shortcodes.

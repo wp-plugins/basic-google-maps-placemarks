@@ -3,7 +3,7 @@
 Plugin Name: Basic Google Maps Placemarks
 Plugin URI: http://wordpress.org/extend/plugins/basic-google-maps-placemarks/
 Description: Embeds a Google Map into your site and lets you add map markers with custom icons and information windows. Each marker can have a different icon.
-Version: 1.8
+Version: 1.9-alpha1
 Author: Ian Dunn
 Author URI: http://iandunn.name
 Text Domain: bgmp
@@ -33,9 +33,10 @@ if( $_SERVER['SCRIPT_FILENAME'] == __FILE__ )
 
 load_plugin_textdomain( 'bgmp', false, basename( dirname( __FILE__ ) ) . '/languages' );
 	
-define( 'BGMP_NAME', __( 'Basic Google Maps Placemarks', 'bgmp' ) );
-define( 'BGMP_REQUIRED_PHP_VERSION', '5.2' );	// because of filter_var()
-define( 'BGMP_REQUIRED_WP_VERSION', '3.1' );	// because of WP_Query[ 'tax_query' ] support
+define( 'BGMP_NAME',					__( 'Basic Google Maps Placemarks', 'bgmp' ) );
+define( 'BGMP_REQUIRED_PHP_VERSION',	'5.2' );	// because of filter_var()
+define( 'BGMP_REQUIRED_WP_VERSION',		'3.1' );	// because of WP_Query[ 'tax_query' ] support
+
 
 /**
  * Checks if the system requirements are met

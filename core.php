@@ -15,7 +15,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 	{
 		// Declare variables and constants
 		protected $settings, $options, $updatedOptions, $userMessageCount, $mapShortcodeCalled, $mapShortcodeArguments, $mapShortcodeCategories;
-		const VERSION		= '1.8';
+		const VERSION		= '1.9-alpha1';
 		const PREFIX		= 'bgmp_';
 		const POST_TYPE		= 'bgmp';
 		const TAXONOMY		= 'bgmp-category';
@@ -497,6 +497,14 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			);
 			
 			wp_register_script(
+				'markerClusterer',
+				plugins_url( 'includes/marker-clusterer/markerclusterer_packed.js', __FILE__ ),
+				array(),
+				'1.0',
+				true
+			);
+			
+			wp_register_script(
 				'bgmp',
 				plugins_url( 'functions.js', __FILE__ ),
 				array( 'googleMapsAPI', 'jquery' ),
@@ -517,8 +525,11 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			if( !is_admin() && $this->mapShortcodeCalled )
 			{
 				wp_enqueue_script( 'googleMapsAPI' );
+				if( true )	// @todo add option
+					wp_enqueue_script( 'markerClusterer' );
 				wp_enqueue_script( 'bgmp' );
 				
+				/* // @todo remove if get working in do_shortcode()
 				$bgmpData = sprintf(
 					"bgmpData.options = %s;\r\nbgmpData.markers = %s",
 					json_encode( $this->getMapOptions() ),
@@ -526,6 +537,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				);
 				
 				wp_localize_script( 'bgmp', 'bgmpData', array( 'l10n_print_after' => $bgmpData ) );
+				*/
 			}
 			
 			if( $this->mapShortcodeCalled )
@@ -886,14 +898,9 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				return $error;
 			}
 			
-			$output = sprintf('
-				<div id="%smap-canvas">
-					<p>'. __( 'Loading map...', 'bgmp' ) .'</p>
-					<p><img src="%s" alt="'. __( 'Loading', 'bgmp' ) .'" /></p>
-				</div>',
-				self::PREFIX,
-				plugins_url( 'images/loading.gif', __FILE__ )
-			);	// @todo - escape alt attr?
+			ob_start();
+			require_once( dirname( __FILE__ ) . '/views/shortcode-yurt-color-picker.php' );
+			$output = ob_get_clean();
 			
 			return $output;
 		}		
