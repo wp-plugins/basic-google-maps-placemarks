@@ -6,17 +6,21 @@
  */
 
 
-** New release checklist **
-	Update development installations to latest WP version
-	Develop on WP single site
+** Development Workflow / New Release Checklist **
+	Upgrade plaground/wp to latest WordPress release
+	Checkout SVN trunk to playground/wp 
 	Update alpha version numbers in basic-google-maps-placemarks.php comment and core.php constant
 	Update readme compatible tag to latest WP version
 	Update readme changelog and upgrade notice
 	Update PHP/WP version requirements in basic-google-maps-placemarks.php comment and core.php constant
-	Test on WPMS playground
+	Work on a single feature/bug fix/etc at a time, test and commit to SVN trunk
+	
+	Upgrade playground/wpms to latest WordPress release
+	Checkout SVN trunk to playground/wpms
+	Test latest commits
 	Update final version numbers in basic-google-maps-placemarks.php comment and core.php constant
 	Update readme stable tag
-	Remove any notes from TODO for current release
+	
 	Update localizations
 		Generate new .pot file and update header values inside it
 			cd wordpress-i18n-tools
@@ -26,22 +30,44 @@
 		Commit to trunk (but don't tag or update readme.txt Stable tag yet)
 		E-mail translators links to latest .pot and complete .zip files
 		Add updated POMO files from translators to local working copy
-	If major changes, commit release candidate and add message on forums asking for testing/feedback
-	Commit to repository with 'Committing [version]' and 'Tagging [version]'
+	
+	Remove any notes from TODO for current release
+	If major changes, commit release candidate
+		Update version to x.x-rc1
+		Add support forum message asking for testing/feedback
+		Wait about a week
+		Release final version
+	Commit latest changes to SVN trunk
+	Tag trunk
 	Download .zip file and test extracting
 	Respond to any relevant open forum posts, and mark as resolved where appropriate
 
 
 ** Version numbering scheme **
 	Basic Google Maps Placemarks x.y.z
-	x = Major, fundamental changes, possibly breaking backwards compatability. Will probably never do a 2.0 unless WP makes some fundamental change to custom post types, Google releases v4 of the API, or you rewrite the whole plugin from scratch to use better OO/MVC patterns
+	x = Major, fundamental changes, possibly breaking backwards compatability. Will probably never do a 2.0 unless WP makes some fundamental change to custom post types, Google releases v4 of the API, or you gradually refactor large portions of the plugin to use better OO/MVC patterns
 	y = New features or other significant changes. Things that average users would want enough to upgrade.
 	z = Bug fixes, minor tweaks, small feature additions
 
 
 ** Roadmap **
 
-1.8.1
+1.9
+	MarkerClusterer integration
+		add the library w/ basics hardcoded
+			have filter on the icon
+		commit, tag as 1.9-alpha1. email adnan
+		add settings to
+			enable/disable
+			cluster threshold
+			icon?
+				maybe select from media library 
+		any other related tasks?
+		
+		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-using-markerclusterer-with-bgmp-plugin?replies=2
+		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-many-markers-behavior?replies=1#post-2778964
+	
+1.9.1
 	column sorting broken
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-sortable-columns-broken?replies=1#post-2851834
 
@@ -94,7 +120,7 @@
 		also add ID field to the placemarks
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-how-to-open-the-placemark-url-in-the-info-window?replies=1#post-2816596
 
-1.8.2
+1.9.2
 	add credits section to other notes
 		list people who've contributed code, helped out in forums, translators in future
 		Ridgididgi - help on forums, link to profile?
@@ -137,7 +163,7 @@
 
 	remove the faq text that says 'make sure tagged with `basic-google-maps-placemarks` b/c not accurate anymore?
 
-1.8.3
+1.9.3
 	internationalize functions.js
 
 	add more machine language translations
@@ -173,7 +199,7 @@
 				ukranian
 				vietnamiese
 
-1.8.4
+1.9.4
 	output buffering for shortcode views instead of inline html
 
 	inline documentation
@@ -203,7 +229,7 @@
 
 	check js file for unnecessary $( this ) calls -- http://whattheheadsaid.com/2010/10/utilizing-the-awesome-power-of-jquery-to-access-properties-of-an-element
 
-1.8.5
+1.9.5
 	savecustomfields() should use $postid that was passed in instead of global $post->id ?
 
 	ensure filtered varaable data types don't change, like you did for ODCG
@@ -225,6 +251,13 @@
 
 	refactor geocode() error checking into multiple functions, like nordlocal remoteGetSuccessful()
 
+	add Settings to Placemarks menu?
+		http://wp.smashingmagazine.com/2012/08/08/help-us-help-wordpress/
+		yeah, it doesn't hurt to add it there.
+		but maybe leave it in WP settings menu too for backwards compatability?
+			then maybe remove it after a year?
+		maybe only keep it in the WP settings menu for existing installs? new installs would only have it in the Placemarks menu
+		update documentation
 
 
 1.minor
@@ -278,6 +311,7 @@
 
 		maybe make this 2.0 if you need to rewrite everything to be more MVC and testable. probably not worth the effort, unless you just want to do it to learn
 			could abstract out the hooks, api interaction etc in the constructors, and have the models all accept/return variables so they'd be testable. supposed to test controllers instead of models, though?
+			http://www.joelonsoftware.com/articles/fog0000000069.html
 
 
 1.major.x
@@ -442,9 +476,6 @@
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-onclick-from-external-link?replies=1
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-categories-feature-requests?replies=13#post-2558220
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-several-questions-about-categories-and-links?replies=1
-	3 - marker clustering
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-using-markerclusterer-with-bgmp-plugin?replies=2
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-many-markers-behavior?replies=1#post-2778964
 	3 - instead of setting icon on placemark, you could set it on taxonomy. looks for in order: placemark icon > category icon > default icon
 	3 - geolocate ip and use as addr for placemark
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-automatic-location?replies=1#post-2566677

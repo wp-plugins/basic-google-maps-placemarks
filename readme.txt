@@ -1,10 +1,10 @@
 === Basic Google Maps Placemarks ===
 Contributors: iandunn
 Donate link: http://www.doctorswithoutborders.org
-Tags: google map, map, embed, marker, placemark, icon, geocode, multisite
+Tags: google map, map, embed, marker, placemark, icon, geocode
 Requires at least: 3.1
 Tested up to: 3.4.1
-Stable tag: 1.7
+Stable tag: 1.8
 License: GPL2
 
 Embeds a Google Map into your site and lets you add map markers with custom icons and information windows.
@@ -172,19 +172,17 @@ Read the Basic Usage section of [the Installation page](http://wordpress.org/ext
 
 = How can I get help when I'm having a problem? =
 
-**Don't e-mail me. I automatically delete any support requests that come in over e-mail. Follow the steps below instead.**
+> **Don't e-mail me.** I automatically delete any support requests that come in over e-mail. Follow the steps below instead.
 
-1. Read the Basic Usage and Advanced Usage sections of [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/).
-2. Read the answers on this page.
-3. Check [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks), because there's a good chance your problem has already been answered there.
+1. Read the [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/).
+2. Read the answers in this FAQ.
+3. Check [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks), because there's a good chance your problem has already been addressed there.
 4. Check the [Other Notes](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/other_notes/) page for known conflicts with other plugins.
 
 If you still need help, then follow these instructions:
 
-1. Disable all other plugins and switch to the default theme, then check if the problem is still happening. 
-2. If it isn't, then the problem may actually be with your theme or other plugins you have installed.
+1. Disable all other plugins and switch to the default theme, then check if the problem is still happening. If it isn't, then the problem may actually be with your theme or other plugins you have installed.
 3. If the problem is still happening, then start a new thread in the forum with a **detailed description** of your problem and **the URL to the page on your site where you placed the map**.
-4. Tag the post with `basic-google-maps-placemarks` so that I get an e-mail notification.
 5. Check the 'Notify me of follow-up posts via e-mail' box so you won't miss any replies.
 
 I monitor the forums and respond to a lot of the requests. I do this in my spare time, though, and can't respond to all of them. I typically only have time to help with problems that are within the plugin's scope. That means that I probably won't respond if the issue is actually caused by your theme or another plugin, or if you're trying to modify the plugin to do something it doesn't natively do. It's still a good idea to post something on the forums, though, because other users may be able to help out when I can't.
@@ -338,12 +336,14 @@ If there isn't a translation for your language (or it is incomplete/inaccurate) 
 
 **How you can help with the plugin's development**
 
-* The thing I could really use some help with is answering questions on [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks). I don't have a lot of time to work on the plugin, so the time I spend answering questions reduces the amount of time I have to add new features. If you're familiar with the plugin and would like to help out, you can click the 'Subscribe to Emails for this Tag' link to get an e-mail whenever a new post is created.
+* The thing I could really use some help with is answering questions on [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks). I don't have a lot of time to work on the plugin, so the time I spend answering questions reduces the amount of time I have to add new features. If you're familiar with the plugin and would like to help out, you can click the 'Subscribe to Emails for this Plugin' link to get an e-mail whenever a new post is created.
 * Translate the plugin into your language. See the *Localizations* section above for details.
 * Volunteer to test new versions before they're officially released. [Contact me](http://iandunn.name/contact) if you want to be put on the list.
 * If you find a bug, create a post on [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks) with as much information as possible. If you're a developer, create a patch and include a link to it in the post.
-* Check the TODO.txt file for features that need to be added and submit a patch.
+* Send me feedback on how easy or difficult the plugin is to use, and where you think things could be improved. Add a post to [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks) with details.   
 * Review the code for security vulnerabilities and best practices. If you find a security issue, please [contact me](http://iandunn.name/contact) privately so that I can release a patched version before the issue is publicly disclosed.
+* Check the TODO.txt file for features that need to be added and submit a patch.
+
 
 **Donations**
 
@@ -351,8 +351,9 @@ I do this as a way to give back to the WordPress community, so I don't want to t
 
 **Customization**
 
-If you need to hire somebody to customize or extend the plugin to fit your specific needs, please [contact me](http://iandunn.name/contact) and we can discuss the details.
+If you need to hire a developer to add a feature that the plugin doesn't currently have, or to make extensive customizations in order to fit your specific needs, please [contact me](http://iandunn.name/contact) and we can discuss the details. I typically have projects booked at least 3 months in advance, so I'm not able to accomidate "urgent" requests. My minimum project size for this plugin is 10 hours worth of work.
 
+If you just need some minor customizations or are looking for someone with a low hourly rate, I'd recommend checking out some of the [WordPress job-posting sites](http://wpmu.org/12-places-to-find-and-post-wordpress-jobs/). If you make customizations that could be benefitial to other users, please start a thread on [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks) with a description of them and a link to the source code.
 
 
 == Screenshots ==
