@@ -15,7 +15,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 	{
 		// Declare variables and constants
 		protected $settings, $options, $updatedOptions, $userMessageCount, $mapShortcodeCalled, $mapShortcodeArguments, $mapShortcodeCategories;
-		const VERSION		= '1.9-alpha1';
+		const VERSION		= '1.8';
 		const PREFIX		= 'bgmp_';
 		const POST_TYPE		= 'bgmp';
 		const TAXONOMY		= 'bgmp-category';
@@ -497,14 +497,6 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			);
 			
 			wp_register_script(
-				'markerClusterer',
-				plugins_url( 'includes/marker-clusterer/markerclusterer_packed.js', __FILE__ ),
-				array(),
-				'1.0',
-				true
-			);
-			
-			wp_register_script(
 				'bgmp',
 				plugins_url( 'functions.js', __FILE__ ),
 				array( 'googleMapsAPI', 'jquery' ),
@@ -525,8 +517,6 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			if( !is_admin() && $this->mapShortcodeCalled )
 			{
 				wp_enqueue_script( 'googleMapsAPI' );
-				if( true )	// @todo add option
-					wp_enqueue_script( 'markerClusterer' );
 				wp_enqueue_script( 'bgmp' );
 				
 				$bgmpData = sprintf(

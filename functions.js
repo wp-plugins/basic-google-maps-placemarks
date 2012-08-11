@@ -25,17 +25,7 @@ function bgmp_wrapper( $ )
 			bgmp.name				= 'Basic Google Maps Placemarks';
 			bgmp.canvas				= document.getElementById( 'bgmp_map-canvas' );	// We have to use getElementById instead of a jQuery selector here in order to pass it to the Maps API.
 			bgmp.previousInfoWindow	= undefined;
-			bgmp.map				= undefined;
-			bgmp.markerClusterer	= undefined;
-			bgmp.clusterStyles		= [[]];
-			bgmp.markers			= [];
 			
-			// @todo add to options page
-			bgmpData.options.clusterMarkers		= true;
-			bgmpData.options.clusterMaxZoom		= parseInt( -1 );
-			bgmpData.options.clusterGridSize	= parseInt( -1 );
-			bgmpData.options.cluserStyle		= parseInt( -1 );
-								
 			if( bgmp.canvas )
 				bgmp.buildMap();
 			else
@@ -68,13 +58,13 @@ function bgmp_wrapper( $ )
 			};
 			
 			// Override default width/heights from settings
-			$( '#bgmp_map-canvas' ).css( 'width', bgmpData.options.mapWidth );		// @todo use bgmp.canvas intead of hardcoding it?
+			$( '#bgmp_map-canvas' ).css( 'width', bgmpData.options.mapWidth );
 			$( '#bgmp_map-canvas' ).css( 'height', bgmpData.options.mapHeight );
 			
 			// Create the map
 			try
 			{
-				bgmp.map = new google.maps.Map( bgmp.canvas, mapOptions );
+				map = new google.maps.Map( bgmp.canvas, mapOptions );
 			}
 			catch( e )
 			{
@@ -85,19 +75,7 @@ function bgmp_wrapper( $ )
 				return;
 			}
 			
-			bgmp.addPlacemarks( bgmp.map );
-			
-			if( bgmpData.options.clusterMarkers )
-			{
-				/*bgmp.markerCluster = new MarkerClusterer( bgmp.map, bgmp.markers, {
-					maxZoom		: bgmpData.options.clusterMaxZoom,
-					gridSize	: bgmpData.options.clusterGridSize,
-					styles		: bgmp.clusterStyles[ bgmpData.options.clusterStyle ]		// @todo not sure what a good way to handle this is yet. maybe have dropdown just like exampe does
-				} );
-				*/
-				
-				bgmp.markerClusterer = new MarkerClusterer( bgmp.map, bgmp.markers );
-			}
+			bgmp.addPlacemarks( map );
 		},
 		
 		/**
@@ -125,20 +103,8 @@ function bgmp_wrapper( $ )
 			// @todo - should probably refactor this since you pulled out the ajax. update phpdoc too
 			
 			if( bgmpData.markers.length > 0 )
-			{
 				for( var m in bgmpData.markers )
-				{
-					bgmp.createMarker(
-						map,
-						bgmpData.markers[ m ][ 'title' ],
-						bgmpData.markers[ m ][ 'latitude' ],
-						bgmpData.markers[ m ][ 'longitude' ],
-						bgmpData.markers[ m ][ 'details' ],
-						bgmpData.markers[ m ][ 'icon' ],
-						parseInt( bgmpData.markers[ m ][ 'zIndex' ] )
-					);
-				}
-			}
+					bgmp.createMarker( map, bgmpData.markers[m]['title'], bgmpData.markers[m]['latitude'], bgmpData.markers[m]['longitude'], bgmpData.markers[m]['details'], bgmpData.markers[m]['icon'], parseInt( bgmpData.markers[m]['zIndex'] ) );
 		},
 
 		/**
@@ -204,7 +170,17 @@ function bgmp_wrapper( $ )
 					'title'		: title,
 					'zIndex'	: zIndex
 				} );
-				bgmp.markers.push( marker );	// @todo does this becoe different var now? so that the event listener below is mapped to different "object" than the clustered version?
+				
+				/*
+					http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-plugin-error-bad-displays-a-map?replies=18#post-2547595
+					
+					detect what google.maps.latlng() detects when commas passed in.
+					if returns error log that
+					same for marker?
+					
+					latitude "50,3227856"
+					longitude "19,1184871"
+				*/
 				
 				google.maps.event.addListener( marker, 'click', function()
 				{
@@ -214,6 +190,7 @@ function bgmp_wrapper( $ )
 					infowindow.open( map, marker );
 					bgmp.previousInfoWindow = infowindow;
 				} );
+				
 				
 				return true;
 			}
