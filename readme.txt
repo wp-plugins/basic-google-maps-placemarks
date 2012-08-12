@@ -115,6 +115,13 @@ This only works if the file that calls do_shortcode() is [registered as a page t
 
 If you want to use any shortcode arguments, you'll have to put them inside a filter callback instead of the shortcode itself, e.g.,
 
+> @todo this no longer applies, update
+> Before version 1.9, you needed to use the `bgmp_map-shortcode-arguments` filter to pass shortcode arguments when calling `do_shortcode()` from a template, but this is no longer necessary. You can simply pass the arguments in the `do_shortcode()` call, like this:
+
+`
+do_shortcode( '[bgmp-map center="Boston" zoom="5"]' );
+`
+
 `
 function setBGMPMapShortcodeArguments( $options )
 {
@@ -367,20 +374,21 @@ If you just need some minor customizations or are looking for someone with a low
 == Changelog ==
 
 = 1.9 =
-* markerclustere
-* bgmpdata movedf to do_shortcode
-* new view for map shortcode
+* Added the MarkerClusterer library.
+* bgmpData moved to mapShortcode(), so users no longer need to use the `bgmp_map-shortcode-arguments` filter to use shortcode parameters from template files calling `do_shortcode()`. They can just be passed in like normal now.
+* Moved `mapShortcode()` markup into external view file.
+* Ensured action callbacks only run once. This fixes the bug where admin notices would be enqueued 2-3 times.
 
 = 1.8 =
-* Added internationalization support
-* Added localizations for Chinese and French
+* Added internationalization support.
+* Added localizations for Chinese and French.
 * Removed height:auto CSS rule because it was [distorting the Google logo](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-google-logo-is-zoomed-and-ipad-safari-cant-zoom-the-page) and [prevented info. windows with images from sizing properly](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-placemarks-content-to-display-fully).
 * Added shameless plug for [Re-Abolish Slavery Ribbon](http://wordpress.org/extend/plugins/re-abolish-slavery-ribbon/) plugin on Settings page.
-* Replaced inline markup in bgmp_requirementsNotMet() and BasicGoogleMapsPlacemarks::printMessages() with views/message.php
+* Replaced inline markup in bgmp_requirementsNotMet() and BasicGoogleMapsPlacemarks::printMessages() with views/message.php.
 * Changed all instances of self::PREFIX to BasicGoogleMapsPlacemarks::PREFIX in settings.php.
 * Moved variables from __construct() to init() in BasicGoogleMapsPlacemarks and BGMPSettings classes.
 * Switched to using [$networkWide parameter for activation callback](http://core.trac.wordpress.org/ticket/20995).
-* Moved addPlacemarks() call outside the try/catch block in buildMap to keep error messages more clear
+* Moved addPlacemarks() call outside the try/catch block in buildMap to keep error messages more clear.
 
 = 1.7 =
 * [bgmp-map] now [supports category, map center, zoom level and other parameters](http://wordpress.org/support/topic/basic-google-maps-placemarks-ok-but-only-1-map).
@@ -482,7 +490,7 @@ If you just need some minor customizations or are looking for someone with a low
 == Upgrade Notice ==
 
 = 1.9 =
-BGMP 1.9 includes the MarkerClusterer library
+BGMP 1.9 adds support for clustering large numbers of markers together.
 
 = 1.8 =
 BGMP 1.8 is internationalized and includes French and Chinese localizations.

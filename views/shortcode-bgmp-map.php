@@ -1,15 +1,11 @@
-$bgmpData = sprintf(
-				"bgmpData.options = %s;\r\nbgmpData.markers = %s",
-				json_encode( $this->getMapOptions() ),
-				json_encode( $this->getMapPlacemarks() )
-			);
-			wp_localize_script( 'bgmp', 'bgmpData', array( 'l10n_print_after' => $bgmpData ) );
-			
-			$output = sprintf('
-				<div id="%smap-canvas">
-					<p>'. __( 'Loading map...', 'bgmp' ) .'</p>
-					<p><img src="%s" alt="'. __( 'Loading', 'bgmp' ) .'" /></p>
-				</div>',
-				self::PREFIX,
-				plugins_url( 'images/loading.gif', __FILE__ )
-			);	// @todo - escape alt attr?
+<script type="text/javascript">
+	var bgmpData = {
+		options: <?php echo json_encode( $this->getMapOptions( $attributes ) ); ?>,
+		markers: <?php echo json_encode( $this->getMapPlacemarks( $attributes ) ); ?>
+	};
+</script>
+	
+<div id="<?php echo self::PREFIX; ?>map-canvas">
+	<p><?php _e( 'Loading map...', 'bgmp' ); ?></p>
+	<p><img src="<?php echo plugins_url( 'images/loading.gif', dirname( __FILE__ ) ); ?>" alt="<?php _e( 'Loading', 'bgmp' ); ?>" /></p>
+</div>

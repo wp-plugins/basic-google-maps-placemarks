@@ -55,10 +55,7 @@
 
 1.9
 	MarkerClusterer integration
-		add the library w/ basics hardcoded
-			have filter on the icon
-		commit, tag as 1.9-alpha1. email adnan
-		add settings to
+		add settings
 			enable/disable
 			cluster threshold
 			icon?
@@ -71,11 +68,14 @@
 	
 	bgmpdata can be output inside shortcode funciton
 		this would simplify things a lot, wouldn't have to parse out anymore
-		wouldn't have to use filters to insert args with do_shortcode
-			updatge readme
 		still peek ahead to tell if shortcode called or not, and enqueue functions.js based on that, but don't need to do that for data
+		wouldn't have to use filters to insert args with do_shortcode
+		
+		this is done and tested, just need to update readme
 
-	
+	enqueuemessage() bug - adds it twice for coordinates error, probably for everything else too
+		done
+
 1.9.1
 	column sorting broken
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-sortable-columns-broken?replies=1#post-2851834
@@ -88,28 +88,7 @@
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-placemark-page-with-just-one-placemarks
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-possibility-to-show-a-single-placemark?replies=1#post-2554004
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-how-to-have-the-info-window-popup-when-the-map-is-shown?replies=1#post-3020406
-
-	enqueuemessage() bug - adds it twice for coordinates error, probably for everything else too
-		i think this is because the hook that enqueueMessage() is called from fires multiple times on page load. some times it may even fire AFTER the messages have been printed, so it'll add ones to the next page load
-		shouldn't be using hooks that fire multiple times anywya b/c of performance?
-			right, but there isn't a practical way around that?
-			did_action()
-		posts_selection hook fires twice before admin_notices and once after
-
-		problem 1 - messages added multiple times before being printed/cleared
-			check if emssage already exists and don't enqueue if it does
-				might want to add message multiple times, but don't have existing test case for this, so maybe go w/ this until need to do multiple
-
-		problem 2 - adding messages after already printed/cleared
-			clear them at shutdown() instead of immediately after printing?
-				no, b/c then could never add them for the next page
-			if being called AFTER admin_notices, then return instead of adding the message?
-				is there any way to detect that?
-				even if there is, there are valid situations where you want to add message after admin_notices. that's normal, in fact.
-
-		did_action checking fixed both problems? look at nordstrom-store-events
-			add it to all callback functions, not just saveCustomFields()
-
+		
 	documentation hard for non-technical people to follow
 		try to clarify some things
 		add a faq entry w/ links to resources for begining PHP stuff, and a note saying that not everyone will be able to make mods so hire a developer if needed

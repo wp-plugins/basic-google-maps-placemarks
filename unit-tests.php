@@ -330,7 +330,7 @@ class bgmpCoreUnitTests extends UnitTestCase
 	{
 		$bgmp = new BasicGoogleMapsPlacemarks();
 		$bgmp->init();
-		$markers = $bgmp->getMapPlacemarks();
+		$markers = $bgmp->getMapPlacemarks( array() );
 		
 		// @todo - insert a test post to ensure at least 1 exists
 		$this->assertTrue( is_array( $markers ) );

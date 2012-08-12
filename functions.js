@@ -89,7 +89,8 @@ function bgmp_wrapper( $ )
 			
 			if( bgmpData.options.clusterMarkers )
 			{
-				/*bgmp.markerCluster = new MarkerClusterer( bgmp.map, bgmp.markers, {
+				/* @todo
+				 bgmp.markerCluster = new MarkerClusterer( bgmp.map, bgmp.markers, {
 					maxZoom		: bgmpData.options.clusterMaxZoom,
 					gridSize	: bgmpData.options.clusterGridSize,
 					styles		: bgmp.clusterStyles[ bgmpData.options.clusterStyle ]		// @todo not sure what a good way to handle this is yet. maybe have dropdown just like exampe does
@@ -204,7 +205,7 @@ function bgmp_wrapper( $ )
 					'title'		: title,
 					'zIndex'	: zIndex
 				} );
-				bgmp.markers.push( marker );	// @todo does this becoe different var now? so that the event listener below is mapped to different "object" than the clustered version?
+				bgmp.markers.push( marker );
 				
 				google.maps.event.addListener( marker, 'click', function()
 				{
