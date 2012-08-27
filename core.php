@@ -21,6 +21,10 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		const TAXONOMY		= 'bgmp-category';
 		const ZOOM_MIN		= 0;
 		const ZOOM_MAX		= 21;
+		const GRID_ZOOM_MIN	= 7;
+		const GRID_ZOOM_MAX	= 14;
+		const GRID_SIZE_MIN	= 40;
+		const GRID_SIZE_MAX	= 80;
 		const DEBUG_MODE	= false;
 		
 		/**
@@ -163,7 +167,16 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				add_option( self::PREFIX . 'map-navigation-control', 'DEFAULT' );
 			if( !get_option( self::PREFIX . 'map-info-window-width' ) )
 				add_option( self::PREFIX . 'map-info-window-width', 500 );
-				
+			
+			if( !get_option( self::PREFIX . 'marker-clustering' ) )
+				add_option( self::PREFIX . 'marker-clustering', '' );
+			if( !get_option( self::PREFIX . 'cluster-max-zoom' ) )
+				add_option( self::PREFIX . 'cluster-max-zoom', '7' );
+			if( !get_option( self::PREFIX . 'cluster-grid-size' ) )
+				add_option( self::PREFIX . 'cluster-grid-size', '40' );
+			if( !get_option( self::PREFIX . 'cluster-style' ) )
+				add_option( self::PREFIX . 'cluster-style', 'default' );
+			
 			// @todo - this isn't DRY, same values in BGMPSettings::__construct() and upgrade()
 		}
 		
@@ -222,6 +235,23 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				add_option( self::PREFIX . 'map-type',					'ROADMAP' );
 				add_option( self::PREFIX . 'map-type-control',			'off' );
 				add_option( self::PREFIX . 'map-navigation-control',	'DEFAULT' );
+				
+				// @todo - this isn't DRY, those default values appear in activate and settings->construct. should have single array to hold them all
+			}
+			
+			$this->markerClustering			= get_option( BasicGoogleMapsPlacemarks::PREFIX . 'marker-clustering', 		'' );
+			$this->clusterMaxZoom			= get_option( BasicGoogleMapsPlacemarks::PREFIX . 'cluster-max-zoom', 		'7' );
+			$this->clusterGridSize			= get_option( BasicGoogleMapsPlacemarks::PREFIX . 'cluster-grid-size', 		'40' );
+			$this->clusterStyle				= get_option( BasicGoogleMapsPlacemarks::PREFIX . 'cluster-style', 			'default' );
+			
+			
+			if( version_compare( $this->options[ 'dbVersion' ], '1.9', '<' ) )
+			{
+				// Add new options
+				add_option( self::PREFIX . 'marker-clustering',	'' );
+				add_option( self::PREFIX . 'cluster-max-zoom',	'7' );
+				add_option( self::PREFIX . 'cluster-grid-size',	'40' );
+				add_option( self::PREFIX . 'cluster-style',		'default' );
 				
 				// @todo - this isn't DRY, those default values appear in activate and settings->construct. should have single array to hold them all
 			}
@@ -450,12 +480,17 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		 */
 		public function loadResources()
 		{
-			if( is_admin() && did_action( 'admin_enqueue_scripts' ) !== 1 )
-				return;
-			
-			else if( did_action( 'wp' ) !== 1 )
-				return;
-			
+			if( is_admin() )
+			{
+				if( did_action( 'admin_enqueue_scripts' ) !== 1 )
+					return;
+			}
+			else
+			{
+				if( did_action( 'wp' ) !== 1 )
+					return;
+			}
+							
 			wp_register_script(
 				'googleMapsAPI',
 				'http'. ( is_ssl() ? 's' : '' ) .'://maps.google.com/maps/api/js?sensor=false',
@@ -872,7 +907,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			}
 
 			if( !is_array( $attributes ) || !isset( $attributes[ 'categories' ] ) )
-				$attributes[ 'categories' ] = '';
+			$attributes[ 'categories' ] = '';
 			$attributes[ 'categories' ]	= apply_filters( self::PREFIX . 'mapShortcodeCategories', $attributes[ 'categories' ] );		// @todo - deprecated b/c 1.9 output bgmpdata in post; can now just set args in do_shortcode() . also  not consistent w/ shortcode naming scheme and have filter for all arguments now. need a way to notify people
 			$attributes					= apply_filters( self::PREFIX . 'map-shortcode-arguments', $attributes );					// @todo - deprecated b/c 1.9 output bgmpdata in post...
 			$attributes					= $this->cleanMapShortcodeArguments( $attributes );

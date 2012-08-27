@@ -56,8 +56,13 @@ if( !class_exists( 'BGMPSettings' ) )
 			$this->mapNavigationControl		= get_option( BasicGoogleMapsPlacemarks::PREFIX . 'map-navigation-control',	'DEFAULT' );
 			$this->mapInfoWindowMaxWidth	= get_option( BasicGoogleMapsPlacemarks::PREFIX . 'map-info-window-width',	500 );
 			
+			$this->markerClustering			= get_option( BasicGoogleMapsPlacemarks::PREFIX . 'marker-clustering', 		'' );
+			$this->clusterMaxZoom			= get_option( BasicGoogleMapsPlacemarks::PREFIX . 'cluster-max-zoom', 		'7' );
+			$this->clusterGridSize			= get_option( BasicGoogleMapsPlacemarks::PREFIX . 'cluster-grid-size', 		'40' );
+			$this->clusterStyle				= get_option( BasicGoogleMapsPlacemarks::PREFIX . 'cluster-style', 			'default' );
+			
 			// @todo - this isn't DRY, same values in BGMP::singleActivate() and upgrade()
-		}
+			}
 		
 		/**
 		 * Get the map center coordinates from the address and update the database values
@@ -159,16 +164,19 @@ if( !class_exists( 'BGMPSettings' ) )
 		 */
 		public function addSettings()
 		{
-			add_settings_section( BasicGoogleMapsPlacemarks::PREFIX . 'map-settings', '', array($this, 'settingsSectionCallback'), BasicGoogleMapsPlacemarks::PREFIX . 'settings' );
+			add_settings_section( BasicGoogleMapsPlacemarks::PREFIX . 'map-settings',				'', array( $this, 'markupSettingsSections' ), BasicGoogleMapsPlacemarks::PREFIX . 'settings' );
+			add_settings_section( BasicGoogleMapsPlacemarks::PREFIX . 'marker-cluster-settings',	'', array( $this, 'markupSettingsSections' ), BasicGoogleMapsPlacemarks::PREFIX . 'settings' );
 			
-			add_settings_field( BasicGoogleMapsPlacemarks::PREFIX . 'map-width',				__( 'Map Width', 'bgmp' ),					array($this, 'mapWidthCallback'),					BasicGoogleMapsPlacemarks::PREFIX . 'settings', BasicGoogleMapsPlacemarks::PREFIX . 'map-settings',	 array( 'label_for' => BasicGoogleMapsPlacemarks::PREFIX . 'map-width' ) );
-			add_settings_field( BasicGoogleMapsPlacemarks::PREFIX . 'map-height',				__( 'Map Height', 'bgmp' ),					array($this, 'mapHeightCallback'),					BasicGoogleMapsPlacemarks::PREFIX . 'settings', BasicGoogleMapsPlacemarks::PREFIX . 'map-settings',	 array( 'label_for' => BasicGoogleMapsPlacemarks::PREFIX . 'map-height' ) );
-			add_settings_field( BasicGoogleMapsPlacemarks::PREFIX . 'map-address',				__( 'Map Center Address', 'bgmp' ),			array($this, 'mapAddressCallback'),					BasicGoogleMapsPlacemarks::PREFIX . 'settings', BasicGoogleMapsPlacemarks::PREFIX . 'map-settings',	 array( 'label_for' => BasicGoogleMapsPlacemarks::PREFIX . 'map-address' ) );
-			add_settings_field( BasicGoogleMapsPlacemarks::PREFIX . 'map-zoom',					__( 'Zoom', 'bgmp' ),						array($this, 'mapZoomCallback'),					BasicGoogleMapsPlacemarks::PREFIX . 'settings', BasicGoogleMapsPlacemarks::PREFIX . 'map-settings',	 array( 'label_for' => BasicGoogleMapsPlacemarks::PREFIX . 'map-zoom' ) );
-			add_settings_field( BasicGoogleMapsPlacemarks::PREFIX . 'map-type',					__( 'Map Type', 'bgmp' ),					array($this, 'mapTypeCallback'),					BasicGoogleMapsPlacemarks::PREFIX . 'settings', BasicGoogleMapsPlacemarks::PREFIX . 'map-settings',	 array( 'label_for' => BasicGoogleMapsPlacemarks::PREFIX . 'map-type' ) );			
-			add_settings_field( BasicGoogleMapsPlacemarks::PREFIX . 'map-type-control',			__( 'Type Control', 'bgmp' ),				array($this, 'mapTypeControlCallback'),				BasicGoogleMapsPlacemarks::PREFIX . 'settings', BasicGoogleMapsPlacemarks::PREFIX . 'map-settings',	 array( 'label_for' => BasicGoogleMapsPlacemarks::PREFIX . 'map-type-control' ) );
-			add_settings_field( BasicGoogleMapsPlacemarks::PREFIX . 'map-navigation-control',	__( 'Navigation Control', 'bgmp' ),			array($this, 'mapNavigationControlCallback'),		BasicGoogleMapsPlacemarks::PREFIX . 'settings', BasicGoogleMapsPlacemarks::PREFIX . 'map-settings',	 array( 'label_for' => BasicGoogleMapsPlacemarks::PREFIX . 'map-navigation-control' ) );
-			add_settings_field( BasicGoogleMapsPlacemarks::PREFIX . 'map-info-window-width',	__( 'Info. Window Maximum Width', 'bgmp' ),	array($this, 'mapInfoWindowMaxWidthCallback'),		BasicGoogleMapsPlacemarks::PREFIX . 'settings', BasicGoogleMapsPlacemarks::PREFIX . 'map-settings',	 array( 'label_for' => BasicGoogleMapsPlacemarks::PREFIX . 'map-info-window-width' ) );
+			
+			// Map Settings
+			add_settings_field( BasicGoogleMapsPlacemarks::PREFIX . 'map-width',				__( 'Map Width', 'bgmp' ),					array( $this, 'markupMapSettingsFields' ),	BasicGoogleMapsPlacemarks::PREFIX . 'settings', BasicGoogleMapsPlacemarks::PREFIX . 'map-settings',	 array( 'label_for' => BasicGoogleMapsPlacemarks::PREFIX . 'map-width' ) );
+			add_settings_field( BasicGoogleMapsPlacemarks::PREFIX . 'map-height',				__( 'Map Height', 'bgmp' ),					array( $this, 'markupMapSettingsFields' ),	BasicGoogleMapsPlacemarks::PREFIX . 'settings', BasicGoogleMapsPlacemarks::PREFIX . 'map-settings',	 array( 'label_for' => BasicGoogleMapsPlacemarks::PREFIX . 'map-height' ) );
+			add_settings_field( BasicGoogleMapsPlacemarks::PREFIX . 'map-address',				__( 'Map Center Address', 'bgmp' ),			array( $this, 'markupMapSettingsFields' ),	BasicGoogleMapsPlacemarks::PREFIX . 'settings', BasicGoogleMapsPlacemarks::PREFIX . 'map-settings',	 array( 'label_for' => BasicGoogleMapsPlacemarks::PREFIX . 'map-address' ) );
+			add_settings_field( BasicGoogleMapsPlacemarks::PREFIX . 'map-zoom',					__( 'Zoom', 'bgmp' ),						array( $this, 'markupMapSettingsFields' ),	BasicGoogleMapsPlacemarks::PREFIX . 'settings', BasicGoogleMapsPlacemarks::PREFIX . 'map-settings',	 array( 'label_for' => BasicGoogleMapsPlacemarks::PREFIX . 'map-zoom' ) );
+			add_settings_field( BasicGoogleMapsPlacemarks::PREFIX . 'map-type',					__( 'Map Type', 'bgmp' ),					array( $this, 'markupMapSettingsFields' ),	BasicGoogleMapsPlacemarks::PREFIX . 'settings', BasicGoogleMapsPlacemarks::PREFIX . 'map-settings',	 array( 'label_for' => BasicGoogleMapsPlacemarks::PREFIX . 'map-type' ) );			
+			add_settings_field( BasicGoogleMapsPlacemarks::PREFIX . 'map-type-control',			__( 'Type Control', 'bgmp' ),				array( $this, 'markupMapSettingsFields' ),	BasicGoogleMapsPlacemarks::PREFIX . 'settings', BasicGoogleMapsPlacemarks::PREFIX . 'map-settings',	 array( 'label_for' => BasicGoogleMapsPlacemarks::PREFIX . 'map-type-control' ) );
+			add_settings_field( BasicGoogleMapsPlacemarks::PREFIX . 'map-navigation-control',	__( 'Navigation Control', 'bgmp' ),			array( $this, 'markupMapSettingsFields' ),	BasicGoogleMapsPlacemarks::PREFIX . 'settings', BasicGoogleMapsPlacemarks::PREFIX . 'map-settings',	 array( 'label_for' => BasicGoogleMapsPlacemarks::PREFIX . 'map-navigation-control' ) );
+			add_settings_field( BasicGoogleMapsPlacemarks::PREFIX . 'map-info-window-width',	__( 'Info. Window Maximum Width', 'bgmp' ),	array( $this, 'markupMapSettingsFields' ),	BasicGoogleMapsPlacemarks::PREFIX . 'settings', BasicGoogleMapsPlacemarks::PREFIX . 'map-settings',	 array( 'label_for' => BasicGoogleMapsPlacemarks::PREFIX . 'map-info-window-width' ) );
 			
 			register_setting( BasicGoogleMapsPlacemarks::PREFIX . 'settings', BasicGoogleMapsPlacemarks::PREFIX . 'map-width' );
 			register_setting( BasicGoogleMapsPlacemarks::PREFIX . 'settings', BasicGoogleMapsPlacemarks::PREFIX . 'map-height' );
@@ -179,120 +187,159 @@ if( !class_exists( 'BGMPSettings' ) )
 			register_setting( BasicGoogleMapsPlacemarks::PREFIX . 'settings', BasicGoogleMapsPlacemarks::PREFIX . 'map-navigation-control' );
 			register_setting( BasicGoogleMapsPlacemarks::PREFIX . 'settings', BasicGoogleMapsPlacemarks::PREFIX . 'map-info-window-width' );
 			
+			
+			// Marker Clustering
+			add_settings_field( BasicGoogleMapsPlacemarks::PREFIX . 'marker-clustering',	__( 'Marker Clustering', 'bgmp' ),	array( $this, 'markupMarkerClusterFields' ),	BasicGoogleMapsPlacemarks::PREFIX . 'settings', BasicGoogleMapsPlacemarks::PREFIX . 'marker-cluster-settings',	 array( 'label_for' => BasicGoogleMapsPlacemarks::PREFIX . 'marker-clustering' ) );
+			add_settings_field( BasicGoogleMapsPlacemarks::PREFIX . 'cluster-max-zoom',		__( 'Max Zoom', 'bgmp' ),			array( $this, 'markupMarkerClusterFields' ),	BasicGoogleMapsPlacemarks::PREFIX . 'settings', BasicGoogleMapsPlacemarks::PREFIX . 'marker-cluster-settings',	 array( 'label_for' => BasicGoogleMapsPlacemarks::PREFIX . 'cluster-max-zoom' ) );
+			add_settings_field( BasicGoogleMapsPlacemarks::PREFIX . 'cluster-grid-size',	__( 'Grid Size', 'bgmp' ),			array( $this, 'markupMarkerClusterFields' ),	BasicGoogleMapsPlacemarks::PREFIX . 'settings', BasicGoogleMapsPlacemarks::PREFIX . 'marker-cluster-settings',	 array( 'label_for' => BasicGoogleMapsPlacemarks::PREFIX . 'cluster-grid-size' ) );
+			add_settings_field( BasicGoogleMapsPlacemarks::PREFIX . 'cluster-style',		__( 'Style', 'bgmp' ),				array( $this, 'markupMarkerClusterFields' ),	BasicGoogleMapsPlacemarks::PREFIX . 'settings', BasicGoogleMapsPlacemarks::PREFIX . 'marker-cluster-settings',	 array( 'label_for' => BasicGoogleMapsPlacemarks::PREFIX . 'cluster-style' ) );
+			
+			register_setting( BasicGoogleMapsPlacemarks::PREFIX . 'settings', BasicGoogleMapsPlacemarks::PREFIX . 'marker-clustering' );
+			register_setting( BasicGoogleMapsPlacemarks::PREFIX . 'settings', BasicGoogleMapsPlacemarks::PREFIX . 'cluster-max-zoom' );
+			register_setting( BasicGoogleMapsPlacemarks::PREFIX . 'settings', BasicGoogleMapsPlacemarks::PREFIX . 'cluster-grid-size' );
+			register_setting( BasicGoogleMapsPlacemarks::PREFIX . 'settings', BasicGoogleMapsPlacemarks::PREFIX . 'cluster-style' );
+			
+			
 			// @todo - add input validation  -- http://ottopress.com/2009/wordpress-settings-api-tutorial/
 		}
 		
 		/**
-		 * Adds the section introduction text to the Settings page
+		 * Adds the markup for the  section introduction text to the Settings page
 		 * @author Ian Dunn <ian@iandunn.name>
+		 * @param array $section
 		 */
-		public function settingsSectionCallback()
+		public function markupSettingsSections( $section )
 		{
-			echo '<p>'. __( 'The map(s) will use these settings as defaults, but you can override them on individual maps using shortcode arguments. See <a href="http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/">the Installation page</a> for details.', 'bgmp' ) .'</p>';
-		}
-		
-		/**
-		 * Adds the map-width field to the Settings page
-		 * @author Ian Dunn <ian@iandunn.name>
-		 */
-		public function mapWidthCallback()
-		{
-			echo '<input id="'. BasicGoogleMapsPlacemarks::PREFIX .'map-width" name="'. BasicGoogleMapsPlacemarks::PREFIX .'map-width" type="text" value="'. $this->mapWidth .'" class="small-text" /> ';
-			_e( 'pixels', 'bgmp' );
-		}
-		
-		/**
-		 * Adds the map-height field to the Settings page
-		 * @author Ian Dunn <ian@iandunn.name>
-		 */
-		public function mapHeightCallback()
-		{
-			echo '<input id="'. BasicGoogleMapsPlacemarks::PREFIX .'map-height" name="'. BasicGoogleMapsPlacemarks::PREFIX .'map-height" type="text" value="'. $this->mapHeight .'" class="small-text" /> ';
-			_e( 'pixels', 'bgmp' );
-		}
-		
-		/**
-		 * Adds the address field to the Settings page
-		 * @author Ian Dunn <ian@iandunn.name>
-		 */
-		public function mapAddressCallback()
-		{
-			echo '<input id="'. BasicGoogleMapsPlacemarks::PREFIX .'map-address" name="'. BasicGoogleMapsPlacemarks::PREFIX .'map-address" type="text" value="'. $this->mapAddress .'" class="regular-text" />';
+			// @todo move this to an external view file
 			
-			if( $this->mapAddress && !BasicGoogleMapsPlacemarks::validateCoordinates( $this->mapAddress ) && $this->mapLatitude && $this->mapLongitude )
-				echo ' <em>('. __( 'Geocoded to:', 'bgmp' ) .' '. $this->mapLatitude .', '. $this->mapLongitude .')</em>';
+			switch( $section[ 'id' ] )
+			{
+				case BasicGoogleMapsPlacemarks::PREFIX . 'map-settings':
+					echo '<h3>'. __( 'Map Settings', 'bgmp' ) .'</h3>';
+					echo '<p>'. __( 'The map(s) will use these settings as defaults, but you can override them on individual maps using shortcode arguments. See <a href="http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/">the Installation page</a> for details.', 'bgmp' ) .'</p>';
+				break;
 				
-			elseif( $this->mapAddress && ( !$this->mapLatitude || !$this->mapLongitude ) )
-				echo " <em>". __( "(Error geocoding address. Please make sure it's correct and try again.)", 'bgmp' ) ."</em>";
+				case BasicGoogleMapsPlacemarks::PREFIX . 'marker-cluster-settings':
+					echo '<h3>'. __( 'Marker Clustering', 'bgmp' ) .'</h3>';
+					echo '<p>'. __( 'You can group large numbers of markers into a single cluster by enabling the Cluster Markers option.', 'bgmp' ) .'</p>';
+				break;
+			}
+		}
+		
+		/**
+		 * Adds the markup for the all of the fields in the Map Settings section
+		 * @author Ian Dunn <ian@iandunn.name>
+		 * @param array $field
+		 */
+		public function markupMapSettingsFields( $field )
+		{
+			// @todo move this to an external view file
+			
+			switch( $field[ 'label_for' ] )
+			{
+				case BasicGoogleMapsPlacemarks::PREFIX . 'map-width':
+					echo '<input id="'. BasicGoogleMapsPlacemarks::PREFIX .'map-width" name="'. BasicGoogleMapsPlacemarks::PREFIX .'map-width" type="text" value="'. $this->mapWidth .'" class="small-text" /> ';
+					_e( 'pixels', 'bgmp' );
+				break;
 				
-			echo '<p>'. __( 'You can type in anything that you would type into a Google Maps search field, from a full address to an intersection, landmark, city, zip code or latitude/longitude coordinates.', 'bgmp' ) .'</p>';
-		}
-		
-		/**
-		 * Adds the zoom field to the Settings page
-		 * @author Ian Dunn <ian@iandunn.name>
-		 */
-		public function mapZoomCallback()
-		{
-			echo '<input id="'. BasicGoogleMapsPlacemarks::PREFIX .'map-zoom" name="'. BasicGoogleMapsPlacemarks::PREFIX .'map-zoom" type="text" value="'. $this->mapZoom .'" class="small-text" /> ';
-			printf( __( '%d (farthest) to %d (closest)', 'bgmp' ), BasicGoogleMapsPlacemarks::ZOOM_MIN, BasicGoogleMapsPlacemarks::ZOOM_MAX );
-		}
-		
-		/**
-		 * Adds the map type field to the Settings page
-		 * @author Ian Dunn <ian@iandunn.name>
-		 */
-		public function mapTypeCallback()
-		{
-			echo '<select id="'. BasicGoogleMapsPlacemarks::PREFIX .'map-type" name="'. BasicGoogleMapsPlacemarks::PREFIX .'map-type">';
-			
-			foreach( $this->mapTypes as $code => $label )
-				echo '<option value="'. $code .'" '. ( $this->mapType == $code ? 'selected="selected"' : '' ) .'>'. $label .'</option>';
-			
-			echo '</select>';
-		}
-		
-		/**
-		 * Adds the map type control field to the Settings page
-		 * @author Ian Dunn <ian@iandunn.name>
-		 */
-		public function mapTypeControlCallback()
-		{
-			echo '<select id="'. BasicGoogleMapsPlacemarks::PREFIX .'map-type-control" name="'. BasicGoogleMapsPlacemarks::PREFIX .'map-type-control">
-					<option value="off" '. ( $this->mapTypeControl == 'off' ? 'selected="selected"' : '' ) .'>'. __( 'Off', 'bgmp' ) .'</option>
-					<option value="DEFAULT" '. ( $this->mapTypeControl == 'DEFAULT' ? 'selected="selected"' : '' ) .'>'. __( 'Automatic', 'bgmp' ) .'</option>
-					<option value="HORIZONTAL_BAR" '. ( $this->mapTypeControl == 'HORIZONTAL_BAR' ? 'selected="selected"' : '' ) .'>'. __( 'Horizontal Bar', 'bgmp' ) .'</option>
-					<option value="DROPDOWN_MENU" '. ( $this->mapTypeControl == 'DROPDOWN_MENU' ? 'selected="selected"' : '' ) .'>'. __( 'Dropdown Menu', 'bgmp' ) .'</option>
-				</select>';
-			
-			_e( ' "Automatic" will automatically switch to the appropriate control based on the window size and other factors.', 'bgmp' );
-		}
-		
-		/**
-		 * Adds the map navigation controll field to the Settings page
-		 * @author Ian Dunn <ian@iandunn.name>
-		 */
-		public function mapNavigationControlCallback()
-		{
-			echo '<select id="'. BasicGoogleMapsPlacemarks::PREFIX .'map-navigation-control" name="'. BasicGoogleMapsPlacemarks::PREFIX .'map-navigation-control">
-					<option value="off" '. ( $this->mapNavigationControl == 'DEFAULT' ? 'selected="selected"' : '' ) .'>'. __( 'Off', 'bgmp' ) .'</option>
-					<option value="DEFAULT" '. ( $this->mapNavigationControl == 'DEFAULT' ? 'selected="selected"' : '' ) .'>'. __( 'Automatic', 'bgmp' ) .'</option>
-					<option value="SMALL" '. ( $this->mapNavigationControl == 'SMALL' ? 'selected="selected"' : '' ) .'>'. __( 'Small', 'bgmp' ) .'</option>
-					<option value="ANDROID" '. ( $this->mapNavigationControl == 'ANDROID' ? 'selected="selected"' : '' ) .'>'. __( 'Android', 'bgmp' ) .'</option>
-					<option value="ZOOM_PAN" '. ( $this->mapNavigationControl == 'ZOOM_PAN' ? 'selected="selected"' : '' ) .'>'. __( 'Zoom/Pan', 'bgmp' ) .'</option>
-				</select>';
+				case BasicGoogleMapsPlacemarks::PREFIX . 'map-height':
+					echo '<input id="'. BasicGoogleMapsPlacemarks::PREFIX .'map-height" name="'. BasicGoogleMapsPlacemarks::PREFIX .'map-height" type="text" value="'. $this->mapHeight .'" class="small-text" /> ';
+					_e( 'pixels', 'bgmp' );
+				break;
 				
-			_e( ' "Automatic" will automatically switch to the appropriate control based on the window size and other factors.', 'bgmp' );
+				case BasicGoogleMapsPlacemarks::PREFIX . 'map-address':
+					echo '<input id="'. BasicGoogleMapsPlacemarks::PREFIX .'map-address" name="'. BasicGoogleMapsPlacemarks::PREFIX .'map-address" type="text" value="'. $this->mapAddress .'" class="regular-text" />';
+			
+					if( $this->mapAddress && !BasicGoogleMapsPlacemarks::validateCoordinates( $this->mapAddress ) && $this->mapLatitude && $this->mapLongitude )
+						echo ' <em>('. __( 'Geocoded to:', 'bgmp' ) .' '. $this->mapLatitude .', '. $this->mapLongitude .')</em>';
+						
+					elseif( $this->mapAddress && ( !$this->mapLatitude || !$this->mapLongitude ) )
+						echo " <em>". __( "(Error geocoding address. Please make sure it's correct and try again.)", 'bgmp' ) ."</em>";
+							
+					echo '<p>'. __( 'You can type in anything that you would type into a Google Maps search field, from a full address to an intersection, landmark, city, zip code or latitude/longitude coordinates.', 'bgmp' ) .'</p>';
+				break;
+					
+				case BasicGoogleMapsPlacemarks::PREFIX . 'map-zoom':
+					echo '<input id="'. BasicGoogleMapsPlacemarks::PREFIX .'map-zoom" name="'. BasicGoogleMapsPlacemarks::PREFIX .'map-zoom" type="text" value="'. $this->mapZoom .'" class="small-text" /> ';
+					printf( __( '%d (farthest) to %d (closest)', 'bgmp' ), BasicGoogleMapsPlacemarks::ZOOM_MIN, BasicGoogleMapsPlacemarks::ZOOM_MAX );
+				break;
+					
+				case BasicGoogleMapsPlacemarks::PREFIX . 'map-type':
+					echo '<select id="'. BasicGoogleMapsPlacemarks::PREFIX .'map-type" name="'. BasicGoogleMapsPlacemarks::PREFIX .'map-type">';
+			
+					foreach( $this->mapTypes as $code => $label )
+						echo '<option value="'. $code .'" '. ( $this->mapType == $code ? 'selected="selected"' : '' ) .'>'. $label .'</option>';
+					
+					echo '</select>';
+				break;
+					
+				case BasicGoogleMapsPlacemarks::PREFIX . 'map-type-control':
+					echo '<select id="'. BasicGoogleMapsPlacemarks::PREFIX .'map-type-control" name="'. BasicGoogleMapsPlacemarks::PREFIX .'map-type-control">
+						<option value="off" '. ( $this->mapTypeControl == 'off' ? 'selected="selected"' : '' ) .'>'. __( 'Off', 'bgmp' ) .'</option>
+						<option value="DEFAULT" '. ( $this->mapTypeControl == 'DEFAULT' ? 'selected="selected"' : '' ) .'>'. __( 'Automatic', 'bgmp' ) .'</option>
+						<option value="HORIZONTAL_BAR" '. ( $this->mapTypeControl == 'HORIZONTAL_BAR' ? 'selected="selected"' : '' ) .'>'. __( 'Horizontal Bar', 'bgmp' ) .'</option>
+						<option value="DROPDOWN_MENU" '. ( $this->mapTypeControl == 'DROPDOWN_MENU' ? 'selected="selected"' : '' ) .'>'. __( 'Dropdown Menu', 'bgmp' ) .'</option>
+					</select>';
+					// @todo use selected()
+					
+					_e( ' "Automatic" will automatically switch to the appropriate control based on the window size and other factors.', 'bgmp' );
+				break;
+					
+				case BasicGoogleMapsPlacemarks::PREFIX . 'map-navigation-control':
+					echo '<select id="'. BasicGoogleMapsPlacemarks::PREFIX .'map-navigation-control" name="'. BasicGoogleMapsPlacemarks::PREFIX .'map-navigation-control">
+						<option value="off" '. ( $this->mapNavigationControl == 'DEFAULT' ? 'selected="selected"' : '' ) .'>'. __( 'Off', 'bgmp' ) .'</option>
+						<option value="DEFAULT" '. ( $this->mapNavigationControl == 'DEFAULT' ? 'selected="selected"' : '' ) .'>'. __( 'Automatic', 'bgmp' ) .'</option>
+						<option value="SMALL" '. ( $this->mapNavigationControl == 'SMALL' ? 'selected="selected"' : '' ) .'>'. __( 'Small', 'bgmp' ) .'</option>
+						<option value="ANDROID" '. ( $this->mapNavigationControl == 'ANDROID' ? 'selected="selected"' : '' ) .'>'. __( 'Android', 'bgmp' ) .'</option>
+						<option value="ZOOM_PAN" '. ( $this->mapNavigationControl == 'ZOOM_PAN' ? 'selected="selected"' : '' ) .'>'. __( 'Zoom/Pan', 'bgmp' ) .'</option>
+					</select>';
+					// @todo use selected()
+						
+					_e( ' "Automatic" will automatically switch to the appropriate control based on the window size and other factors.', 'bgmp' );
+				break;
+					
+				case BasicGoogleMapsPlacemarks::PREFIX . 'map-info-window-width':
+					echo '<input id="'. BasicGoogleMapsPlacemarks::PREFIX .'map-info-window-width" name="'. BasicGoogleMapsPlacemarks::PREFIX .'map-info-window-width" type="text" value="'. $this->mapInfoWindowMaxWidth .'" class="small-text" /> ';
+					_e( 'pixels', 'bgmp' );
+				break;
+			}
 		}
-		
+
 		/**
-		 * Adds the info-window-width field to the Settings page
+		 * Adds the markup for the all of the fields in the Map Settings section
 		 * @author Ian Dunn <ian@iandunn.name>
+		 * @param array $field
 		 */
-		public function mapInfoWindowMaxWidthCallback()
+		public function markupMarkerClusterFields( $field )
 		{
-			echo '<input id="'. BasicGoogleMapsPlacemarks::PREFIX .'map-info-window-width" name="'. BasicGoogleMapsPlacemarks::PREFIX .'map-info-window-width" type="text" value="'. $this->mapInfoWindowMaxWidth .'" class="small-text" /> ';
-			_e( 'pixels', 'bgmp' );
+			// @todo move this to an external view file
+			
+			switch( $field[ 'label_for' ] )
+			{
+				case BasicGoogleMapsPlacemarks::PREFIX . 'marker-clustering':
+					echo '<input id="'. BasicGoogleMapsPlacemarks::PREFIX .'marker-clustering" name="'. BasicGoogleMapsPlacemarks::PREFIX .'marker-clustering" type="checkbox" '. checked( $this->markerClustering, 'on', false ) .' /> ';
+					_e( ' Enable marker clustering', 'bgmp' );
+				break;
+				
+				case BasicGoogleMapsPlacemarks::PREFIX . 'cluster-max-zoom':
+					echo '<input id="'. BasicGoogleMapsPlacemarks::PREFIX .'cluster-max-zoom" name="'. BasicGoogleMapsPlacemarks::PREFIX .'cluster-max-zoom" type="text" value="'. $this->clusterMaxZoom .'" class="small-text" /> ';
+					printf( __( '%d (farthest) to %d (closest)', 'bgmp' ), BasicGoogleMapsPlacemarks::GRID_ZOOM_MIN, BasicGoogleMapsPlacemarks::GRID_ZOOM_MAX );
+				break;
+				
+				case BasicGoogleMapsPlacemarks::PREFIX . 'cluster-grid-size':
+					echo '<input id="'. BasicGoogleMapsPlacemarks::PREFIX .'cluster-grid-size" name="'. BasicGoogleMapsPlacemarks::PREFIX .'cluster-grid-size" type="text" value="'. $this->clusterGridSize .'" class="small-text" /> ';
+					printf( __( '%d (smallest) to %d (largest)', 'bgmp' ), BasicGoogleMapsPlacemarks::GRID_SIZE_MIN, BasicGoogleMapsPlacemarks::GRID_SIZE_MAX );
+				break;
+				
+				case BasicGoogleMapsPlacemarks::PREFIX . 'cluster-style':
+					echo '<select id="'. BasicGoogleMapsPlacemarks::PREFIX .'cluster-style" name="'. BasicGoogleMapsPlacemarks::PREFIX .'cluster-style">
+						<option value="default" '.		selected( $this->clusterStyle, 'default', false ) .'>'.			__( 'Default', 'bgmp' ) .'</option>
+						<option value="people" '.		selected( $this->clusterStyle, 'people', false ) .'>'.			__( 'People', 'bgmp' ) .'</option>
+						<option value="hearts" '.		selected( $this->clusterStyle, 'hearts', false ) .'>'.			__( 'Hearts', 'bgmp' ) .'</option>
+						<option value="conversation" '.	selected( $this->clusterStyle, 'conversation', false ) .'>'.	__( 'Conversation', 'bgmp' ) .'</option>
+					</select>';
+				break;
+			}
 		}
 	} // end BGMPSettings
 }

@@ -8,7 +8,7 @@
 
 ** Development Workflow / New Release Checklist **
 	Upgrade plaground/wp to latest WordPress release
-	Checkout SVN trunk to playground/wp 
+	Update SVN trunk in playground/wp 
 	Update alpha version numbers in basic-google-maps-placemarks.php comment and core.php constant
 	Update readme compatible tag to latest WP version
 	Work on a single feature/bug fix/etc at a time
@@ -17,7 +17,7 @@
 		Test and commit to SVN trunk
 	
 	Upgrade playground/wpms to latest WordPress release
-	Checkout SVN trunk to playground/wpms
+	Update SVN trunk in playground/wpms
 	Test latest commits
 	Update final version numbers in basic-google-maps-placemarks.php comment and core.php constant
 	Update readme stable tag
@@ -62,6 +62,9 @@
 				maybe select from media library 
 		any other related tasks?
 		
+		auto generate 200 markers and test
+			probably setup a wpms blog for it so it doesn't clutter normal blog
+		
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-using-markerclusterer-with-bgmp-plugin?replies=2
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-many-markers-behavior?replies=1#post-2778964
 		
@@ -70,8 +73,7 @@
 		this would simplify things a lot, wouldn't have to parse out anymore
 		still peek ahead to tell if shortcode called or not, and enqueue functions.js based on that, but don't need to do that for data
 		wouldn't have to use filters to insert args with do_shortcode
-		
-		this is done and tested, just need to update readme
+		this is done and tested
 
 	enqueuemessage() bug - adds it twice for coordinates error, probably for everything else too
 		done
@@ -101,6 +103,7 @@
 	add filter to each placemarks in the foreach loop in getMapPlacemarks(), so that people can modify the individual fields as they're created, instead of having to loop through the entire thing after it's been generated
 		also add ID field to the placemarks
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-how-to-open-the-placemark-url-in-the-info-window?replies=1#post-2816596
+
 
 1.9.2
 	add credits section to other notes
@@ -133,6 +136,9 @@
 		has_archive in cpt reg
 		upgrade() has to flush rewrite rules
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-how-to-access-placemarks-list-archive-directly?replies=1
+		
+	refactor markupmetabox methods into single one, like nrp merchant team directory plugin does
+		callback's 2nd param is an array w/ the box id, so switch on it and include the view files
 
 1.9.3
 	internationalize functions.js
@@ -233,6 +239,12 @@
 	mapShortcode()
 		shouldn't check for stylesheet here? only really need the two scripts, so removing stylesheet check would let users dequeue stylesheet and use their own w/out having to keep same name. update readme
 
+	move settings markup into a single view file?
+		settings markup callback has param passed to it to identify? if so, could  have a single view file that outputs based on swithc() cases
+		or maybe there's a global var that's set soemwhere
+		look through core
+		
+		
 1.minor
 	infowinder not rounded anymore?
 		b/c of image styles? try turning off stylesheet and see what happens

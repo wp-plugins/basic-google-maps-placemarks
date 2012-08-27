@@ -1,7 +1,7 @@
 === Basic Google Maps Placemarks ===
 Contributors: iandunn
 Donate link: http://www.doctorswithoutborders.org
-Tags: google map, map, embed, marker, placemark, icon, geocode
+Tags: google maps, maps, embed, marker, placemark, icon, geocode, shortcode, custom post type, multisite
 Requires at least: 3.1
 Tested up to: 3.4.1
 Stable tag: 1.8
@@ -11,7 +11,7 @@ Embeds a Google Map into your site and lets you add map markers with custom icon
 
 
 == Description ==
-BGMP creates a [custom post type](http://codex.wordpress.org/Post_Types) for placemarks (markers) on a Google Map. The map is embedded into pages or posts using a shortcode, and there are settings to affect how it's displayed. Then you can create markers that will show up on the map using the featured image as the map icon. When a marker is clicked on, a box will appear showing its title and description.
+BGMP creates a [custom post type](http://www.youtube.com/watch?v=FWkLBPpGOmo#!) for placemarks (markers) on a Google Map. The map is embedded into pages or posts using a shortcode, and there are settings to affect how it's displayed. Then you can create markers that will show up on the map using the featured image as the map icon. When a marker is clicked on, a box will appear showing its title and description.
 
 **Features**
 
@@ -97,9 +97,8 @@ function bgmpShortcodeCalled()
 	global $post;
 	
 	$shortcodePageSlugs = array(
-		'first-page-slug',
-		'second-page-slug',
-		'hello-world'
+		'hello-world',
+		'second-page-slug'
 	);
 	
 	if( $post )
@@ -109,64 +108,27 @@ function bgmpShortcodeCalled()
 add_action( 'wp', 'bgmpShortcodeCalled' );
 `
 
-Copy and paste that into your theme's *functions.php* file or a [functionality plugin](http://www.doitwithwp.com/create-functions-plugin/), update the function names and filter arguments, and then add the slugs of any pages/posts containing the map to $shortcodePageSlugs. If you're using it on the home page, the slug will be 'home'.
+Copy and paste that into your theme's *functions.php* file or a [functionality plugin](http://www.doitwithwp.com/create-functions-plugin/), update the function names and filter arguments, and then add the slugs of any pages/posts containing the map to $shortcodePageSlugs.
 
-This only works if the file that calls do_shortcode() is [registered as a page template](http://codex.wordpress.org/Pages#Creating_Your_Own_Page_Templates) and assigned to a page.
+That won't work for the home page, though. If you want to target the home page, or any other pages with [conditional tags](http://codex.wordpress.org/Conditional_Tags), you can do it like this:
 
-If you want to use any shortcode arguments, you'll have to put them inside a filter callback instead of the shortcode itself, e.g.,
+`
+function bgmpShortcodeCalled()
+{
+	global $post;
+	
+	if( is_front_page() || is_home_page() )
+		add_filter( 'bgmp_map-shortcode-called', '__return_true' );
+}
+add_action( 'wp', 'bgmpShortcodeCalled' );
+`
 
-> @todo this no longer applies, update
-> Before version 1.9, you needed to use the `bgmp_map-shortcode-arguments` filter to pass shortcode arguments when calling `do_shortcode()` from a template, but this is no longer necessary. You can simply pass the arguments in the `do_shortcode()` call, like this:
+Before version 1.9, you needed to use the `bgmp_map-shortcode-arguments` filter to pass shortcode arguments when calling `do_shortcode()` from a template, but that is no longer necessary. You can simply pass the arguments in the `do_shortcode()` call, like this:
 
 `
 do_shortcode( '[bgmp-map center="Boston" zoom="5"]' );
 `
 
-`
-function setBGMPMapShortcodeArguments( $options )
-{
-	global $bgmp;
-	$coordinates = $bgmp->geocode( 'Seattle' );
-	
-	$options[ 'mapWidth' ]				= 500;
-	$options[ 'mapHeight' ]				= 400;
-	$options[ 'latitude' ]				= $coordinates[ 'latitude' ];
-	$options[ 'longitude' ]				= $coordinates[ 'longitude' ];
-	$options[ 'zoom' ]					= 10;
-	$options[ 'type' ]					= 'ROADMAP';
-	$options[ 'typeControl' ]			= 'HORIZONTAL_BAR';
-	$options[ 'navigationControl' ]		= 'SMALL';
-	$options[ 'infoWindowMaxWidth' ]	= 350;
-	$options[ 'categories' ]			= array( 'record-stores', 'parks' );
-	
-	return $options;
-}
-add_filter( 'bgmp_map-shortcode-arguments', 'setBGMPMapShortcodeArguments' );
-`
-
-These are the valid arguments for map type, type control and navigation control. They're case-sensative.
-
-*Map Type*
-
-* ROADMAP
-* SATELLITE
-* HYBRID
-* TERRAIN
-
-*Map Type Control*
-
-* off
-* DEFAULT
-* HORIZONTAL_BAR
-* DROPDOWN_MENU
-
-*Navigation Control*
-
-* off
-* DEFAULT
-* SMALL
-* ANDROID
-* ZOOM_PAN
 
 Check [the FAQ](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/faq/) and [support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks) if you have any questions.
 
@@ -223,7 +185,7 @@ Yes. You can type anything into the Address field that you would type into a sta
 
 If the plugin recognizes your input as coordinates then it will create the marker at that exact point on the map. If it doesn't, it will attempt to geocode them, which can sometimes result in a different location than you intended. To help the plugin recognize the coordinates, make sure they're in decimal notation (e.g. 48.61322,-123.3465) instead of minutes/seconds notation. The latitude and longitude must be separated by a comma and cannot contain any letters or symbols. If your input has been geocoded, you'll see a note next to the address field that gives the geocoded coordinates, and the plugin will use those to create the marker on the map; if you don't see that note then that means that your input was not geocoded and your exact coordates will be used to place the marker.
 
-If you're having a hard time getting a set of coordinates to work, try visiting <a href="http://www.itouchmap.com/latlong.html" title="Latitude and Longitude of a Point">this page</a> and use the coordinates they give you.
+If you're having a hard time getting a set of coordinates to work, try visiting <a href="http://www.itouchmap.com/latlong.html">Latitude and Longitude of a Point</a> and use the coordinates they give you.
 
 
 = Can I change the default icon? =
@@ -354,7 +316,7 @@ If there isn't a translation for your language (or it is incomplete/inaccurate) 
 
 **Donations**
 
-I do this as a way to give back to the WordPress community, so I don't want to take any donations, but if you'd like to give something I'd encourage you to make a donation to [Doctors Without Borders](http://www.doctorswithoutborders.org).
+I do this as a way to give back to the WordPress community, so I don't want to take any donations. If you'd like to give something, though, I'd encourage you to make a donation to [Doctors Without Borders](http://www.doctorswithoutborders.org) or the [Electronic Frontier Foundation](https://www.eff.org).
 
 **Customization**
 
