@@ -3,7 +3,7 @@ Contributors: iandunn
 Donate link: http://www.doctorswithoutborders.org
 Tags: google maps, maps, embed, marker, placemark, icon, geocode, shortcode, custom post type, multisite
 Requires at least: 3.1
-Tested up to: 3.4.1
+Tested up to: 3.4.2
 Stable tag: 1.8
 License: GPL2
 
@@ -158,7 +158,7 @@ I monitor the forums and respond to a lot of the requests. I do this in my spare
 
 
 = Does the plugin support [non-standard feature]? / How can I get the plugin to do [non-standard feature]? =
-All of the features that the plugin supports are documented on these pages. If you don't see a feature mentioned, then that means that the plugin doesn't support it. You'll need to write the extra code yourself if you want to add that feature to the plugin. There are filters throughout the core code to support customization. If you need a hook or filter that doesn't currently exist, add a post to [the support forums](http://wordpress.org/support/plugin/basic-google-maps-placemarks) to request it and I'll add it to the next version.
+All of the features that the plugin supports are documented on these pages. If you don't see a feature mentioned, then that means that the plugin doesn't support it. You'll need to write the extra code yourself if you want to add that feature to the plugin, or hire someone to do it for you (see the Customization section on the [Other Notes](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/other_notes/) page. There are filters throughout the core code to support customization. If you need a hook or filter that doesn't currently exist, add a post to [the support forums](http://wordpress.org/support/plugin/basic-google-maps-placemarks) to request it and I'll add it to the next version.
 
 You can also try searching [the support forums](http://wordpress.org/support/plugin/basic-google-maps-placemarks) in case others have already worked out a way to do it.
 
@@ -210,12 +210,26 @@ function setBGMPDefaultIconByCategory( $iconURL, $placemarkID )
 	$placemarkCategories = wp_get_object_terms( $placemarkID, 'bgmp-category' );
 
 	foreach( $placemarkCategories as $pc )
-		if( $pc->slug == 'restaurants' )
-			$iconURL = get_bloginfo( 'stylesheet_directory' ) . '/images/bgmp-default-icon.png';
+	{
+		switch( $pc->slug )
+		{
+			case 'restaurants':
+				$iconURL = get_bloginfo( 'stylesheet_directory' ) . '/images/marker-icons/resturants.png';
+			break;
+			
+			case 'book-stores':
+				$iconURL = get_bloginfo( 'stylesheet_directory' ) . '/images/marker-icons/book-stores.png';
+			break;
+			
+			default:
+				$iconURL = get_bloginfo( 'stylesheet_directory' ) . '/images/marker-icons/pin.png';
+			break;
+		}
+	}
 
     return $iconURL;
 }
-add_filter( 'bgmp_default-icon', 'setBGMPDefaultIcon', 10, 2 );
+add_filter( 'bgmp_default-icon', 'setBGMPDefaultIconByCategory', 10, 2 );
 `
 
 Here's another example to uses the placemark's ID:
@@ -291,7 +305,7 @@ Yes, I've tried to add filters for everything you might reasonably want, just br
 **Localizations**
 
 * Chinese (thanks to [yzqiang](http://wordpress.org/support/profile/yzqiang))
-* French (machine translated)
+* French (thanks to Romain Fèvre)
 
 If there isn't a translation for your language (or it is incomplete/inaccurate) please consider making one and contributing it to the plugin. You can learn how by reading [Translating WordPress](http://codex.wordpress.org/Translating_WordPress) and [How to Create a .po Language Translation](http://www.wdmac.com/how-to-create-a-po-language-translation). The .pot file you'll need is inside the *languages* directory in the plugin's folder. Once you're done, just [contact me](http://iandunn.name/contact) and send me the .po and .mo files, and I'll add them to the plugin.
 
@@ -302,6 +316,7 @@ If there isn't a translation for your language (or it is incomplete/inaccurate) 
 * The [Better WP Security](http://wordpress.org/extend/plugins/better-wp-security/) plugin may [break the Google Maps API](http://wordpress.org/support/topic/plugin-better-wp-security-google-maps-api) if the "Display random version number" option is enabled.
 * The [bgmp-map] and [bgmp-list] shortcodes <a href="http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-map-showing-all-placemarkers-no-filter">won't work in WP e-Commerce product post types</a>.
 * Also make sure that no other Google Maps plugins are activated, and that your theme isn't including the Maps API. You can view the page's source code and search for instances of "maps.google.com/maps/api/js". If there's more than one, then you're probably going to have issues.
+
 
 **How you can help with the plugin's development**
 
@@ -317,6 +332,7 @@ If there isn't a translation for your language (or it is incomplete/inaccurate) 
 **Donations**
 
 I do this as a way to give back to the WordPress community, so I don't want to take any donations. If you'd like to give something, though, I'd encourage you to make a donation to [Doctors Without Borders](http://www.doctorswithoutborders.org) or the [Electronic Frontier Foundation](https://www.eff.org).
+
 
 **Customization**
 
@@ -338,6 +354,7 @@ If you just need some minor customizations or are looking for someone with a low
 = 1.9 =
 * Added the MarkerClusterer library.
 * bgmpData moved to mapShortcode(), so users no longer need to use the `bgmp_map-shortcode-arguments` filter to use shortcode parameters from template files calling `do_shortcode()`. They can just be passed in like normal now.
+* Added proper French translation, thanks to Romain Fèvre.
 * Moved `mapShortcode()` markup into external view file.
 * Ensured action callbacks only run once. This fixes the bug where admin notices would be enqueued 2-3 times.
 

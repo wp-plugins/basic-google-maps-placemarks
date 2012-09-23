@@ -37,6 +37,8 @@ if( !class_exists( 'BGMPSettings' ) )
 		 */
 		public function init()
 		{
+			// @todo saving this as a single array instead of separate options
+			
 			$this->mapWidth					= get_option( BasicGoogleMapsPlacemarks::PREFIX . 'map-width',				600 );
 			$this->mapHeight				= get_option( BasicGoogleMapsPlacemarks::PREFIX . 'map-height',				400 );
 			$this->mapAddress				= get_option( BasicGoogleMapsPlacemarks::PREFIX . 'map-address',			__( 'Seattle', 'bgmp' ) );
@@ -62,7 +64,7 @@ if( !class_exists( 'BGMPSettings' ) )
 			$this->clusterStyle				= get_option( BasicGoogleMapsPlacemarks::PREFIX . 'cluster-style', 			'default' );
 			
 			// @todo - this isn't DRY, same values in BGMP::singleActivate() and upgrade()
-			}
+		}
 		
 		/**
 		 * Get the map center coordinates from the address and update the database values
@@ -312,34 +314,7 @@ if( !class_exists( 'BGMPSettings' ) )
 		 */
 		public function markupMarkerClusterFields( $field )
 		{
-			// @todo move this to an external view file
-			
-			switch( $field[ 'label_for' ] )
-			{
-				case BasicGoogleMapsPlacemarks::PREFIX . 'marker-clustering':
-					echo '<input id="'. BasicGoogleMapsPlacemarks::PREFIX .'marker-clustering" name="'. BasicGoogleMapsPlacemarks::PREFIX .'marker-clustering" type="checkbox" '. checked( $this->markerClustering, 'on', false ) .' /> ';
-					_e( ' Enable marker clustering', 'bgmp' );
-				break;
-				
-				case BasicGoogleMapsPlacemarks::PREFIX . 'cluster-max-zoom':
-					echo '<input id="'. BasicGoogleMapsPlacemarks::PREFIX .'cluster-max-zoom" name="'. BasicGoogleMapsPlacemarks::PREFIX .'cluster-max-zoom" type="text" value="'. $this->clusterMaxZoom .'" class="small-text" /> ';
-					printf( __( '%d (farthest) to %d (closest)', 'bgmp' ), BasicGoogleMapsPlacemarks::GRID_ZOOM_MIN, BasicGoogleMapsPlacemarks::GRID_ZOOM_MAX );
-				break;
-				
-				case BasicGoogleMapsPlacemarks::PREFIX . 'cluster-grid-size':
-					echo '<input id="'. BasicGoogleMapsPlacemarks::PREFIX .'cluster-grid-size" name="'. BasicGoogleMapsPlacemarks::PREFIX .'cluster-grid-size" type="text" value="'. $this->clusterGridSize .'" class="small-text" /> ';
-					printf( __( '%d (smallest) to %d (largest)', 'bgmp' ), BasicGoogleMapsPlacemarks::GRID_SIZE_MIN, BasicGoogleMapsPlacemarks::GRID_SIZE_MAX );
-				break;
-				
-				case BasicGoogleMapsPlacemarks::PREFIX . 'cluster-style':
-					echo '<select id="'. BasicGoogleMapsPlacemarks::PREFIX .'cluster-style" name="'. BasicGoogleMapsPlacemarks::PREFIX .'cluster-style">
-						<option value="default" '.		selected( $this->clusterStyle, 'default', false ) .'>'.			__( 'Default', 'bgmp' ) .'</option>
-						<option value="people" '.		selected( $this->clusterStyle, 'people', false ) .'>'.			__( 'People', 'bgmp' ) .'</option>
-						<option value="hearts" '.		selected( $this->clusterStyle, 'hearts', false ) .'>'.			__( 'Hearts', 'bgmp' ) .'</option>
-						<option value="conversation" '.	selected( $this->clusterStyle, 'conversation', false ) .'>'.	__( 'Conversation', 'bgmp' ) .'</option>
-					</select>';
-				break;
-			}
+			require( dirname( __FILE__ ) .'/views/settings-marker-clusterer.php' );
 		}
 	} // end BGMPSettings
 }

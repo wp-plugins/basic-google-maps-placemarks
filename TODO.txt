@@ -12,6 +12,17 @@
 	Update alpha version numbers in basic-google-maps-placemarks.php comment and core.php constant
 	Update readme compatible tag to latest WP version
 	Work on a single feature/bug fix/etc at a time
+		New Code Checklist
+			Security
+				Input validation for domain correctness and security.
+				Pass any manual SQL queries through $wpdb->prepare().
+				Output sanitization when sending untrusted data to browser. All data should be considered untrusted.
+				Add/check nonces for all forms and AJAX requests.
+				Make sure current user is authorized to perform the action with current_user_can().
+			Add filters
+			Write unit and integration tests
+			Throw/catch exceptions when encountering invalid conditions.
+			Use did_action() in action callbacks 
 		Update readme changelog and upgrade notice
 		Update PHP/WP version requirements in basic-google-maps-placemarks.php comment and core.php constant
 		Test and commit to SVN trunk
@@ -55,30 +66,25 @@
 
 1.9
 	MarkerClusterer integration
-		add settings
-			enable/disable
-			cluster threshold
-			icon?
-				maybe select from media library 
-		any other related tasks?
-		
 		auto generate 200 markers and test
 			probably setup a wpms blog for it so it doesn't clutter normal blog
+			can just export from alpha.nrp
 		
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-using-markerclusterer-with-bgmp-plugin?replies=2
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-many-markers-behavior?replies=1#post-2778964
-		
+		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-placemark-with-2-marks-on-the-same-place?replies=2
 	
-	bgmpdata can be output inside shortcode funciton
-		this would simplify things a lot, wouldn't have to parse out anymore
-		still peek ahead to tell if shortcode called or not, and enqueue functions.js based on that, but don't need to do that for data
-		wouldn't have to use filters to insert args with do_shortcode
-		this is done and tested
-
-	enqueuemessage() bug - adds it twice for coordinates error, probably for everything else too
-		done
+	move screenshots to assets directory
+		done, but verify after tagging
+	
 
 1.9.1
+	Maybe refactor markercluster stuff into a subplugin architecture
+		because markerclustere isn't really a core feature
+		add a way to add "core" plugins to bgmp that aren't ran unless activated
+		separate js,php,css etc
+		probably too much work
+		
 	column sorting broken
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-sortable-columns-broken?replies=1#post-2851834
 
@@ -104,6 +110,10 @@
 		also add ID field to the placemarks
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-how-to-open-the-placemark-url-in-the-info-window?replies=1#post-2816596
 
+	add javascript hooks
+		maybe wp 3.5 will have formal system -- http://core.trac.wordpress.org/ticket/21170
+		http://wordpress.tv/2012/08/14/luke-gedeon-javascript-actions-and-filters-in-core-hooked-on-javascript-works-for-me/
+		https://github.com/carldanley/WordPress-Action-Filter-Library
 
 1.9.2
 	add credits section to other notes
@@ -236,6 +246,7 @@
 		maybe only keep it in the WP settings menu for existing installs? new installs would only have it in the Placemarks menu
 		update documentation
 
+1.9.6
 	mapShortcode()
 		shouldn't check for stylesheet here? only really need the two scripts, so removing stylesheet check would let users dequeue stylesheet and use their own w/out having to keep same name. update readme
 
@@ -244,6 +255,20 @@
 		or maybe there's a global var that's set soemwhere
 		look through core
 		
+	setup read-only mirror on github using svn2git?
+		that'd let people add it as a submodule in their git repos and easily upgrade
+		add to faq
+		
+	clean up options page, make it less cluttered and busy
+		maybe divide into several pages: 'basic settings', 'marker clustering', 're-abolish slavery'
+	
+1.10
+	move files to subdirectories
+		core.php, settings.php => classes/
+		functions.js => javascript/
+		style.css => css/
+		unit-tests.php => tests/unit/
+		problems with backwards compat for people who mod'd plugin?. sol b/c should have used functionality plugin?
 		
 1.minor
 	infowinder not rounded anymore?
@@ -469,7 +494,7 @@
 	2 - set width as % in addition to px
 			check that google api allows that
 			this may be working in 1.3 already, check notes for 1.3.2 or 1.3.3 for testing info
-	2 - directions (and other options that google includes in their implementaiton? e.g., 'zoom here'?
+	3 - directions (and other options that google includes in their implementaiton? e.g., 'zoom here'?
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-directions?replies=2#post-2494522
 		one other?
 	2 - option to have placemark info window open when map loads.
@@ -482,7 +507,10 @@
 	2 - zip code search to display placemarks near a given zip code. could also have a shortcode option to display them
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-look-up-closest-store-and-route?replies=2
 	1 - search only placemarks
-	1 - shortcode argument for post id, then only display that post on the map
+	2 - exclude from search results
+		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-excluding-from-search-results?replies=3#post-3185959
+	2 - shortcode argument for post id, then only display that post on the map
+		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-single-placemark-on-maps-and-functionsphp-question?replies=1#post-3185988
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-possibility-to-show-a-single-placemark?replies=1
 	1 - configuration option to upload/link to new default marker, instead of having to use filter
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-upload-placemark-logo-in-configuration-page?replies=1#post-2679597

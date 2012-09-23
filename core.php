@@ -15,7 +15,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 	{
 		// Declare variables and constants
 		protected $settings, $options, $updatedOptions, $userMessageCount, $mapShortcodeCalled, $mapShortcodeCategories;
-		const VERSION		= '1.9-alpha1';
+		const VERSION		= '1.9-alpha2';
 		const PREFIX		= 'bgmp_';
 		const POST_TYPE		= 'bgmp';
 		const TAXONOMY		= 'bgmp-category';
@@ -528,7 +528,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			if( !is_admin() && $this->mapShortcodeCalled )
 			{
 				wp_enqueue_script( 'googleMapsAPI' );
-				if( true )	// @todo add option
+				if( $this->settings->markerClustering )
 					wp_enqueue_script( 'markerClusterer' );
 				wp_enqueue_script( 'bgmp' );
 			}
@@ -950,6 +950,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			}
 			
 			$posts = get_posts( apply_filters( self::PREFIX . 'list-shortcode-params', $params ) );
+			$posts = apply_filters( self::PREFIX . 'list-shortcode-posts', $posts );
 			
 			if( $posts )
 			{
@@ -994,8 +995,95 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		 */
 		public function getMapOptions( $attributes )
 		{
+			$clusterStyles = array(
+				'people' => array(
+					array(
+						'url'		=> plugins_url( 'includes/marker-clusterer/images/people35.png', __FILE__ ),
+						'height'	=> 35,
+						'width'		=> 35,
+						'anchor'	=> array( 16, 0 ),
+						'textColor'	=> '#ff00ff',
+						'textSize'	=> 10
+					),
+					
+					array(
+						'url'		=> plugins_url( 'includes/marker-clusterer/images/people45.png', __FILE__ ),
+						'height'	=> 45,
+						'width'		=> 45,
+						'anchor'	=> array( 24, 0 ),
+						'textColor'	=> '#ff0000',
+						'textSize'	=> 11
+					),
+					
+					array(
+						'url'		=> plugins_url( 'includes/marker-clusterer/images/people55.png', __FILE__ ),
+						'height'	=> 55,
+						'width'		=> 55,
+						'anchor'	=> array( 32, 0 ),
+						'textColor'	=> '#ffffff',
+						'textSize'	=> 12
+					)
+				),
+				
+				'conversation' => array(
+					array(
+						'url'		=> plugins_url( 'includes/marker-clusterer/images/conv30.png', __FILE__ ),
+						'height'	=> 27,
+						'width'		=> 30,
+						'anchor'	=> array( 3, 0 ),
+						'textColor'	=> '#ff00ff',
+						'textSize'	=> 10
+					),
+					
+					array(
+						'url'		=> plugins_url( 'includes/marker-clusterer/images/conv40.png', __FILE__ ),
+						'height'	=> 36,
+						'width'		=> 40,
+						'anchor'	=> array( 6, 0 ),
+						'textColor'	=> '#ff0000',
+						'textSize'	=> 11
+					),
+					
+					array(
+						'url'		=> plugins_url( 'includes/marker-clusterer/images/conv50.png', __FILE__ ),
+						'height'	=> 50,
+						'width'		=> 45,
+						'anchor'	=> array( 8, 0 ),
+						'textSize'	=> 12
+					)
+				),
+				
+				'hearts' => array(
+					array(
+						'url'		=> plugins_url( 'includes/marker-clusterer/images/heart30.png', __FILE__ ),
+						'height'	=> 26,
+						'width'		=> 30,
+						'anchor'	=> array( 4, 0 ),
+						'textColor'	=> '#ff00ff',
+						'textSize'	=> 10
+					),
+					
+					array(
+						'url'		=> plugins_url( 'includes/marker-clusterer/images/heart40.png', __FILE__ ),
+						'height'	=> 35,
+						'width'		=> 40,
+						'anchor'	=> array( 8, 0 ),
+						'textColor'	=> '#ff0000',
+						'textSize'	=> 11
+					),
+					
+					array(
+						'url'		=> plugins_url( 'includes/marker-clusterer/images/heart50.png', __FILE__ ),
+						'height'	=> 50,
+						'width'		=> 44,
+						'anchor'	=> array( 12, 0 ),
+						'textSize'	=> 12
+					)
+				)
+			);
+					
 			$options = array(
-				'mapWidth'				=> $this->settings->mapWidth,
+				'mapWidth'				=> $this->settings->mapWidth,					// @todo move these into 'map' subarray? but then have to worry about backwards compat
 				'mapHeight'				=> $this->settings->mapHeight,
 				'latitude'				=> $this->settings->mapLatitude,
 				'longitude'				=> $this->settings->mapLongitude,
@@ -1003,7 +1091,16 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				'type'					=> $this->settings->mapType,
 				'typeControl'			=> $this->settings->mapTypeControl,
 				'navigationControl'		=> $this->settings->mapNavigationControl,
-				'infoWindowMaxWidth'	=> $this->settings->mapInfoWindowMaxWidth
+				'infoWindowMaxWidth'	=> $this->settings->mapInfoWindowMaxWidth,
+				'streetViewControl'		=> true,
+				
+				'clustering'			=> array(
+					'enabled'			=> $this->settings->markerClustering,
+					'maxZoom'			=> $this->settings->clusterMaxZoom,
+					'gridSize'			=> $this->settings->clusterGridSize,
+					'style'				=> $this->settings->clusterStyle,
+					'styles'			=> $clusterStyles
+				)
 			);
 			
 			$options = shortcode_atts( $options, $attributes );
@@ -1050,6 +1147,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 					$defaultIcon = apply_filters( self::PREFIX .'default-icon', plugins_url( 'images/default-marker.png', __FILE__ ), $pp->ID );
  
 					$placemarks[] = array(
+						'id'		=> $pp->ID,
 						'title'		=> $pp->post_title,
 						'latitude'	=> get_post_meta( $pp->ID, self::PREFIX . 'latitude', true ),
 						'longitude'	=> get_post_meta( $pp->ID, self::PREFIX . 'longitude', true ),

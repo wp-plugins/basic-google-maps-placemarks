@@ -23,83 +23,18 @@ function bgmp_wrapper( $ )
 		init : function()
 		{
 			bgmp.name				= 'Basic Google Maps Placemarks';
-			bgmp.canvas				= document.getElementById( 'bgmp_map-canvas' );	// We have to use getElementById instead of a jQuery selector here in order to pass it to the Maps API.
+			bgmp.canvas				= document.getElementById( 'bgmp_map-canvas' );		// We have to use getElementById instead of a jQuery selector here in order to pass it to the Maps API.
 			bgmp.previousInfoWindow	= undefined;
 			bgmp.map				= undefined;
 			bgmp.markerClusterer	= undefined;
-			bgmp.clusterStyles		= [[]];
 			bgmp.markers			= [];
 			
-			// @todo add to options page
-			bgmpData.options.clusterMarkers		= true;
-			bgmpData.options.clusterMaxZoom		= parseInt( -1 );
-			bgmpData.options.clusterGridSize	= parseInt( -1 );
-			bgmpData.options.clusterStyle		= parseInt( -1 );
-			
-			/*
-			 var styles = [[{
-		        url: '../images/people35.png',
-		        height: 35,
-		        width: 35,
-		        anchor: [16, 0],
-		        textColor: '#ff00ff',
-		        textSize: 10
-		      }, {
-		        url: '../images/people45.png',
-		        height: 45,
-		        width: 45,
-		        anchor: [24, 0],
-		        textColor: '#ff0000',
-		        textSize: 11
-		      }, {
-		        url: '../images/people55.png',
-		        height: 55,
-		        width: 55,
-		        anchor: [32, 0],
-		        textColor: '#ffffff',
-		        textSize: 12
-		      }], [{
-		        url: '../images/conv30.png',
-		        height: 27,
-		        width: 30,
-		        anchor: [3, 0],
-		        textColor: '#ff00ff',
-		        textSize: 10
-		      }, {
-		        url: '../images/conv40.png',
-		        height: 36,
-		        width: 40,
-		        anchor: [6, 0],
-		        textColor: '#ff0000',
-		        textSize: 11
-		      }, {
-		        url: '../images/conv50.png',
-		        width: 50,
-		        height: 45,
-		        anchor: [8, 0],
-		        textSize: 12
-		      }], [{
-		        url: '../images/heart30.png',
-		        height: 26,
-		        width: 30,
-		        anchor: [4, 0],
-		        textColor: '#ff00ff',
-		        textSize: 10
-		      }, {
-		        url: '../images/heart40.png',
-		        height: 35,
-		        width: 40,
-		        anchor: [8, 0],
-		        textColor: '#ff0000',
-		        textSize: 11
-		      }, {
-		        url: '../images/heart50.png',
-		        width: 50,
-		        height: 44,
-		        anchor: [12, 0],
-		        textSize: 12
-		      }]];
-			 */
+			// @todo make this loop through array instead of manual. also add any other numbers
+			bgmpData.options.zoom					= parseInt( bgmpData.options.zoom ),
+			bgmpData.options.latitude				= parseFloat( bgmpData.options.latitude );
+			bgmpData.options.longitude				= parseFloat( bgmpData.options.longitude );
+			bgmpData.options.clustering.maxZoom		= parseInt( bgmpData.options.clustering.maxZoom );
+			bgmpData.options.clustering.gridSize	= parseInt( bgmpData.options.clustering.gridSize );
 								
 			if( bgmp.canvas )
 				bgmp.buildMap();
@@ -125,13 +60,14 @@ function bgmp_wrapper( $ )
 			
 			mapOptions = 
 			{
-				'zoom'						: parseInt( bgmpData.options.zoom ),
-				'center'					: new google.maps.LatLng( parseFloat( bgmpData.options.latitude ), parseFloat( bgmpData.options.longitude ) ),
+				'zoom'						: bgmpData.options.zoom,
+				'center'					: new google.maps.LatLng( bgmpData.options.latitude, bgmpData.options.longitude ),
 				'mapTypeId'					: google.maps.MapTypeId[ bgmpData.options.type ],
 				'mapTypeControl'			: bgmpData.options.typeControl == 'off' ? false : true,
 				'mapTypeControlOptions'		: { style: google.maps.MapTypeControlStyle[ bgmpData.options.typeControl ] },
 				'navigationControl'			: bgmpData.options.navigationControl == 'off' ? false : true,
-				'navigationControlOptions'	: { style: google.maps.NavigationControlStyle[ bgmpData.options.navigationControl ] }
+				'navigationControlOptions'	: { style: google.maps.NavigationControlStyle[ bgmpData.options.navigationControl ] },
+				'streetViewControl'			: bgmpData.options.streetViewControl
 			};
 			
 			// Override default width/heights from settings
@@ -154,17 +90,13 @@ function bgmp_wrapper( $ )
 			
 			bgmp.addPlacemarks( bgmp.map );		// @todo not supposed to add them when clustering is enabled? http://www.youtube.com/watch?v=Z2VF9uKbQjI
 			
-			if( bgmpData.options.clusterMarkers )
+			if( bgmpData.options.clustering.enabled )
 			{
-				/* @todo
-				 bgmp.markerCluster = new MarkerClusterer( bgmp.map, bgmp.markers, {
-					maxZoom		: bgmpData.options.clusterMaxZoom,
-					gridSize	: bgmpData.options.clusterGridSize,
-					styles		: bgmp.clusterStyles[ bgmpData.options.clusterStyle ]		// @todo not sure what a good way to handle this is yet. maybe have dropdown just like exampe does
+				bgmp.markerCluster = new MarkerClusterer( bgmp.map, bgmp.markers, {
+					maxZoom		: bgmpData.options.clustering.maxZoom,
+					gridSize	: bgmpData.options.clustering.gridSize,
+					styles		: bgmpData.options.clustering.styles[ bgmpData.options.clustering.style ]
 				} );
-				*/
-				
-				bgmp.markerClusterer = new MarkerClusterer( bgmp.map, bgmp.markers );
 			}
 		},
 		
