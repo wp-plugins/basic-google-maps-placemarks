@@ -258,7 +258,7 @@ if( !class_exists( 'BGMPSettings' ) )
 					elseif( $this->mapAddress && ( !$this->mapLatitude || !$this->mapLongitude ) )
 						echo " <em>". __( "(Error geocoding address. Please make sure it's correct and try again.)", 'bgmp' ) ."</em>";
 							
-					echo '<p>'. __( 'You can type in anything that you would type into a Google Maps search field, from a full address to an intersection, landmark, city, zip code or latitude/longitude coordinates.', 'bgmp' ) .'</p>';
+					echo '<p class="description">'. __( 'You can type in anything that you would type into a Google Maps search field, from a full address to an intersection, landmark, city, zip code or latitude/longitude coordinates.', 'bgmp' ) .'</p>';
 				break;
 					
 				case BasicGoogleMapsPlacemarks::PREFIX . 'map-zoom':
@@ -284,7 +284,7 @@ if( !class_exists( 'BGMPSettings' ) )
 					</select>';
 					// @todo use selected()
 					
-					_e( ' "Automatic" will automatically switch to the appropriate control based on the window size and other factors.', 'bgmp' );
+					echo '<p class="description">' . esc_html__( ' "Automatic" will automatically switch to the appropriate control based on the window size and other factors.', 'bgmp' ) . '</p>';
 				break;
 					
 				case BasicGoogleMapsPlacemarks::PREFIX . 'map-navigation-control':
@@ -297,7 +297,7 @@ if( !class_exists( 'BGMPSettings' ) )
 					</select>';
 					// @todo use selected()
 						
-					_e( ' "Automatic" will automatically switch to the appropriate control based on the window size and other factors.', 'bgmp' );
+					echo '<p class="description">' . esc_html__( ' "Automatic" will automatically switch to the appropriate control based on the window size and other factors.', 'bgmp' ) . '</p>';
 				break;
 					
 				case BasicGoogleMapsPlacemarks::PREFIX . 'map-info-window-width':

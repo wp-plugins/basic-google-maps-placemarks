@@ -36,7 +36,7 @@
 	Update localizations
 		Generate new .pot file and update header values inside it
 			cd wordpress-i18n-tools
-			php makepot.php wp-plugin ../wp/wp-content/plugins/basic-google-maps-placemarks/
+			php makepot.php wp-plugin ../wp/content/plugins/basic-google-maps-placemarks/
 			mv basic-google-maps-placemarks.pot ../wp/wp-content/plugins/basic-google-maps-placemarks/languages/
 		Update French translation yourself until a native speaker takes it over
 		Commit to trunk (but don't tag or update readme.txt Stable tag yet)
@@ -65,14 +65,9 @@
 ** Roadmap **
 
 1.9
-	MarkerClusterer integration
-		auto generate 200 markers and test
-			probably setup a wpms blog for it so it doesn't clutter normal blog
-			can just export from alpha.nrp
-		
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-using-markerclusterer-with-bgmp-plugin?replies=2
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-many-markers-behavior?replies=1#post-2778964
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-placemark-with-2-marks-on-the-same-place?replies=2
+	http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-using-markerclusterer-with-bgmp-plugin?replies=2
+	http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-many-markers-behavior?replies=1#post-2778964
+	http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-placemark-with-2-marks-on-the-same-place?replies=2
 	
 	move screenshots to assets directory
 		done, but verify after tagging
@@ -88,7 +83,8 @@
 	column sorting broken
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-sortable-columns-broken?replies=1#post-2851834
 
-	need to escape translated strings?
+	need to escape translated strings more
+		also remove markup from strings
 	
 	show map on single placemark page that only shows that individual marker
 		add "placemarks" param to bgmp-map shortcode. e.g., [bgmp-map placemarks="13,93,234"]. pass in post ids

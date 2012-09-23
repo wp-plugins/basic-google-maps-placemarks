@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the Basic Google Maps Placemarks package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Basic Google Maps Placemarks 1.8-rc1\n"
+"Project-Id-Version: Basic Google Maps Placemarks 1.9-rc1\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/basic-google-maps-placemarks\n"
-"POT-Creation-Date: 2012-08-05 05:28:07+00:00\n"
+"POT-Creation-Date: 2012-09-23 02:13:06+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -12,13 +12,13 @@ msgstr ""
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 
-#. #-#-#-#-#  basic-google-maps-placemarks.pot (Basic Google Maps Placemarks 1.8-rc1)  #-#-#-#-#
+#. #-#-#-#-#  basic-google-maps-placemarks.pot (Basic Google Maps Placemarks 1.9-rc1)  #-#-#-#-#
 #. Plugin Name of the plugin/theme
 #: basic-google-maps-placemarks.php:36
 msgid "Basic Google Maps Placemarks"
 msgstr ""
 
-#: basic-google-maps-placemarks.php:68
+#: basic-google-maps-placemarks.php:69
 msgid ""
 "%s <strong>requires PHP %s</strong> and <strong>WordPress %s</strong> in "
 "order to work. You're running PHP %s and WordPress %s. You'll need to "
@@ -29,11 +29,11 @@ msgid ""
 "Upgrading_WordPress\">the Codex</a>."
 msgstr ""
 
-#: core.php:149 settings.php:42
+#: core.php:151 settings.php:44
 msgid "Seattle"
 msgstr ""
 
-#: core.php:255
+#: core.php:292
 msgid ""
 "%s requires the Images media button setting to be enabled in order to use "
 "custom icons on markers, but it's currently turned off. If you'd like to use "
@@ -41,206 +41,218 @@ msgid ""
 "page, in the Upload Settings section."
 msgstr ""
 
-#: core.php:319
+#: core.php:356
 msgid "%s shortcode error: %s is not a valid category."
 msgstr ""
 
-#: core.php:336
+#: core.php:373
 msgid "%s shortcode error: %s is not a valid width."
 msgstr ""
 
-#: core.php:353
+#: core.php:390
 msgid "%s shortcode error: %s is not a valid height."
 msgstr ""
 
-#: core.php:378
+#: core.php:415
 msgid "%s shortcode error: %s is not a valid zoom level."
 msgstr ""
 
-#: core.php:394
+#: core.php:431
 msgid "%s shortcode error: %s is not a valid map type."
 msgstr ""
 
-#: core.php:563 core.php:580
+#: core.php:570 core.php:587
 msgid "Placemarks"
 msgstr ""
 
-#: core.php:564
+#: core.php:571
 msgid "Placemark"
 msgstr ""
 
-#: core.php:565
+#: core.php:572
 msgid "Add New"
 msgstr ""
 
-#: core.php:566
+#: core.php:573
 msgid "Add New Placemark"
 msgstr ""
 
-#: core.php:567
+#: core.php:574
 msgid "Edit"
 msgstr ""
 
-#: core.php:568
+#: core.php:575
 msgid "Edit Placemark"
 msgstr ""
 
-#: core.php:569
+#: core.php:576
 msgid "New Placemark"
 msgstr ""
 
-#: core.php:570 core.php:571
+#: core.php:577 core.php:578
 msgid "View Placemark"
 msgstr ""
 
-#: core.php:572
+#: core.php:579
 msgid "Search Placemarks"
 msgstr ""
 
-#: core.php:573 core.php:967
+#: core.php:580 core.php:983
 msgid "No Placemarks found"
 msgstr ""
 
-#: core.php:574
+#: core.php:581
 msgid "No Placemarks found in Trash"
 msgstr ""
 
-#: core.php:575
+#: core.php:582
 msgid "Parent Placemark"
 msgstr ""
 
-#: core.php:606 core.php:607
+#: core.php:616 core.php:617
 msgid "Category"
 msgstr ""
 
-#: core.php:607
+#: core.php:617
 msgid "Categories"
 msgstr ""
 
-#: core.php:644
+#: core.php:657
 msgid "Placemark Address"
 msgstr ""
 
-#: core.php:645
+#: core.php:658
 msgid "Stacking Order"
 msgstr ""
 
-#: core.php:722
+#: core.php:738
 msgid "The stacking order has to be an integer."
 msgstr ""
 
-#: core.php:750
+#: core.php:766
 msgid "%s geocode error: %s"
 msgstr ""
 
-#: core.php:762
+#: core.php:778
 msgid "%s geocode error: Response code not present"
 msgstr ""
 
-#: core.php:780
+#: core.php:796
 msgid "<p>%s geocode error: %d %s</p> <p>Response: %s</p>"
 msgstr ""
 
-#: core.php:797
+#: core.php:813
 msgid "%s geocode error: Response was not formatted in JSON."
 msgstr ""
 
-#: core.php:803
+#: core.php:819
 msgid "%s geocode error: Request Denied."
 msgstr ""
 
-#: core.php:809
+#: core.php:825
 msgid "That address couldn't be geocoded, please make sure that it's correct."
 msgstr ""
 
-#: core.php:879
+#: core.php:895
 msgid ""
 "<p class=\"error\">%s error: JavaScript and/or CSS files aren't loaded. If "
 "you're using do_shortcode() you need to add a filter to your theme first. "
 "See <a href=\"%s\">the FAQ</a> for details.</p>"
 msgstr ""
 
-#: core.php:891
-msgid "Loading map..."
-msgstr ""
-
-#: core.php:892
-msgid "Loading"
-msgstr ""
-
-#: core.php:1149
+#: core.php:1268
 msgid "Type"
 msgstr ""
 
-#: core.php:1151
+#: core.php:1270
 msgid "Length"
 msgstr ""
 
-#: core.php:1153
+#: core.php:1272
 msgid "Content"
 msgstr ""
 
-#: settings.php:49
+#: settings.php:51
 msgid "Street Map"
 msgstr ""
 
-#: settings.php:50
+#: settings.php:52
 msgid "Satellite Images"
 msgstr ""
 
-#: settings.php:51
+#: settings.php:53
 msgid "Hybrid"
 msgstr ""
 
-#: settings.php:52
+#: settings.php:54
 msgid "Terrain"
 msgstr ""
 
-#: settings.php:109
+#: settings.php:116
 msgid "Re-Abolish Slavery"
 msgstr ""
 
-#: settings.php:148
+#: settings.php:155
 msgid "Help"
 msgstr ""
 
-#: settings.php:149
+#: settings.php:156
 msgid "Settings"
 msgstr ""
 
-#: settings.php:164
+#: settings.php:174
 msgid "Map Width"
 msgstr ""
 
-#: settings.php:165
+#: settings.php:175
 msgid "Map Height"
 msgstr ""
 
-#: settings.php:166
+#: settings.php:176
 msgid "Map Center Address"
 msgstr ""
 
-#: settings.php:167
+#: settings.php:177
 msgid "Zoom"
 msgstr ""
 
-#: settings.php:168
+#: settings.php:178
 msgid "Map Type"
 msgstr ""
 
-#: settings.php:169
+#: settings.php:179
 msgid "Type Control"
 msgstr ""
 
-#: settings.php:170
+#: settings.php:180
 msgid "Navigation Control"
 msgstr ""
 
-#: settings.php:171
+#: settings.php:181
 msgid "Info. Window Maximum Width"
 msgstr ""
 
-#: settings.php:191
+#: settings.php:194 settings.php:225
+msgid "Marker Clustering"
+msgstr ""
+
+#: settings.php:195
+msgid "Max Zoom"
+msgstr ""
+
+#: settings.php:196
+msgid "Grid Size"
+msgstr ""
+
+#: settings.php:197
+msgid "Style"
+msgstr ""
+
+#: settings.php:220
+msgid "Map Settings"
+msgstr ""
+
+#: settings.php:221
 msgid ""
 "The map(s) will use these settings as defaults, but you can override them on "
 "individual maps using shortcode arguments. See <a href=\"http://wordpress."
@@ -248,60 +260,66 @@ msgid ""
 "Installation page</a> for details."
 msgstr ""
 
-#: settings.php:201 settings.php:211 settings.php:295
+#: settings.php:226
+msgid ""
+"You can group large numbers of markers into a single cluster by enabling the "
+"Cluster Markers option."
+msgstr ""
+
+#: settings.php:244 settings.php:249 settings.php:305
 msgid "pixels"
 msgstr ""
 
-#: settings.php:223
+#: settings.php:256
 msgid "Geocoded to:"
 msgstr ""
 
-#: settings.php:226 views/meta-address.php:14
+#: settings.php:259 views/meta-address.php:14
 msgid "(Error geocoding address. Please make sure it's correct and try again.)"
 msgstr ""
 
-#: settings.php:228
+#: settings.php:261
 msgid ""
 "You can type in anything that you would type into a Google Maps search "
 "field, from a full address to an intersection, landmark, city, zip code or "
 "latitude/longitude coordinates."
 msgstr ""
 
-#: settings.php:238
+#: settings.php:266 views/settings-marker-clusterer.php:11
 msgid "%d (farthest) to %d (closest)"
 msgstr ""
 
-#: settings.php:262 settings.php:278
+#: settings.php:280 settings.php:292
 msgid "Off"
 msgstr ""
 
-#: settings.php:263 settings.php:279
+#: settings.php:281 settings.php:293
 msgid "Automatic"
 msgstr ""
 
-#: settings.php:264
+#: settings.php:282
 msgid "Horizontal Bar"
 msgstr ""
 
-#: settings.php:265
+#: settings.php:283
 msgid "Dropdown Menu"
 msgstr ""
 
-#: settings.php:268 settings.php:285
+#: settings.php:287 settings.php:300
 msgid ""
 " \"Automatic\" will automatically switch to the appropriate control based on "
 "the window size and other factors."
 msgstr ""
 
-#: settings.php:280
+#: settings.php:294
 msgid "Small"
 msgstr ""
 
-#: settings.php:281
+#: settings.php:295
 msgid "Android"
 msgstr ""
 
-#: settings.php:282
+#: settings.php:296
 msgid "Zoom/Pan"
 msgstr ""
 
@@ -346,12 +364,52 @@ msgstr ""
 msgid "Stacking Order:"
 msgstr ""
 
+#: views/settings-marker-clusterer.php:5
+msgid " Enable marker clustering"
+msgstr ""
+
+#: views/settings-marker-clusterer.php:13
+msgid ""
+"When the maximum zoom level is reached, all markers will be shown without "
+"clustering."
+msgstr ""
+
+#: views/settings-marker-clusterer.php:20
+msgid ""
+"The grid size of a cluster, in pixels. Each cluster will be a square. Larger "
+"grids can be rendered faster."
+msgstr ""
+
+#: views/settings-marker-clusterer.php:26
+msgid "Default"
+msgstr ""
+
+#: views/settings-marker-clusterer.php:27
+msgid "People"
+msgstr ""
+
+#: views/settings-marker-clusterer.php:28
+msgid "Hearts"
+msgstr ""
+
+#: views/settings-marker-clusterer.php:29
+msgid "Conversation"
+msgstr ""
+
 #: views/settings.php:5
 msgid "%s Settings"
 msgstr ""
 
 #: views/settings.php:14
 msgid "Save Changes"
+msgstr ""
+
+#: views/shortcode-bgmp-map.php:9
+msgid "Loading map..."
+msgstr ""
+
+#: views/shortcode-bgmp-map.php:10
+msgid "Loading"
 msgstr ""
 
 #. Plugin URI of the plugin/theme
