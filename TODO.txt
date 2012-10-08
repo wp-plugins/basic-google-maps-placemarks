@@ -64,15 +64,6 @@
 
 ** Roadmap **
 
-1.9
-	http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-using-markerclusterer-with-bgmp-plugin?replies=2
-	http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-many-markers-behavior?replies=1#post-2778964
-	http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-placemark-with-2-marks-on-the-same-place?replies=2
-	
-	move screenshots to assets directory
-		done, but verify after tagging
-	
-
 1.9.1
 	Maybe refactor markercluster stuff into a subplugin architecture
 		because markerclustere isn't really a core feature
@@ -110,6 +101,8 @@
 		maybe wp 3.5 will have formal system -- http://core.trac.wordpress.org/ticket/21170
 		http://wordpress.tv/2012/08/14/luke-gedeon-javascript-actions-and-filters-in-core-hooked-on-javascript-works-for-me/
 		https://github.com/carldanley/WordPress-Action-Filter-Library
+		
+	add categories to bgmpData.markers
 
 1.9.2
 	add credits section to other notes

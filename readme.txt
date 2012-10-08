@@ -4,7 +4,7 @@ Donate link: http://www.doctorswithoutborders.org
 Tags: google maps, maps, embed, marker, placemark, icon, geocode, shortcode, custom post type, multisite
 Requires at least: 3.1
 Tested up to: 3.4.2
-Stable tag: 1.8
+Stable tag: 1.9
 License: GPL2
 
 Embeds a Google Map into your site and lets you add map markers with custom icons and information windows.
@@ -305,7 +305,7 @@ Yes, I've tried to add filters for everything you might reasonably want, just br
 **Localizations**
 
 * Chinese (thanks to [yzqiang](http://wordpress.org/support/profile/yzqiang))
-* French (thanks to Romain Fèvre)
+* French (thanks to Romain Fevre)
 
 If there isn't a translation for your language (or it is incomplete/inaccurate) please consider making one and contributing it to the plugin. You can learn how by reading [Translating WordPress](http://codex.wordpress.org/Translating_WordPress) and [How to Create a .po Language Translation](http://www.wdmac.com/how-to-create-a-po-language-translation). The .pot file you'll need is inside the *languages* directory in the plugin's folder. Once you're done, just [contact me](http://iandunn.name/contact) and send me the .po and .mo files, and I'll add them to the plugin.
 
