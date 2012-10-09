@@ -68,7 +68,9 @@
 
 ** Roadmap **
 
-1.9.1
+1.9.3
+	Add all the readme filter callbacks to unit tests if possible, or at least twentytwelve child theme for manual testing
+	
 	Maybe refactor markercluster stuff into a subplugin architecture
 		because markerclustere isn't really a core feature
 		add a way to add "core" plugins to bgmp that aren't ran unless activated

@@ -107,9 +107,6 @@ class bgmpCoreUnitTests extends UnitTestCase
 		$this->assertTrue( in_array( 'restaurants', $cleaned[ 'categories' ] ) );
 		$this->assertFalse( in_array( 'shopping-malls', $cleaned[ 'categories' ] ) );
 		
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'categories' => '' ) ) );
-		$this->assertTrue( is_array( $cleaned[ 'categories' ] ) && empty( $cleaned[ 'categories' ] ) );
-		
 		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'categories' => new stdClass() ) ) );
 		$this->assertTrue( is_array( $cleaned[ 'categories' ] ) && empty( $cleaned[ 'categories' ] ) );
 		
