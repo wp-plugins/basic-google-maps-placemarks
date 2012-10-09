@@ -25,7 +25,11 @@
 			Use did_action() in action callbacks 
 		Update readme changelog and upgrade notice
 		Update PHP/WP version requirements in basic-google-maps-placemarks.php comment and core.php constant
-		Test and commit to SVN trunk
+		Perform tests
+			Smoke
+			Unit
+			All action/filter callbacks in Readme
+		Commit to SVN trunk
 	
 	Upgrade playground/wpms to latest WordPress release
 	Update SVN trunk in playground/wpms
@@ -496,7 +500,8 @@
 	2 - zip code search to display placemarks near a given zip code. could also have a shortcode option to display them
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-look-up-closest-store-and-route?replies=2
 	1 - search only placemarks
-	2 - exclude from search results
+	3 - exclude from search results
+		but what about backwards compat? they can already use the filter to change it
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-excluding-from-search-results?replies=3#post-3185959
 	2 - shortcode argument for post id, then only display that post on the map
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-single-placemark-on-maps-and-functionsphp-question?replies=1#post-3185988

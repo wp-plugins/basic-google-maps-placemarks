@@ -15,7 +15,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 	{
 		// Declare variables and constants
 		protected $settings, $options, $updatedOptions, $userMessageCount, $mapShortcodeCalled, $mapShortcodeCategories;
-		const VERSION		= '1.9';
+		const VERSION		= '1.9.1';
 		const PREFIX		= 'bgmp_';
 		const POST_TYPE		= 'bgmp';
 		const TAXONOMY		= 'bgmp-category';
@@ -338,14 +338,18 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				// maybe call getMapShortcodeArguments() when saving post so they get immediate feedback about any errors in shortcode
 					// do something similar for list shortcode arguments?
 			
+			global $post;
+			
 			if( !is_array( $arguments ) )
 				return array();
 				
-			if( isset( $arguments[ 'categories' ] ) && !empty( $arguments[ 'categories' ] ) )
+			if( isset( $arguments[ 'categories' ] ) )
 			{
-				$arguments[ 'categories' ] = explode( ',', $arguments[ 'categories' ] );
+				if( is_string( $arguments[ 'categories' ] ) )
+					$arguments[ 'categories' ] = explode( ',', $arguments[ 'categories' ] );
 				
-				global $post;
+				elseif( !is_array( $arguments[ 'categories' ] ) )
+					$arguments[ 'categories' ] = array();
 				
 				foreach( $arguments[ 'categories' ] as $index => $term )
 				{

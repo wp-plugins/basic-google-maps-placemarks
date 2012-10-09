@@ -4,7 +4,7 @@ Donate link: http://www.doctorswithoutborders.org
 Tags: google maps, maps, embed, marker, placemark, icon, geocode, shortcode, custom post type, multisite
 Requires at least: 3.1
 Tested up to: 3.4.2
-Stable tag: 1.9
+Stable tag: 1.9.1
 License: GPL2
 
 Embeds a Google Map into your site and lets you add map markers with custom icons and information windows.
@@ -351,6 +351,9 @@ If you just need some minor customizations or are looking for someone with a low
 
 == Changelog ==
 
+= 1.9.1 =
+* Fixed [map shortcode categories bug](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-corephp-on-line-346).
+
 = 1.9 =
 * Added the MarkerClusterer library.
 * bgmpData moved to mapShortcode(), so users no longer need to use the `bgmp_map-shortcode-arguments` filter to use shortcode parameters from template files calling `do_shortcode()`. They can just be passed in like normal now.
@@ -467,6 +470,9 @@ If you just need some minor customizations or are looking for someone with a low
 
 
 == Upgrade Notice ==
+
+= 1.9.1 =
+BGMP 1.9.1 fixes a bug where [bgmp-map] shortcode categories passed as an array would issue a PHP warning.  
 
 = 1.9 =
 BGMP 1.9 adds support for clustering large numbers of markers together.
