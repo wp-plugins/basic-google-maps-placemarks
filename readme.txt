@@ -4,7 +4,7 @@ Donate link: http://www.doctorswithoutborders.org
 Tags: google maps, maps, embed, marker, placemark, icon, geocode, shortcode, custom post type, multisite
 Requires at least: 3.1
 Tested up to: 3.4.2
-Stable tag: 1.9.2
+Stable tag: 1.8
 License: GPL2
 
 Embeds a Google Map into your site and lets you add map markers with custom icons and information windows.
@@ -151,7 +151,7 @@ Read the Basic Usage section of [the Installation page](http://wordpress.org/ext
 If you still need help, then follow these instructions:
 
 1. Disable all other plugins and switch to the default theme, then check if the problem is still happening. If it isn't, then the problem may actually be with your theme or other plugins you have installed.
-3. If the problem is still happening, then start a new thread in the forum with a **detailed description** of your problem and **the URL to the page on your site where you placed the map**.
+3. If the problem is still happening, then start a new thread in the forum with a **detailed description** of your problem and **the URL to the page on your site where you placed the map**. Please copy/paste any error messages verbatim. Screenshots can be very helpful, too.
 5. Check the 'Notify me of follow-up posts via e-mail' box so you won't miss any replies.
 
 I monitor the forums and respond to a lot of the requests. I do this in my spare time, though, and can't respond to all of them. I typically only have time to help with problems that are within the plugin's scope. That means that I probably won't respond if the issue is actually caused by your theme or another plugin, or if you're trying to modify the plugin to do something it doesn't natively do. It's still a good idea to post something on the forums, though, because other users may be able to help out when I can't.
@@ -291,10 +291,12 @@ Add the following styles to your theme's style.css file or a [child theme](http:
 Yes. The plugin creates a [custom post type](http://codex.wordpress.org/Post_Types), so it has the same [permission structure](http://codex.wordpress.org/Roles_and_Capabilities) as regular posts/pages.
 
 
-= I upgraded to the latest version and now the map isn't working. =
+= I upgraded to the latest version and now something's broken =
 If you're running a caching plugin like WP Super Cache, make sure you delete the cache contents so that the latest files are loaded, and then refresh your browser.
 
 If you upgraded other plugins at the same time, it's possible that one of them is causing a JavaScript error that breaks the entire page or some other kind of conflict. Check if the plugin works with the default theme and no other plugins activated.
+
+If you're still having problems, create a detailed report on [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks) (see the 'How can I get help when I'm having a problem?' question above), and then [download an older version](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/developers/) to use until the problem is fixed. 
 
 = Are there any hooks I can use to modify or extend the plugin? =
 Yes, I've tried to add filters for everything you might reasonably want, just browse the source code to look for them. If you need a filter or action that isn't there, make a request on [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks) and I'll add it to the next version.

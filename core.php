@@ -888,7 +888,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		/**
 		 * Defines the [bgmp-map] shortcode
 		 * @author Ian Dunn <ian@iandunn.name>
-		 * @param array $attributes Array of parameters automatically passed in by Wordpress
+		 * @param array $attributes Array of parameters automatically passed in by WordPress
 		 * return string The output of the shortcode
 		 */
 		public function mapShortcode( $attributes ) 
@@ -907,7 +907,8 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			}
 
 			if( !is_array( $attributes ) || !isset( $attributes[ 'categories' ] ) )
-			$attributes[ 'categories' ] = '';
+				$attributes[ 'categories' ] = '';
+			
 			$attributes[ 'categories' ]	= apply_filters( self::PREFIX . 'mapShortcodeCategories', $attributes[ 'categories' ] );		// @todo - deprecated b/c 1.9 output bgmpdata in post; can now just set args in do_shortcode() . also  not consistent w/ shortcode naming scheme and have filter for all arguments now. need a way to notify people
 			$attributes					= apply_filters( self::PREFIX . 'map-shortcode-arguments', $attributes );					// @todo - deprecated b/c 1.9 output bgmpdata in post...
 			$attributes					= $this->cleanMapShortcodeArguments( $attributes );
