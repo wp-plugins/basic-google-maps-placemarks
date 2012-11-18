@@ -47,9 +47,11 @@
 	
 	If major changes, commit release candidate
 		Update version to x.x-rc1
+		Commit, tag
 		Add support forum message asking for testing/feedback
 		Email testers mailing list with link to forum post
-		Wait about a week
+		Wait about a week so people have chance to test
+		Fix any reported bugs, release additional RCs if necessary
 		Release final version
 	
 	Remove any notes from TODO for current release	
@@ -73,11 +75,10 @@
 ** Roadmap **
 
 1.9.3
-	new unit tests for cleanshortcodeargs
-	integration test to json_decode after passed through everything, to make sure no errors?
+	fix 'not valid cateory' error
+		done
 	fix line break bug in json
-	
-	Add all the readme filter callbacks to unit tests if possible, or at least twentytwelve child theme for manual testing
+		possibly done, need testers
 	
 	push a release candidate out and ask for feedback before releasing stable
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-map-not-loading-after-update?replies=12
@@ -88,6 +89,8 @@
 		mention mailing list for testing in forum post
 
 1.9.4
+	Add all the readme filter callbacks to unit tests if possible, or at least twentytwelve child theme for manual testing
+	
 	Maybe refactor markercluster stuff into a subplugin architecture
 		because markerclustere isn't really a core feature
 		add a way to add "core" plugins to bgmp that aren't ran unless activated
