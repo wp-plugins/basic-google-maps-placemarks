@@ -34,8 +34,6 @@
 	Upgrade playground/wpms to latest WordPress release
 	Update SVN trunk in playground/wpms
 	Test latest commits
-	Update final version numbers in basic-google-maps-placemarks.php comment and core.php constant
-	Update readme stable tag
 	
 	Update localizations
 		Generate new .pot file and update header values inside it
@@ -44,15 +42,21 @@
 			mv basic-google-maps-placemarks.pot ../wp/wp-content/plugins/basic-google-maps-placemarks/languages/
 		Update French translation yourself until a native speaker takes it over
 		Commit to trunk (but don't tag or update readme.txt Stable tag yet)
-		E-mail translators links to latest .pot and complete .zip files
+		E-mail translators mailing list with links to latest .pot and complete .zip files
 		Add updated POMO files from translators to local working copy
 	
-	Remove any notes from TODO for current release
 	If major changes, commit release candidate
 		Update version to x.x-rc1
 		Add support forum message asking for testing/feedback
+		Email testers mailing list with link to forum post
 		Wait about a week
 		Release final version
+	
+	Remove any notes from TODO for current release	
+	Update final version numbers in basic-google-maps-placemarks.php comment and core.php constant
+	Update readme stable tag
+	Update changelog date
+	
 	Commit latest changes to SVN trunk
 	Tag trunk
 	Download .zip file and test extracting
@@ -69,8 +73,21 @@
 ** Roadmap **
 
 1.9.3
+	new unit tests for cleanshortcodeargs
+	integration test to json_decode after passed through everything, to make sure no errors?
+	fix line break bug in json
+	
 	Add all the readme filter callbacks to unit tests if possible, or at least twentytwelve child theme for manual testing
 	
+	push a release candidate out and ask for feedback before releasing stable
+		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-map-not-loading-after-update?replies=12
+		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-corephp-on-line-346?replies=4
+		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-shortcode-errornot-valid-category?replies=4
+		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-error-msg-after-upgrade-to-v191?replies=5
+		http://wordpress.org/support/topic/displaying-the-map-in-difeerent-language?replies=4
+		mention mailing list for testing in forum post
+
+1.9.4
 	Maybe refactor markercluster stuff into a subplugin architecture
 		because markerclustere isn't really a core feature
 		add a way to add "core" plugins to bgmp that aren't ran unless activated
@@ -482,7 +499,7 @@
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-categories-feature-requests?replies=13#post-2558220
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-several-questions-about-categories-and-links?replies=1
 	3 - instead of setting icon on placemark, you could set it on taxonomy. looks for in order: placemark icon > category icon > default icon
-	3 - geolocate ip and use as addr for placemark
+	4 - geolocate ip and use as addr for placemark
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-automatic-location?replies=1#post-2566677
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-iphone-and-ipad-layout?replies=4
 			related to above: http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-iphone-map-broken?replies=1
@@ -502,7 +519,7 @@
 	2 - zip code search to display placemarks near a given zip code. could also have a shortcode option to display them
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-look-up-closest-store-and-route?replies=2
 	1 - search only placemarks
-	3 - exclude from search results
+	4 - exclude from search results
 		but what about backwards compat? they can already use the filter to change it
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-excluding-from-search-results?replies=3#post-3185959
 	2 - shortcode argument for post id, then only display that post on the map

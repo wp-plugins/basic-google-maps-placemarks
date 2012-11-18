@@ -3,7 +3,7 @@ Contributors: iandunn
 Donate link: http://www.doctorswithoutborders.org
 Tags: google maps, maps, embed, marker, placemark, icon, geocode, shortcode, custom post type, multisite
 Requires at least: 3.1
-Tested up to: 3.4.2
+Tested up to: 3.5-beta3
 Stable tag: 1.8
 License: GPL2
 
@@ -28,6 +28,9 @@ BGMP creates a [custom post type](http://www.youtube.com/watch?v=FWkLBPpGOmo#!) 
 You can see a live example of the plugin running at [washingtonhousechurches.net](http://washingtonhousechurches.net).
 
 Basic instructions are on [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/). Check [the FAQ](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/faq/) and [support forums](http://wordpress.org/support/plugin/basic-google-maps-placemarks) for help.
+
+**Note**: Support is *not* guaranteed. See [the FAQ](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/faq/) for details.
+
 
 == Installation ==
 
@@ -155,6 +158,8 @@ If you still need help, then follow these instructions:
 5. Check the 'Notify me of follow-up posts via e-mail' box so you won't miss any replies.
 
 I monitor the forums and respond to a lot of the requests. I do this in my spare time, though, and can't respond to all of them. I typically only have time to help with problems that are within the plugin's scope. That means that I probably won't respond if the issue is actually caused by your theme or another plugin, or if you're trying to modify the plugin to do something it doesn't natively do. It's still a good idea to post something on the forums, though, because other users may be able to help out when I can't.
+
+If you can't find a solution, you can always hire a developer to create one for you. See the Customization section on the [Other Notes](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/other_notes/) page for more info on that.
 
 
 = Does the plugin support [non-standard feature]? / How can I get the plugin to do [non-standard feature]? =
@@ -296,7 +301,10 @@ If you're running a caching plugin like WP Super Cache, make sure you delete the
 
 If you upgraded other plugins at the same time, it's possible that one of them is causing a JavaScript error that breaks the entire page or some other kind of conflict. Check if the plugin works with the default theme and no other plugins activated.
 
-If you're still having problems, create a detailed report on [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks) (see the 'How can I get help when I'm having a problem?' question above), and then [download an older version](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/developers/) to use until the problem is fixed. 
+If you're still having problems, create a detailed report on [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks) (see the 'How can I get help when I'm having a problem?' question above), and then [download an older version](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/developers/) to use until the problem is fixed.
+
+Also, keep in mind that professionals don't just install plugin updates on their live website and then get angry when they inevitably run into a situation where an update crashes the site. The right way to do it is to have [a staging server](http://webdesign.about.com/od/servers/qt/web-servers-and-workflow.htm) where you test all updates and code changes, and then push them to the production server once you're satisfied that everything is working properly. If your website is mission-critical, then this is what you need to be doing. If you're not capable or willing to do it yourself, then you need to hire a developer to manage the process for you. If you don't do those things, then you don't have anyone to blame but yourself when things go wrong. You can subscribe to [the BGMP Testers e-mail list](http://iandunn.us6.list-manage.com/subscribe?u=38510a08f1d822cc1c358e644&id=b183d686c6) to be notified when new release candidates are available for testing. 
+
 
 = Are there any hooks I can use to modify or extend the plugin? =
 Yes, I've tried to add filters for everything you might reasonably want, just browse the source code to look for them. If you need a filter or action that isn't there, make a request on [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks) and I'll add it to the next version.
@@ -308,8 +316,9 @@ Yes, I've tried to add filters for everything you might reasonably want, just br
 
 * Chinese (thanks to [yzqiang](http://wordpress.org/support/profile/yzqiang))
 * French (thanks to Romain Fevre)
+* German (thanks to Jens)
 
-If there isn't a translation for your language (or it is incomplete/inaccurate) please consider making one and contributing it to the plugin. You can learn how by reading [Translating WordPress](http://codex.wordpress.org/Translating_WordPress) and [How to Create a .po Language Translation](http://www.wdmac.com/how-to-create-a-po-language-translation). The .pot file you'll need is inside the *languages* directory in the plugin's folder. Once you're done, just [contact me](http://iandunn.name/contact) and send me the .po and .mo files, and I'll add them to the plugin.
+If there isn't a translation for your language (or it is incomplete/inaccurate) please consider making one and contributing it to the plugin. You can learn how by reading [Translating WordPress](http://codex.wordpress.org/Translating_WordPress) and [How to Create a .po Language Translation](http://www.wdmac.com/how-to-create-a-po-language-translation). The .pot file you'll need is inside the *languages* directory in the plugin's folder. Once you're done, just [contact me](http://iandunn.name/contact) and send me the .po and .mo files, and I'll add them to the plugin. You can also subscribe to [the BGMP Translators e-mail list](http://iandunn.us6.list-manage1.com/subscribe?u=38510a08f1d822cc1c358e644&id=b7ff5f7393) to be notified when updated versions have new strings to translate.
 
 
 **Known conflicts**
@@ -324,7 +333,7 @@ If there isn't a translation for your language (or it is incomplete/inaccurate) 
 
 * The thing I could really use some help with is answering questions on [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks). I don't have a lot of time to work on the plugin, so the time I spend answering questions reduces the amount of time I have to add new features. If you're familiar with the plugin and would like to help out, you can click the 'Subscribe to Emails for this Plugin' link to get an e-mail whenever a new post is created.
 * Translate the plugin into your language. See the *Localizations* section above for details.
-* Volunteer to test new versions before they're officially released. [Contact me](http://iandunn.name/contact) if you want to be put on the list.
+* Volunteer to test new versions before they're officially released. Sign up for [the BGMP Testers e-mail list](http://iandunn.us6.list-manage.com/subscribe?u=38510a08f1d822cc1c358e644&id=b183d686c6) to be notified when new release candidates are available for testing.  
 * If you find a bug, create a post on [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks) with as much information as possible. If you're a developer, create a patch and include a link to it in the post.
 * Send me feedback on how easy or difficult the plugin is to use, and where you think things could be improved. Add a post to [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks) with details.   
 * Review the code for security vulnerabilities and best practices. If you find a security issue, please [contact me](http://iandunn.name/contact) privately so that I can release a patched version before the issue is publicly disclosed.
@@ -353,64 +362,69 @@ If you just need some minor customizations or are looking for someone with a low
 
 == Changelog ==
 
-= 1.9.2 =
-* Fixed ['is not a valid category' error](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-map-not-loading-after-update)
+= v1.9.3 () =
+* [FIX] Fixed persistent bugs in previous 1.9.x releases
+* [NEW] German translation added (thanks to Jens)
+* [NEW] Added a filter to allow [changing the language the map is displayed in](http://wordpress.org/support/topic/displaying-the-map-in-difeerent-language).
 
-= 1.9.1 =
-* Fixed [map shortcode categories bug](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-corephp-on-line-346).
+= v1.9.2 (10/9/2012) =
+* [FIX] Attempted to fix ['is not a valid category' error](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-map-not-loading-after-update)
 
-= 1.9 =
-* Added the MarkerClusterer library.
-* bgmpData moved to mapShortcode(), so users no longer need to use the `bgmp_map-shortcode-arguments` filter to use shortcode parameters from template files calling `do_shortcode()`. They can just be passed in like normal now.
-* Added proper French translation, thanks to Romain Fèvre.
-* Moved `mapShortcode()` markup into external view file.
-* Ensured action callbacks only run once. This fixes the bug where admin notices would be enqueued 2-3 times.
+= v1.9.1 (10/9/2012) =
+* [FIX] Attempted to fix [map shortcode categories bug](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-corephp-on-line-346).
 
-= 1.8 =
-* Added internationalization support.
-* Added localizations for Chinese and French.
-* Removed height:auto CSS rule because it was [distorting the Google logo](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-google-logo-is-zoomed-and-ipad-safari-cant-zoom-the-page) and [prevented info. windows with images from sizing properly](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-placemarks-content-to-display-fully).
-* Added shameless plug for [Re-Abolish Slavery Ribbon](http://wordpress.org/extend/plugins/re-abolish-slavery-ribbon/) plugin on Settings page.
-* Replaced inline markup in bgmp_requirementsNotMet() and BasicGoogleMapsPlacemarks::printMessages() with views/message.php.
-* Changed all instances of self::PREFIX to BasicGoogleMapsPlacemarks::PREFIX in settings.php.
-* Moved variables from __construct() to init() in BasicGoogleMapsPlacemarks and BGMPSettings classes.
-* Switched to using [$networkWide parameter for activation callback](http://core.trac.wordpress.org/ticket/20995).
-* Moved addPlacemarks() call outside the try/catch block in buildMap to keep error messages more clear.
+= v1.9 (10/8/2012) =
+* [NEW] Added the MarkerClusterer library.
+* [UPDATE] bgmpData moved to mapShortcode(), so users no longer need to use the `bgmp_map-shortcode-arguments` filter to use shortcode parameters from template files calling `do_shortcode()`. They can just be passed in like normal now.
+* [NEW] Added proper French translation, thanks to Romain Fèvre.
+* [UPDATE] Moved `mapShortcode()` markup into external view file.
+* [FIX] Ensured action callbacks only run once. This fixes the bug where admin notices would be enqueued 2-3 times.
 
-= 1.7 =
-* [bgmp-map] now [supports category, map center, zoom level and other parameters](http://wordpress.org/support/topic/basic-google-maps-placemarks-ok-but-only-1-map).
-* [bgmp-list] now [supports a category parameter](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-categories-feature-requests).
-* Replaced disabled latitude/longitude fields with '(Geocoded to...)' note.
-* Switched to using core small-text and regular-text CSS classes on the input fields in the settings and Add/Edit Placemark screens.
+= v1.8 (8/11/2012)=
+* [NEW] Added internationalization support.
+* [NEW] Added localizations for Chinese and French.
+* [REMOVE] Removed height:auto CSS rule because it was [distorting the Google logo](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-google-logo-is-zoomed-and-ipad-safari-cant-zoom-the-page) and [prevented info. windows with images from sizing properly](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-placemarks-content-to-display-fully).
+* [NEW] Added shameless plug for [Re-Abolish Slavery Ribbon](http://wordpress.org/extend/plugins/re-abolish-slavery-ribbon/) plugin on Settings page.
+* [UPDATE] Replaced inline markup in bgmp_requirementsNotMet() and BasicGoogleMapsPlacemarks::printMessages() with views/message.php.
+* [UPDATE] Changed all instances of self::PREFIX to BasicGoogleMapsPlacemarks::PREFIX in settings.php.
+* [UPDATE] Moved variables from __construct() to init() in BasicGoogleMapsPlacemarks and BGMPSettings classes.
+* [UPDATE] Switched to using [$networkWide parameter for activation callback](http://core.trac.wordpress.org/ticket/20995).
+* [UPDATE] Moved addPlacemarks() call outside the try/catch block in buildMap to keep error messages more clear.
 
-= 1.6.1 =
-* Valid coordinates in the Address field will now [bypass geocoding](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-plugin-changes-the-coordinates).
-* Improved [geocode error messages](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-errors-everywhere-a-location-is-required).
-* Added a few more !important declarations to CSS rules to prevent [theme styles overriding the map styles](http://wordpress.org/support/topic/hide-popup-box).
-* Added [more CSS classes](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-list-page-placementalignment) to the [bgmp-list] elements.
+= v1.7 (2/13/2012) =
+* [NEW] [bgmp-map] now [supports category, map center, zoom level and other parameters](http://wordpress.org/support/topic/basic-google-maps-placemarks-ok-but-only-1-map).
+* [NEW] [bgmp-list] now [supports a category parameter](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-categories-feature-requests).
+* [UPDATE] Replaced disabled latitude/longitude fields with '(Geocoded to...)' note.
+* [UPDATE] Switched to using core small-text and regular-text CSS classes on the input fields in the settings and Add/Edit Placemark screens.
 
-= 1.6 =
-* Added options for changing the map type, type control and navigation control.
-* Added [a new filter on the default icon URL](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-categories-feature-requests).
-* Changed infomation window titles from H1 to H3 because it's more semantically appropriate
-* Made the default information window text black because [it wasn't visible in some themes](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-no-description-in-placemark-balloon).
-* Fixed bug where [coordinates with commas instead of periods wouldn't work](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-plugin-error-bad-displays-a-map).
-* Added a lot of additional filters
-* Placemark descriptions are passed through wpautop() instead of nl2br() to prevent [extra line breaks](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-line-breaks-added-to-description-popup).
-* Added option to track plugin version and upgrade routine
-* Added labels to fields on the Settings page
-* Added error message when wp_remote_get() fails in geocode()
+= v1.6.1 (1/8/2012) =
+* [NEW] Valid coordinates in the Address field will now [bypass geocoding](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-plugin-changes-the-coordinates).
+* [UPDATE] Improved [geocode error messages](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-errors-everywhere-a-location-is-required).
+* [NEW] Added a few more !important declarations to CSS rules to prevent [theme styles overriding the map styles](http://wordpress.org/support/topic/hide-popup-box).
+* [NEW] Added [more CSS classes](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-list-page-placementalignment) to the [bgmp-list] elements.
 
-= 1.5.1 =
+= v1.6 (12/12/2011) =
+* [NEW] Added options for changing the map type, type control and navigation control.
+* [NEW] Added [a new filter on the default icon URL](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-categories-feature-requests).
+* [UPDATE] Changed infomation window titles from H1 to H3 because it's more semantically appropriate
+* [FIX] Made the default information window text black because [it wasn't visible in some themes](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-no-description-in-placemark-balloon).
+* [FIX] Fixed bug where [coordinates with commas instead of periods wouldn't work](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-plugin-error-bad-displays-a-map).
+* [NEW] Added a lot of additional filters
+* [FIX] Placemark descriptions are passed through wpautop() instead of nl2br() to prevent [extra line breaks](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-line-breaks-added-to-description-popup).
+* [NEW] Added option to track plugin version and upgrade routine
+* [NEW] Added labels to fields on the Settings page
+* [NEW] Added error message when wp_remote_get() fails in geocode()
+
+= v1.5.1 (10/15/2011) =
 * Updated readme.txt to reflect that the Wordpress version requirement is 3.1 as of BGMP 1.5.
 
-= 1.5 =
+= v1.5 (10/9/2011) =
 * Added a custom taxonomy to categorize placemarks. Thanks to [Marcel Bootsman](http://nostromo.nl) for contributing code to this.
 * Added support for [placemark comments](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-comments-the-placemarks).
 * Fixed a [fatal error when geocoding the map center](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-that-address-couldnt-be-geocoded-fatal-error).
 * Fixed a warning on 404 pages.
 
-= 1.4 =
+= v1.4 (8/21/2011) =
 * Added meta box for placemark stacking order. Thanks to Jesper Lofgren for contributing code for this.
 * Upgraded PHP requirement to version 5.2 in order to use filter_var().
 * Moved settings from the Writing page to their own page.
@@ -419,16 +433,16 @@ If you just need some minor customizations or are looking for someone with a low
 * Stopped trying to geocode empty addresses.
 * Updated the FAQ to mention that [do_shortcode() has to be called from a registered page template that's been assiged to a page](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-javascript-andor-css-files-arent-loaded?replies=14#post-2287781).
 
-= 1.3.2 =
+= v1.3.2 (8/8/2011) =
 * The markers are now sorted alphabetically in the [bgmp-list] shortcode
 * More theme styles are overriden to prevent the Maps API infowindow scroller bug
 * The View screen in the Administration Panels is now sorted alphabetically
 * enqueuemessage() is now declared protected instead of public
 
-= 1.3.1 =
+= v1.3.1 (7/24/2011) =
 * Fixes bug where [standard posts and pages would lose the 'Set Featured Image' meta box](http://wordpress.org/support/topic/featured-image-option-not-showing)
 
-= 1.3 =
+= v1.3 (7/24/2011) =
 * Removed AJAX because unnecessary, slow and causing several bugs
 * Removed now-unnecessary front-end-footer.php
 * Fixed bug where [placemarks weren't showing up when theme didn't support post-thumbnails](http://wordpress.org/support/topic/no-placemarks-on-theme-raindrops)
@@ -437,10 +451,10 @@ If you just need some minor customizations or are looking for someone with a low
 * [Added title to markers](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-add-mouseover-title-to-marker)
 * Enabled support for BGMP post type revisions
 
-= 1.2.1 = 
+= v1.2.1 (7/18/2011) = 
 * Fixes the [info window height bug](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-info-window-width-height)
 
-= 1.2 =
+= v1.2 (7/3/2011) =
 * Fixes bug from 1.1.3 where the default options weren't set on activation
 * MultiSite - Fixed [activation error](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-call-to-undefined-function-wp_get_current_user) from relative require paths
 * MultiSite - Added support for network activation, new site activation
@@ -449,32 +463,35 @@ If you just need some minor customizations or are looking for someone with a low
 * Fixed ['active version' stats bug](http://wordpress.stackexchange.com/questions/21132/repository-reporting-incorrect-plugin-active-version-stat)
 * Added notification when geocode couldn't resolve correct coordinates
 
-= 1.1.3 = 
+= v1.1.3 (6/26/2011) = 
 * CSS and JavaScript files are only loaded on pages where the map shortcode is called
 * Fixed [fatal error when trying to activate on PHP 4 servers](http://wordpress.org/support/topic/fatal-error-when-activating-basic-google-maps-placemarks)
 * Styles updated for twentyeleven based themes
 * Switched to wrapper function for $ instead of *$ = jQuery.noConflict();*
 * JavaScript functions moved inside an object literal
 
-= 1.1.2 = 
+= v1.1.2 (6/14/2011) = 
 * Settings moved to separate class
 * Updated Wordpress requirement to 3.0. Listing it at 2.9 in previous versions was a mistake.
 
-= 1.1.1 =
+= v1.1.1 (6/11/2011) =
 * JavaScript files only loaded when needed
 * Fixed bug where [JavaScript files were loaded over HTTP when they should have been over HTTPS](http://iandunn.name/basic-google-maps-placemarks-plugin/)
 * A few minor back-end changes
 
-= 1.1 = 
+= v1.1 (6/5/2011) = 
 * Addresses are automatically geocoded
 * Default markers used when no featured image set
 * Default settings saved to database upon activation
 
-= 1.0 =
+= v1.0 (5/29/2011) =
 * Initial release
 
 
 == Upgrade Notice ==
+
+= 1.9.3 =
+BGMP 1.9.3 fixes bugs in previous 1.9.x releases, and adds a German translation.
 
 = 1.9.2 =
 BGMP 1.9.2 fixes a bug where a [bgmp-map] shortcode category error would incorrectly be displayed in the Admin Panel.

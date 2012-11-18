@@ -108,7 +108,15 @@ class bgmpCoreUnitTests extends UnitTestCase
 		$this->assertFalse( in_array( 'shopping-malls', $cleaned[ 'categories' ] ) );
 		
 		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'categories' => new stdClass() ) ) );
-		$this->assertTrue( is_array( $cleaned[ 'categories' ] ) && empty( $cleaned[ 'categories' ] ) );
+		$this->assertFalse( isset( $cleaned[ 'categories' ] ) );
+		
+		// @todo add new category unit tests if 1.9 problems not solved
+			// not set - not set
+			// set to soething other than array|string - not set
+			// set to string w/ 1 entry - array w/ 1 entry
+			// set to string w/ 2+ entries - array w/ 2+ entries
+			// set to empty array - not set
+			// set to non empty array - unchanged
 		
 		// Width
 		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'width' => 100 ) ) );
@@ -314,7 +322,7 @@ class bgmpCoreUnitTests extends UnitTestCase
 		$this->assertFalse( $reverseGeocode->invokeArgs( $bgmp, array( '23432.324', 'tomato' ) ) );
 
 		$address = $reverseGeocode->invokeArgs( $bgmp, array( '39.7589478', '-84.1916069' ) );
-		$this->assertEqual( $address, '4 S Main St, Dayton, OH 45423, USA' );
+		$this->assertEqual( $address, 'Dayton Transportation Center Heliport, Dayton, OH 45402, USA' );
 	}
 		
 	// map shortcode
@@ -346,6 +354,21 @@ class bgmpCoreUnitTests extends UnitTestCase
 		// test that they contain actual posts w/ ids
 		// @todo - remove the test post to clean up
 	}
+	
+	public function testGetPlacemarksJsonEncode()
+	{
+		$bgmp = new BasicGoogleMapsPlacemarks();
+		$bgmp->init();
+		
+		$markers = json_encode( $bgmp->getMapPlacemarks( array() ) );
+		$this->assertTrue( is_string( $markers ) );
+		$markers = json_decode( $markers );
+		$this->assertFalse( is_null( $markers ) );
+		
+		// @todo again w/ various attributes
+	}
+	
+	// json_decode getmapoptions test
 	
 	// public function testUpgradeFromBeforeX.X.X
 	

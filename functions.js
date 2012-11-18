@@ -73,6 +73,8 @@ function bgmp_wrapper( $ )
 			// Override default width/heights from settings
 			$( '#bgmp_map-canvas' ).css( 'width', bgmpData.options.mapWidth );		// @todo use bgmp.canvas intead of hardcoding it?
 			$( '#bgmp_map-canvas' ).css( 'height', bgmpData.options.mapHeight );
+			// @todo this prevents users from using their own stylesheet?
+			
 			
 			// Create the map
 			try

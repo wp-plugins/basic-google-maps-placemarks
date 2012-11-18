@@ -15,7 +15,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 	{
 		// Declare variables and constants
 		protected $settings, $options, $updatedOptions, $userMessageCount, $mapShortcodeCalled, $mapShortcodeCategories;
-		const VERSION		= '1.9.2';
+		const VERSION		= '1.9.3-rc1';
 		const PREFIX		= 'bgmp_';
 		const POST_TYPE		= 'bgmp';
 		const TAXONOMY		= 'bgmp-category';
@@ -235,12 +235,6 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				// @todo - this isn't DRY, those default values appear in activate and settings->construct. should have single array to hold them all
 			}
 			
-			$this->markerClustering			= get_option( BasicGoogleMapsPlacemarks::PREFIX . 'marker-clustering', 		'' );
-			$this->clusterMaxZoom			= get_option( BasicGoogleMapsPlacemarks::PREFIX . 'cluster-max-zoom', 		'7' );
-			$this->clusterGridSize			= get_option( BasicGoogleMapsPlacemarks::PREFIX . 'cluster-grid-size', 		'40' );
-			$this->clusterStyle				= get_option( BasicGoogleMapsPlacemarks::PREFIX . 'cluster-style', 			'default' );
-			
-			
 			if( version_compare( $this->options[ 'dbVersion' ], '1.9', '<' ) )
 			{
 				// Add new options
@@ -274,10 +268,10 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		 */
 		public function addFeaturedImageSupport()
 		{
+			global $wp_version;
+			
 			if( did_action( 'after_setup_theme' ) !== 1 )
 				return;
-			
-			global $wp_version;
 			
 			// We enabled image media buttons for MultiSite on activation, but the admin may have turned it back off
 			if( version_compare( $wp_version, '3.3', "<=" ) && is_admin() && function_exists( 'is_multisite' ) && is_multisite() )
@@ -343,24 +337,27 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			if( !is_array( $arguments ) )
 				return array();
 				
-			if( isset( $arguments[ 'categories' ] ) && !empty( $arguments[ 'categories' ] ) )
+			if( isset( $arguments[ 'categories' ] ) )
 			{
 				if( is_string( $arguments[ 'categories' ] ) )
 					$arguments[ 'categories' ] = explode( ',', $arguments[ 'categories' ] );
 				
-				elseif( !is_array( $arguments[ 'categories' ] ) )
-					$arguments[ 'categories' ] = array();
-				
-				foreach( $arguments[ 'categories' ] as $index => $term )
+				elseif( !is_array( $arguments[ 'categories' ] ) || empty( $arguments[ 'categories' ] ) )
+					unset( $arguments[ 'categories' ] );
+					
+				if( isset( $arguments[ 'categories' ] ) && !empty( $arguments[ 'categories' ] ) )
 				{
-					if( !term_exists( $term, self::TAXONOMY ) )
+					foreach( $arguments[ 'categories' ] as $index => $term )
 					{
-						unset( $arguments[ 'categories' ][ $index ] );	// Note - This will leave holes in the key sequence, but it doesn't look like that's a problem with the way we're using it.
-						$this->enqueueMessage( sprintf(
-							__( '%s shortcode error: %s is not a valid category.', 'bgmp' ),
-							BGMP_NAME,
-							$term
-						), 'error' );
+						if( !term_exists( $term, self::TAXONOMY ) )
+						{
+							unset( $arguments[ 'categories' ][ $index ] );	// Note - This will leave holes in the key sequence, but it doesn't look like that's a problem with the way we're using it.
+							$this->enqueueMessage( sprintf(
+								__( '%s shortcode error: %s is not a valid category.', 'bgmp' ),
+								BGMP_NAME,
+								$term
+							), 'error' );
+						}
 					}
 				}
 			}
@@ -491,9 +488,13 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 					return;
 			}
 							
+			$googleMapsLanguage = apply_filters( self::PREFIX . 'map-language', '' );
+			if( $googleMapsLanguage )
+				$googleMapsLanguage = '&language=' . $googleMapsLanguage;
+			
 			wp_register_script(
 				'googleMapsAPI',
-				'http'. ( is_ssl() ? 's' : '' ) .'://maps.google.com/maps/api/js?sensor=false',
+				'http'. ( is_ssl() ? 's' : '' ) .'://maps.google.com/maps/api/js?sensor=false' . $googleMapsLanguage,
 				array(),
 				false,
 				true
@@ -905,13 +906,12 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				
 				return $error;
 			}
-
-			if( !is_array( $attributes ) || !isset( $attributes[ 'categories' ] ) )
-				$attributes[ 'categories' ] = '';
 			
-			$attributes[ 'categories' ]	= apply_filters( self::PREFIX . 'mapShortcodeCategories', $attributes[ 'categories' ] );		// @todo - deprecated b/c 1.9 output bgmpdata in post; can now just set args in do_shortcode() . also  not consistent w/ shortcode naming scheme and have filter for all arguments now. need a way to notify people
-			$attributes					= apply_filters( self::PREFIX . 'map-shortcode-arguments', $attributes );					// @todo - deprecated b/c 1.9 output bgmpdata in post...
-			$attributes					= $this->cleanMapShortcodeArguments( $attributes );
+			if( isset( $attributes[ 'categories' ] ) )
+				$attributes[ 'categories' ]	= apply_filters( self::PREFIX . 'mapShortcodeCategories', $attributes[ 'categories' ] );		// @todo - deprecated b/c 1.9 output bgmpdata in post; can now just set args in do_shortcode() . also  not consistent w/ shortcode naming scheme and have filter for all arguments now. need a way to notify people
+			
+			$attributes = apply_filters( self::PREFIX . 'map-shortcode-arguments', $attributes );					// @todo - deprecated b/c 1.9 output bgmpdata in post...
+			$attributes = $this->cleanMapShortcodeArguments( $attributes );
 			
 			ob_start();
 			require_once( dirname( __FILE__ ) . '/views/shortcode-bgmp-map.php' );
@@ -960,7 +960,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				foreach( $posts as $p )
 				{
 					// @todo - redo this w/ setup_postdata() and template tags instead of accessing properties directly
-					// @todo - make this an external view file
+					// @todo - make this an external view file - can't easily b/c filter on individual marker output. maybe create template loop view for it
 					
 					$address = get_post_meta( $p->ID, self::PREFIX . 'address', true );
 						
