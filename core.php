@@ -15,7 +15,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 	{
 		// Declare variables and constants
 		protected $settings, $options, $updatedOptions, $userMessageCount, $mapShortcodeCalled, $mapShortcodeCategories;
-		const VERSION		= '1.9.3-rc1';
+		const VERSION		= '1.9.3-rc2a';
 		const PREFIX		= 'bgmp_';
 		const POST_TYPE		= 'bgmp';
 		const TAXONOMY		= 'bgmp-category';
@@ -1117,6 +1117,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		 */
 		public function getMapPlacemarks( $attributes )
 		{
+			global $post;
 			$placemarks = array();
 			
 			$query = array( 
@@ -1142,21 +1143,31 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			
 			if( $publishedPlacemarks )
 			{
-				foreach( $publishedPlacemarks as $pp )
+				foreach( $publishedPlacemarks as $post )
 				{
-					$icon = wp_get_attachment_image_src( get_post_thumbnail_id( $pp->ID ) );
-					$defaultIcon = apply_filters( self::PREFIX .'default-icon', plugins_url( 'images/default-marker.png', __FILE__ ), $pp->ID );
+					setup_postdata( $post );
+					$postID = get_the_ID();
+					
+					$categories = get_the_terms( $postID, self::TAXONOMY );
+					if( !is_array( $categories ) )
+						$categories = array();
+						
+					
+					$icon = wp_get_attachment_image_src( get_post_thumbnail_id( $postID ) );
+					$defaultIcon = apply_filters( self::PREFIX .'default-icon', plugins_url( 'images/default-marker.png', __FILE__ ), $postID );
  
 					$placemarks[] = array(
-						'id'		=> $pp->ID,
-						'title'		=> $pp->post_title,
-						'latitude'	=> get_post_meta( $pp->ID, self::PREFIX . 'latitude', true ),
-						'longitude'	=> get_post_meta( $pp->ID, self::PREFIX . 'longitude', true ),
-						'details'	=> wpautop( $pp->post_content ),
-						'icon'		=> is_array( $icon ) ? $icon[0] : $defaultIcon,
-						'zIndex'	=> get_post_meta( $pp->ID, self::PREFIX . 'zIndex', true )
+						'id'			=> $postID,
+						'title'			=> get_the_title(),
+						'latitude'		=> get_post_meta( $postID, self::PREFIX . 'latitude', true ),
+						'longitude'		=> get_post_meta( $postID, self::PREFIX . 'longitude', true ),
+						'details'		=> wpautop( get_the_content() ),
+						'categories'	=> $categories,
+						'icon'			=> is_array( $icon ) ? $icon[0] : $defaultIcon,
+						'zIndex'		=> get_post_meta( $postID, self::PREFIX . 'zIndex', true )
 					);
 				}
+				wp_reset_postdata();
 			}
 			
 			$placemarks = apply_filters( self::PREFIX . 'get-placemarks-return', $placemarks );	// @todo - filter name deprecated

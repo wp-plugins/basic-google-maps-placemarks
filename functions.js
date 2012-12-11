@@ -14,7 +14,7 @@ function bgmp_wrapper( $ )
 	// @todo - figure out if wrapper bad for memory consumption (https://developer.mozilla.org/en/JavaScript/Reference/Functions_and_function_scope#Efficiency_considerations)
 		// ask on stackoverflow
 	
-	var bgmp = 
+	$.bgmp = 
 	{
 		/**
 		 * Main entry point
@@ -22,12 +22,12 @@ function bgmp_wrapper( $ )
 		 */
 		init : function()
 		{
-			bgmp.name				= 'Basic Google Maps Placemarks';
-			bgmp.canvas				= document.getElementById( 'bgmp_map-canvas' );		// We have to use getElementById instead of a jQuery selector here in order to pass it to the Maps API.
-			bgmp.previousInfoWindow	= undefined;
-			bgmp.map				= undefined;
-			bgmp.markerClusterer	= undefined;
-			bgmp.markers			= [];
+			$.bgmp.name					= 'Basic Google Maps Placemarks';
+			$.bgmp.canvas				= document.getElementById( 'bgmp_map-canvas' );		// We have to use getElementById instead of a jQuery selector here in order to pass it to the Maps API.
+			$.bgmp.previousInfoWindow	= undefined;
+			$.bgmp.map					= undefined;
+			$.bgmp.markerClusterer		= undefined;
+			$.bgmp.markers				= [];
 			
 			// @todo make this loop through array instead of manual. also add any other numbers
 			bgmpData.options.zoom					= parseInt( bgmpData.options.zoom ),
@@ -36,10 +36,10 @@ function bgmp_wrapper( $ )
 			bgmpData.options.clustering.maxZoom		= parseInt( bgmpData.options.clustering.maxZoom );
 			bgmpData.options.clustering.gridSize	= parseInt( bgmpData.options.clustering.gridSize );
 								
-			if( bgmp.canvas )
-				bgmp.buildMap();
+			if( $.bgmp.canvas )
+				$.bgmp.buildMap();
 			else
-				$( bgmp.canvas ).html( bgmp.name + " error: couldn't retrieve DOM elements." );
+				$( $.bgmp.canvas ).html( $.bgmp.name + " error: couldn't retrieve DOM elements." );
 		},
 		
 		/**
@@ -54,7 +54,7 @@ function bgmp_wrapper( $ )
 			{
 				// @todo update w/ cluster options?
 				
-				$( bgmp.canvas ).html( bgmp.name + " error: map options not set." );
+				$( $.bgmp.canvas ).html( $.bgmp.name + " error: map options not set." );
 				return;
 			}
 			
@@ -71,7 +71,7 @@ function bgmp_wrapper( $ )
 			};
 			
 			// Override default width/heights from settings
-			$( '#bgmp_map-canvas' ).css( 'width', bgmpData.options.mapWidth );		// @todo use bgmp.canvas intead of hardcoding it?
+			$( '#bgmp_map-canvas' ).css( 'width', bgmpData.options.mapWidth );		// @todo use $.bgmp.canvas intead of hardcoding it?
 			$( '#bgmp_map-canvas' ).css( 'height', bgmpData.options.mapHeight );
 			// @todo this prevents users from using their own stylesheet?
 			
@@ -79,26 +79,30 @@ function bgmp_wrapper( $ )
 			// Create the map
 			try
 			{
-				bgmp.map = new google.maps.Map( bgmp.canvas, mapOptions );
+				$.bgmp.map = new google.maps.Map( $.bgmp.canvas, mapOptions );
 			}
 			catch( e )
 			{
-				$( bgmp.canvas ).html( bgmp.name + " error: couln't build map." );
+				$( $.bgmp.canvas ).html( $.bgmp.name + " error: couln't build map." );
 				if( window.console )
 					console.log( 'bgmp_buildMap: '+ e );
 					
 				return;
 			}
 			
-			bgmp.addPlacemarks( bgmp.map );		// @todo not supposed to add them when clustering is enabled? http://www.youtube.com/watch?v=Z2VF9uKbQjI
+			$.bgmp.addPlacemarks( $.bgmp.map );		// @todo not supposed to add them when clustering is enabled? http://www.youtube.com/watch?v=Z2VF9uKbQjI
 			
 			if( bgmpData.options.clustering.enabled )
 			{
-				bgmp.markerCluster = new MarkerClusterer( bgmp.map, bgmp.markers, {
-					maxZoom		: bgmpData.options.clustering.maxZoom,
-					gridSize	: bgmpData.options.clustering.gridSize,
-					styles		: bgmpData.options.clustering.styles[ bgmpData.options.clustering.style ]
-				} );
+				$.bgmp.markerCluster = new MarkerClusterer(		// @todo should be .markerClusterer ?
+					$.bgmp.map,
+					$.bgmp.markers,
+					{
+						maxZoom		: bgmpData.options.clustering.maxZoom,
+						gridSize	: bgmpData.options.clustering.gridSize,
+						styles		: bgmpData.options.clustering.styles[ bgmpData.options.clustering.style ]
+					}
+				);
 			}
 		},
 		
@@ -130,7 +134,7 @@ function bgmp_wrapper( $ )
 			{
 				for( var m in bgmpData.markers )
 				{
-					bgmp.createMarker(
+					$.bgmp.createMarker(
 						map,
 						bgmpData.markers[ m ][ 'title' ],
 						bgmpData.markers[ m ][ 'latitude' ],
@@ -178,7 +182,7 @@ function bgmp_wrapper( $ )
 				return false;
 			}
 			
-			if( !bgmp.isInt( zIndex ) )
+			if( !$.bgmp.isInt( zIndex ) )
 			{
 				//if( window.console )
 					//console.log( "bgmp_createMarker():  "+ title +" z-index wasn't valid." );	// this would fire any time it's empty
@@ -206,22 +210,22 @@ function bgmp_wrapper( $ )
 					'title'		: title,
 					'zIndex'	: zIndex
 				} );
-				bgmp.markers.push( marker );
+				$.bgmp.markers.push( marker );
 				
 				google.maps.event.addListener( marker, 'click', function()
 				{
-					if( bgmp.previousInfoWindow != undefined )
-						bgmp.previousInfoWindow.close();
+					if( $.bgmp.previousInfoWindow != undefined )
+						$.bgmp.previousInfoWindow.close();
 					
 					infowindow.open( map, marker );
-					bgmp.previousInfoWindow = infowindow;
+					$.bgmp.previousInfoWindow = infowindow;
 				} );
 				
 				return true;
 			}
 			catch( e )
 			{
-				//$( bgmp.canvas ).append( '<p>' + bgmp.name + " error: couldn't add map placemarks.</p>");		// add class for making red? other places need this too?	// @todo - need to figure out a good way to alert user that placemarks couldn't be added
+				//$( $.bgmp.canvas ).append( '<p>' + $.bgmp.name + " error: couldn't add map placemarks.</p>");		// add class for making red? other places need this too?	// @todo - need to figure out a good way to alert user that placemarks couldn't be added
 				if( window.console )
 					console.log( 'bgmp_createMarker: '+ e );
 			}
@@ -229,7 +233,7 @@ function bgmp_wrapper( $ )
 	}; // end bgmp
 	
 	// Kick things off...
-	$( document ).ready( bgmp.init );
+	$( document ).ready( $.bgmp.init );
 	
 } // end bgmp_wrapper()
 

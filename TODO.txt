@@ -77,8 +77,26 @@
 1.9.3
 	fix 'not valid cateory' error
 		done
+	
 	fix line break bug in json
-		possibly done, need testers
+		release rc2 to see if using get_the_content() fixed.
+		
+		if not
+			get db backup or access to staging server from reporters
+			
+			json_encode bug? search php.net
+			
+			ask on wordpress answers
+			
+			maybe try using the_content() or the_content_feed() instead of $post->content
+			so that it gets passed through filters
+			
+			remove_filter wpautop ?
+				not applied by get_the_content anyway?
+				maybe don't wrap getthecontent w/ wpautop, but apply it as a filter so people can remove it?
+
+	make cat data available to js / make bgmp object accessible to outside scripts
+		done, but need to test good before releasing
 	
 	push a release candidate out and ask for feedback before releasing stable
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-map-not-loading-after-update?replies=12
@@ -86,6 +104,7 @@
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-shortcode-errornot-valid-category?replies=4
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-error-msg-after-upgrade-to-v191?replies=5
 		http://wordpress.org/support/topic/displaying-the-map-in-difeerent-language?replies=4
+		http://wordpress.org/support/topic/filter-placemarks-revisited?replies=5#post-3538177
 		mention mailing list for testing in forum post
 
 1.9.4
@@ -533,6 +552,8 @@
 	1 - add a filter taxonomy
 		maybe add options to control what the CPT 'supports' pamameter has in it, and have lots off by default
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-filter-placemarks?replies=3#post-2826743
+	1 - text input box for address, then zoom to it
+		http://wordpress.org/support/topic/future-request?replies=4#post-3547152
 
 
 ** Future considerations **

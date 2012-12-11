@@ -3,7 +3,7 @@ Contributors: iandunn
 Donate link: http://www.doctorswithoutborders.org
 Tags: google maps, maps, embed, marker, placemark, icon, geocode, shortcode, custom post type, multisite
 Requires at least: 3.1
-Tested up to: 3.5-beta3
+Tested up to: 3.5
 Stable tag: 1.8
 License: GPL2
 
@@ -366,6 +366,8 @@ If you just need some minor customizations or are looking for someone with a low
 * [FIX] Fixed persistent bugs in previous 1.9.x releases
 * [NEW] German translation added (thanks to Jens)
 * [NEW] Added a filter to allow [changing the language the map is displayed in](http://wordpress.org/support/topic/displaying-the-map-in-difeerent-language).
+* [UPDATE] Attached bgmp JavaScript object to jQuery object, so it can be accessed from other scripts
+* [UPDATE] Added category data available to JavaScript bgmpData object
 
 = v1.9.2 (10/9/2012) =
 * [FIX] Attempted to fix ['is not a valid category' error](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-map-not-loading-after-update)
