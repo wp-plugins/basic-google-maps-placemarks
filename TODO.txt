@@ -39,8 +39,7 @@
 		Generate new .pot file and update header values inside it
 			cd wordpress-i18n-tools
 			php makepot.php wp-plugin ../wp/content/plugins/basic-google-maps-placemarks/
-			mv basic-google-maps-placemarks.pot ../wp/wp-content/plugins/basic-google-maps-placemarks/languages/
-		Update French translation yourself until a native speaker takes it over
+			mv basic-google-maps-placemarks.pot ../wp/content/plugins/basic-google-maps-placemarks/languages/
 		Commit to trunk (but don't tag or update readme.txt Stable tag yet)
 		E-mail translators mailing list with links to latest .pot and complete .zip files
 		Add updated POMO files from translators to local working copy
@@ -96,8 +95,20 @@
 				maybe don't wrap getthecontent w/ wpautop, but apply it as a filter so people can remove it?
 
 	make cat data available to js / make bgmp object accessible to outside scripts
-		done, but need to test good before releasing
+		done
 	
+	added get-map-placemarks-individual-placemark filter
+		done
+		
+	geocode error details
+		done
+		
+	add single id to shortcode
+		done
+		
+	do some manual browser/integration testing
+		done
+		
 	push a release candidate out and ask for feedback before releasing stable
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-map-not-loading-after-update?replies=12
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-corephp-on-line-346?replies=4
@@ -105,6 +116,9 @@
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-error-msg-after-upgrade-to-v191?replies=5
 		http://wordpress.org/support/topic/displaying-the-map-in-difeerent-language?replies=4
 		http://wordpress.org/support/topic/filter-placemarks-revisited?replies=5#post-3538177
+		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-single-placemark-on-maps-and-functionsphp-question?replies=1#post-3185988
+		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-possibility-to-show-a-single-placemark?replies=1
+
 		mention mailing list for testing in forum post
 
 1.9.4
@@ -148,6 +162,9 @@
 		https://github.com/carldanley/WordPress-Action-Filter-Library
 		
 	add categories to bgmpData.markers
+		did it in 1.9.3?
+	
+	improve documentation by adding list of shortcode params w/ details, and also list of filters/actions
 
 1.9.2
 	add credits section to other notes
@@ -508,8 +525,10 @@
 
 
 ** Feature Requests **
-	8 - javascript to toggle categories on map dynamically
+	9 - javascript to toggle categories on map dynamically
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-turn-onoff-category-display?replies=1#post-2760224
+		http://wordpress.org/support/topic/filter-placemarks-revisited?replies=13
+			this has some code
 		http://templatic.com/demos/?theme=geoplaces4
 		http://www.geocodezip.com/v3_MW_example_categories.html
 		a bunch of others
@@ -520,11 +539,12 @@
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-onclick-from-external-link?replies=1
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-categories-feature-requests?replies=13#post-2558220
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-several-questions-about-categories-and-links?replies=1
-	3 - instead of setting icon on placemark, you could set it on taxonomy. looks for in order: placemark icon > category icon > default icon
-	4 - geolocate ip and use as addr for placemark
+	5 - geolocate ip and use as addr for placemark
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-automatic-location?replies=1#post-2566677
+			this one has some code 
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-iphone-and-ipad-layout?replies=4
 			related to above: http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-iphone-map-broken?replies=1
+	3 - instead of setting icon on placemark, you could set it on taxonomy. looks for in order: placemark icon > category icon > default icon
 	2 - set width as % in addition to px
 			check that google api allows that
 			this may be working in 1.3 already, check notes for 1.3.2 or 1.3.3 for testing info
@@ -544,9 +564,6 @@
 	4 - exclude from search results
 		but what about backwards compat? they can already use the filter to change it
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-excluding-from-search-results?replies=3#post-3185959
-	2 - shortcode argument for post id, then only display that post on the map
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-single-placemark-on-maps-and-functionsphp-question?replies=1#post-3185988
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-possibility-to-show-a-single-placemark?replies=1
 	1 - configuration option to upload/link to new default marker, instead of having to use filter
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-upload-placemark-logo-in-configuration-page?replies=1#post-2679597
 	1 - add a filter taxonomy
@@ -554,6 +571,8 @@
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-filter-placemarks?replies=3#post-2826743
 	1 - text input box for address, then zoom to it
 		http://wordpress.org/support/topic/future-request?replies=4#post-3547152
+		http://wordpress.org/support/topic/map-search?replies=7 has some code
+		http://wordpress.org/support/topic/filter-placemarks-revisited?replies=21#post-3568838 also has some code
 
 
 ** Future considerations **

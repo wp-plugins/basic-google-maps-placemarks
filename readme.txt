@@ -69,7 +69,8 @@ Basic instructions are on [the Installation page](http://wordpress.org/extend/pl
 
 1. Just add the extra parameters to the [bgmp-map] shortcode. Here's an example of the different ones you can use:
 
-> [bgmp-map categories="parks,restaurants" width="500" height="500" center="chicago" zoom="10" type="terrain"]
+> [bgmp-map categories="parks,restaurants" width="500" height="500"]
+> [bgmp-map placemark="105" center="chicago" zoom="10" type="terrain"]
 
 *Multiple maps with different placemarks:*
 
@@ -299,7 +300,7 @@ Yes. The plugin creates a [custom post type](http://codex.wordpress.org/Post_Typ
 = I upgraded to the latest version and now something's broken =
 If you're running a caching plugin like WP Super Cache, make sure you delete the cache contents so that the latest files are loaded, and then refresh your browser.
 
-If you upgraded other plugins at the same time, it's possible that one of them is causing a JavaScript error that breaks the entire page or some other kind of conflict. Check if the plugin works with the default theme and no other plugins activated.
+If you upgraded other plugins at the same time, it's possible that one of them is causing a JavaScript error that breaks the entire page or some other kind of conflict. Check if BGMP works with the default theme and no other plugins activated.
 
 If you're still having problems, create a detailed report on [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks) (see the 'How can I get help when I'm having a problem?' question above), and then [download an older version](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/developers/) to use until the problem is fixed.
 
@@ -366,6 +367,8 @@ If you just need some minor customizations or are looking for someone with a low
 * [FIX] Fixed persistent bugs in previous 1.9.x releases
 * [NEW] German translation added (thanks to Jens)
 * [NEW] Added a filter to allow [changing the language the map is displayed in](http://wordpress.org/support/topic/displaying-the-map-in-difeerent-language).
+* [NEW] Added get-map-placemarks-individual-placemark filter
+* [NEW] Added placemark ID parameter to map shortcode
 * [UPDATE] Attached bgmp JavaScript object to jQuery object, so it can be accessed from other scripts
 * [UPDATE] Added category data available to JavaScript bgmpData object
 

@@ -95,6 +95,36 @@ class bgmpCoreUnitTests extends UnitTestCase
 		$this->assertEqual( $emptyArray, $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( 'asdfasdfas' ) ) );
 		$this->assertEqual( $emptyArray, $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( 234 ) ) );
 		
+		// ID - invalid
+		// @todo setup and tear down the IDs you test with for testing if post id exists in db
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'placemark' => 0 ) ) );
+		$this->assertFalse( isset( $cleaned[ 'placemark' ] ) );
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'placemark' => '0' ) ) );
+		$this->assertFalse( isset( $cleaned[ 'placemark' ] ) );
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'placemark' => 'alpha' ) ) );
+		$this->assertFalse( isset( $cleaned[ 'placemark' ] ) );
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'placemark' => '10alpha' ) ) );
+		$this->assertFalse( isset( $cleaned[ 'placemark' ] ) );
+//		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'placemark' => 5.25 ) ) );
+//		$this->assertFalse( isset( $cleaned[ 'id' ] ) );
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'placemark' => '-5' ) ) );
+		$this->assertFalse( isset( $cleaned[ 'placemark' ] ) );
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'placemark' => '1,000' ) ) );	// has to exist to really test, otherwise will be triggered by statement that checks if ID exists
+		$this->assertFalse( isset( $cleaned[ 'placemark' ] ) );
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'placemark' => array( 10 ) ) ) );
+		$this->assertFalse( isset( $cleaned[ 'placemark' ] ) );
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'placemark' => 9999999 ) ) );	// one that doesn't exist
+		$this->assertFalse( isset( $cleaned[ 'placemark' ] ) );
+		
+		// ID - valid
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'placemark' => 5 ) ) );	// one that exists
+		$this->assertTrue( isset( $cleaned[ 'placemark' ] ) && is_int( $cleaned[ 'placemark' ] ) );
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'placemark' => '5' ) ) );
+		$this->assertTrue( isset( $cleaned[ 'placemark' ] ) && is_int( $cleaned[ 'placemark' ] ) );
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'placemark' => '5.00' ) ) );
+		$this->assertTrue( isset( $cleaned[ 'placemark' ] ) && is_int( $cleaned[ 'placemark' ] ) );
+		
+		
 		// Categories
 		// @todo insert categories before test, then delete after?
 		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'categories' => 'parks,restaurants,shopping-malls' ) ) );

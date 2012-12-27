@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the Basic Google Maps Placemarks package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Basic Google Maps Placemarks 1.9-rc1\n"
+"Project-Id-Version: Basic Google Maps Placemarks 1.9.3-rc2a\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/basic-google-maps-placemarks\n"
-"POT-Creation-Date: 2012-09-23 02:13:06+00:00\n"
+"POT-Creation-Date: 2012-12-27 22:15:20+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 
-#. #-#-#-#-#  basic-google-maps-placemarks.pot (Basic Google Maps Placemarks 1.9-rc1)  #-#-#-#-#
+#. #-#-#-#-#  basic-google-maps-placemarks.pot (Basic Google Maps Placemarks 1.9.3-rc2a)  #-#-#-#-#
 #. Plugin Name of the plugin/theme
 #: basic-google-maps-placemarks.php:36
 msgid "Basic Google Maps Placemarks"
@@ -33,7 +33,7 @@ msgstr ""
 msgid "Seattle"
 msgstr ""
 
-#: core.php:292
+#: core.php:286
 msgid ""
 "%s requires the Images media button setting to be enabled in order to use "
 "custom icons on markers, but it's currently turned off. If you'd like to use "
@@ -41,134 +41,142 @@ msgid ""
 "page, in the Upload Settings section."
 msgstr ""
 
-#: core.php:356
+#: core.php:361
+msgid "%s shortcode error: %s is not a valid placemark ID."
+msgstr ""
+
+#: core.php:386
 msgid "%s shortcode error: %s is not a valid category."
 msgstr ""
 
-#: core.php:373
+#: core.php:404
 msgid "%s shortcode error: %s is not a valid width."
 msgstr ""
 
-#: core.php:390
+#: core.php:421
 msgid "%s shortcode error: %s is not a valid height."
 msgstr ""
 
-#: core.php:415
+#: core.php:446
 msgid "%s shortcode error: %s is not a valid zoom level."
 msgstr ""
 
-#: core.php:431
+#: core.php:462
 msgid "%s shortcode error: %s is not a valid map type."
 msgstr ""
 
-#: core.php:570 core.php:587
+#: core.php:605 core.php:622
 msgid "Placemarks"
 msgstr ""
 
-#: core.php:571
+#: core.php:606
 msgid "Placemark"
 msgstr ""
 
-#: core.php:572
+#: core.php:607
 msgid "Add New"
 msgstr ""
 
-#: core.php:573
+#: core.php:608
 msgid "Add New Placemark"
 msgstr ""
 
-#: core.php:574
+#: core.php:609
 msgid "Edit"
 msgstr ""
 
-#: core.php:575
+#: core.php:610
 msgid "Edit Placemark"
 msgstr ""
 
-#: core.php:576
+#: core.php:611
 msgid "New Placemark"
 msgstr ""
 
-#: core.php:577 core.php:578
+#: core.php:612 core.php:613
 msgid "View Placemark"
 msgstr ""
 
-#: core.php:579
+#: core.php:614
 msgid "Search Placemarks"
 msgstr ""
 
-#: core.php:580 core.php:983
+#: core.php:615 core.php:1022
 msgid "No Placemarks found"
 msgstr ""
 
-#: core.php:581
+#: core.php:616
 msgid "No Placemarks found in Trash"
 msgstr ""
 
-#: core.php:582
+#: core.php:617
 msgid "Parent Placemark"
 msgstr ""
 
-#: core.php:616 core.php:617
+#: core.php:651 core.php:652
 msgid "Category"
 msgstr ""
 
-#: core.php:617
+#: core.php:652
 msgid "Categories"
 msgstr ""
 
-#: core.php:657
+#: core.php:692
 msgid "Placemark Address"
 msgstr ""
 
-#: core.php:658
+#: core.php:693
 msgid "Stacking Order"
 msgstr ""
 
-#: core.php:738
+#: core.php:773
 msgid "The stacking order has to be an integer."
 msgstr ""
 
-#: core.php:766
+#: core.php:801
 msgid "%s geocode error: %s"
 msgstr ""
 
-#: core.php:778
+#: core.php:813
 msgid "%s geocode error: Response code not present"
 msgstr ""
 
-#: core.php:796
+#: core.php:831
 msgid "<p>%s geocode error: %d %s</p> <p>Response: %s</p>"
 msgstr ""
 
-#: core.php:813
+#: core.php:848
 msgid "%s geocode error: Response was not formatted in JSON."
 msgstr ""
 
-#: core.php:819
+#: core.php:854
 msgid "%s geocode error: Request Denied."
 msgstr ""
 
-#: core.php:825
+#: core.php:860
 msgid "That address couldn't be geocoded, please make sure that it's correct."
 msgstr ""
 
-#: core.php:895
+#: core.php:862
+msgid "Geocode response:"
+msgstr ""
+
+#: core.php:934
 msgid ""
 "<p class=\"error\">%s error: JavaScript and/or CSS files aren't loaded. If "
 "you're using do_shortcode() you need to add a filter to your theme first. "
 "See <a href=\"%s\">the FAQ</a> for details.</p>"
 msgstr ""
 
-#: core.php:1268
+#: core.php:1324
 msgid "Type"
 msgstr ""
 
-#: core.php:1270
+#: core.php:1326
 msgid "Length"
 msgstr ""
 
-#: core.php:1272
+#: core.php:1328
 msgid "Content"
 msgstr ""
 

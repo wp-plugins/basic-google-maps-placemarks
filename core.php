@@ -337,6 +337,36 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			if( !is_array( $arguments ) )
 				return array();
 				
+			if( isset( $arguments[ 'placemark' ] ) )
+			{
+				$pass = true;
+				$originalID = $arguments[ 'placemark' ];
+				
+				if( !is_numeric( $arguments[ 'placemark' ] ) )
+					$pass = false;
+				
+				$arguments[ 'placemark' ] = (int) $arguments[ 'placemark' ];
+				
+				if( $arguments[ 'placemark' ] <= 0 )
+					$pass = false;
+				
+				$exists = get_post( $arguments[ 'placemark' ] );
+				if( !$exists )
+					$pass = false;
+				
+				// if not either of those, unset
+				if( !$pass )
+				{
+					$this->enqueueMessage( sprintf(
+						__( '%s shortcode error: %s is not a valid placemark ID.', 'bgmp' ),
+						BGMP_NAME,
+						(string) $originalID
+					), 'error' );
+					
+					unset( $arguments[ 'placemark' ] );
+				}
+			}
+			
 			if( isset( $arguments[ 'categories' ] ) )
 			{
 				if( is_string( $arguments[ 'categories' ] ) )
@@ -828,6 +858,10 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			if( !isset( $coordinates->results ) || empty( $coordinates->results ) )
 			{
 				$this->enqueueMessage( __( "That address couldn't be geocoded, please make sure that it's correct.", 'bgmp' ), "error" );
+				$this->enqueueMessage(
+					__( "Geocode response:", 'bgmp' ) . ' <pre>' . print_r( $coordinates, true ) . '</pre>',
+					"error"
+				);
 				return false;
 			}
 			
@@ -1126,6 +1160,9 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				'post_status'	=> 'publish'
 			);
 			
+			if( isset( $attributes[ 'placemark' ] ) )
+				$query[ 'p' ] = $attributes[ 'placemark' ];
+			
 			if( isset( $attributes[ 'categories' ] ) && !empty( $attributes[ 'categories' ] ) )
 			{
 				$query[ 'tax_query' ] = array(
@@ -1152,11 +1189,10 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 					if( !is_array( $categories ) )
 						$categories = array();
 						
-					
 					$icon = wp_get_attachment_image_src( get_post_thumbnail_id( $postID ) );
 					$defaultIcon = apply_filters( self::PREFIX .'default-icon', plugins_url( 'images/default-marker.png', __FILE__ ), $postID );
- 
-					$placemarks[] = array(
+
+					$placemark = array(
 						'id'			=> $postID,
 						'title'			=> get_the_title(),
 						'latitude'		=> get_post_meta( $postID, self::PREFIX . 'latitude', true ),
@@ -1166,6 +1202,8 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 						'icon'			=> is_array( $icon ) ? $icon[0] : $defaultIcon,
 						'zIndex'		=> get_post_meta( $postID, self::PREFIX . 'zIndex', true )
 					);
+					
+					$placemarks[] = apply_filters( self::PREFIX . 'get-map-placemarks-individual-placemark', $placemark );
 				}
 				wp_reset_postdata();
 			}
