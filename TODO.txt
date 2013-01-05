@@ -48,7 +48,7 @@
 		Add updated POMO files from translators to local working copy
 	
 	If major changes, commit release candidate
-		Update version to x.x-rc1
+		Update version to x.x-rc1 in basic-google-maps-placemarks.php and core.php
 		Commit, tag
 		Add support forum message asking for testing/feedback
 		Email testers mailing list with link to forum post
