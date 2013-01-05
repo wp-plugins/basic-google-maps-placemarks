@@ -8,7 +8,7 @@
 
 ** Development Workflow / New Release Checklist **
 	Upgrade plaground/wp to latest WordPress release
-	Update SVN trunk in playground/wp 
+	Update SVN trunk in playground/wp
 	Update alpha version numbers in basic-google-maps-placemarks.php comment and core.php constant
 	Update readme compatible tag to latest WP version
 	Work on a single feature/bug fix/etc at a time
@@ -22,7 +22,7 @@
 			Add filters
 			Write unit and integration tests
 			Throw/catch exceptions when encountering invalid conditions.
-			Use did_action() in action callbacks 
+			Use did_action() in action callbacks
 		Update readme changelog and upgrade notice
 		Update PHP/WP version requirements in basic-google-maps-placemarks.php comment and core.php constant
 		Perform tests
@@ -34,6 +34,9 @@
 	Upgrade playground/wpms to latest WordPress release
 	Update SVN trunk in playground/wpms
 	Test latest commits
+		Various test sites with different placemarks/options
+		Debug tools site to catch warnings
+		Plugin compatability site to check for conflicts with popular plugins
 	
 	Update localizations
 		Generate new .pot file and update header values inside it
@@ -78,7 +81,7 @@
 		done
 	
 	fix line break bug in json
-		release rc2 to see if using get_the_content() fixed.
+		release rc2 to see if using apply_filters( 'the_content' ) fixed it.
 		
 		if not
 			get db backup or access to staging server from reporters
@@ -93,6 +96,7 @@
 			remove_filter wpautop ?
 				not applied by get_the_content anyway?
 				maybe don't wrap getthecontent w/ wpautop, but apply it as a filter so people can remove it?
+				maybe it's ok to apply_filters() to it, as long as you don't setup_postdata() ?
 
 	make cat data available to js / make bgmp object accessible to outside scripts
 		done
@@ -109,6 +113,14 @@
 	do some manual browser/integration testing
 		done
 		
+	shortcode bug
+		done
+		
+	update wahc link to these instead
+		polioaustralia.org.au - done
+		http://fdmaps.com/forestry-ncfs-and-usfs-combined/ - get permission
+		update screenshots too
+		
 	push a release candidate out and ask for feedback before releasing stable
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-map-not-loading-after-update?replies=12
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-corephp-on-line-346?replies=4
@@ -118,6 +130,7 @@
 		http://wordpress.org/support/topic/filter-placemarks-revisited?replies=5#post-3538177
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-single-placemark-on-maps-and-functionsphp-question?replies=1#post-3185988
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-possibility-to-show-a-single-placemark?replies=1
+		http://wordpress.org/support/topic/incompatibility-between-bgmp-193-rc1-and-jetpack-204?replies=4#post-3675859
 
 		mention mailing list for testing in forum post
 

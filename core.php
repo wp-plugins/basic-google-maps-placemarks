@@ -360,7 +360,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 					$this->enqueueMessage( sprintf(
 						__( '%s shortcode error: %s is not a valid placemark ID.', 'bgmp' ),
 						BGMP_NAME,
-						(string) $originalID
+						is_scalar( $originalID ) ? (string) $originalID : gettype( $originalID )
 					), 'error' );
 					
 					unset( $arguments[ 'placemark' ] );
@@ -472,7 +472,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		}
 		
 		/**
-		 * Checks the current posts to see if they contain the map shortcode
+		 * Checks the current post to see if they contain the map shortcode
 		 * @author Ian Dunn <ian@iandunn.name>
 		 * @link http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-can-i-use-the-shortcode-on-any-php-without-assign-it-in-functionphp
 		 * @return bool
@@ -480,21 +480,19 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		protected function mapShortcodeCalled()
 		{
 			global $post;
-				
+			
 			$this->mapShortcodeCalled = apply_filters( self::PREFIX .'mapShortcodeCalled', $this->mapShortcodeCalled );		// @todo - deprecated b/c not consistent w/ shortcode naming scheme. need a way to notify people
 			$this->mapShortcodeCalled = apply_filters( self::PREFIX .'map-shortcode-called', $this->mapShortcodeCalled );
 			
 			if( $this->mapShortcodeCalled )
 				return true;
 			
-			if( !$post )		// note: this needs to run after the above code, so that templates can call do_shortcode(...) from templates that don't have $post, like 404.php. See link in phpDoc for background.
+			if( !$post )		// note: this needs to run after the above code, so that templates can call do_shortcode(...) from templates that don't have $post, like 404.php. See link in phpDoc @link for background.
 				return false;
 			
-			setup_postdata( $post );
-			$shortcodes = $this->getShortcodes( get_the_content() );
-			wp_reset_postdata();
+			$shortcodes = $this->getShortcodes( $post->post_content );		// note: don't use setup_postdata/get_the_content() in this instance -- http://lists.automattic.com/pipermail/wp-hackers/2013-January/045053.html
 			
-			for( $i = 0; $i < count( $shortcodes[2] ); $i++ )
+			for( $i = 0; $i < count( $shortcodes[ 2 ] ); $i++ )
 				if( $shortcodes[ 2 ][ $i ] == 'bgmp-map' )
 					return true;
 			
@@ -952,7 +950,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			$output = ob_get_clean();
 			
 			return $output;
-		}		
+		}
 		
 		/**
 		 * Defines the [bgmp-list] shortcode
@@ -993,7 +991,6 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				
 				foreach( $posts as $p )
 				{
-					// @todo - redo this w/ setup_postdata() and template tags instead of accessing properties directly
 					// @todo - make this an external view file - can't easily b/c filter on individual marker output. maybe create template loop view for it
 					
 					$address = get_post_meta( $p->ID, self::PREFIX . 'address', true );
@@ -1004,8 +1001,8 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 							<div class="'. self::PREFIX .'list-description">%s</div>
 							<p class="'. self::PREFIX .'list-link"><a href="%s">%s</a></p>
 						</li>',
-						$p->post_title,
-						wpautop( $p->post_content ),
+						apply_filters( 'the_title', $p->post_title ),
+						apply_filters( 'the_content', $p->post_content ),		// note: don't use setup_postdata/get_the_content() in this instance -- http://lists.automattic.com/pipermail/wp-hackers/2013-January/045053.html
 						'http://google.com/maps?q='. $address,
 						$address
 					);
@@ -1151,7 +1148,6 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		 */
 		public function getMapPlacemarks( $attributes )
 		{
-			global $post;
 			$placemarks = array();
 			
 			$query = array( 
@@ -1175,15 +1171,13 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			}
 			
 			$query = apply_filters( self::PREFIX . 'get-placemarks-query', $query );		// @todo - filter name deprecated
-			
 			$publishedPlacemarks = get_posts( apply_filters( self::PREFIX . 'get-map-placemarks-query', $query ) );
 			
 			if( $publishedPlacemarks )
 			{
-				foreach( $publishedPlacemarks as $post )
+				foreach( $publishedPlacemarks as $pp )
 				{
-					setup_postdata( $post );
-					$postID = get_the_ID();
+					$postID = $pp->ID;
 					
 					$categories = get_the_terms( $postID, self::TAXONOMY );
 					if( !is_array( $categories ) )
@@ -1194,10 +1188,10 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 
 					$placemark = array(
 						'id'			=> $postID,
-						'title'			=> get_the_title(),
+						'title'			=> apply_filters( 'the_title', $pp->post_title ),
 						'latitude'		=> get_post_meta( $postID, self::PREFIX . 'latitude', true ),
 						'longitude'		=> get_post_meta( $postID, self::PREFIX . 'longitude', true ),
-						'details'		=> wpautop( get_the_content() ),
+						'details'		=> apply_filters( 'the_content', $pp->post_content ),		// note: don't use setup_postdata/get_the_content() in this instance -- http://lists.automattic.com/pipermail/wp-hackers/2013-January/045053.html
 						'categories'	=> $categories,
 						'icon'			=> is_array( $icon ) ? $icon[0] : $defaultIcon,
 						'zIndex'		=> get_post_meta( $postID, self::PREFIX . 'zIndex', true )
@@ -1205,7 +1199,6 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 					
 					$placemarks[] = apply_filters( self::PREFIX . 'get-map-placemarks-individual-placemark', $placemark );
 				}
-				wp_reset_postdata();
 			}
 			
 			$placemarks = apply_filters( self::PREFIX . 'get-placemarks-return', $placemarks );	// @todo - filter name deprecated

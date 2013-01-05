@@ -25,7 +25,7 @@ BGMP creates a [custom post type](http://www.youtube.com/watch?v=FWkLBPpGOmo#!) 
 * Compatible with WordPress MultiSite.
 * Internationalized (see [Other Notes](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/other_notes/) for a current list of supported languages)
 
-You can see a live example of the plugin running at [washingtonhousechurches.net](http://washingtonhousechurches.net).
+You can see a live example of the plugin running at [the Australian Polio Register](http://www.polioaustralia.org.au/?page_id=6098).
 
 Basic instructions are on [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/). Check [the FAQ](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/faq/) and [support forums](http://wordpress.org/support/plugin/basic-google-maps-placemarks) for help.
 
@@ -364,13 +364,14 @@ If you just need some minor customizations or are looking for someone with a low
 == Changelog ==
 
 = v1.9.3 () =
-* [FIX] Fixed persistent bugs in previous 1.9.x releases
-* [NEW] German translation added (thanks to Jens)
+* [FIX] Fixed persistent bugs in previous 1.9.x releases.
+* [FIX] Fixed [bgmp-map shortcode bug](http://wordpress.org/support/topic/incompatibility-between-bgmp-193-rc1-and-jetpack-204) that led to conflicts with Jetpack.
+* [NEW] German translation added (thanks to Jens).
 * [NEW] Added a filter to allow [changing the language the map is displayed in](http://wordpress.org/support/topic/displaying-the-map-in-difeerent-language).
-* [NEW] Added get-map-placemarks-individual-placemark filter
-* [NEW] Added placemark ID parameter to map shortcode
-* [UPDATE] Attached bgmp JavaScript object to jQuery object, so it can be accessed from other scripts
-* [UPDATE] Added category data available to JavaScript bgmpData object
+* [NEW] Added get-map-placemarks-individual-placemark filter.
+* [NEW] Added placemark ID parameter to [bgmp-map] shortcode.
+* [UPDATE] Attached bgmp JavaScript object to jQuery object, so it can be accessed from other scripts.
+* [UPDATE] Added category data available to JavaScript bgmpData object.
 
 = v1.9.2 (10/9/2012) =
 * [FIX] Attempted to fix ['is not a valid category' error](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-map-not-loading-after-update)
