@@ -1,3 +1,5 @@
+<?php do_action( self::PREFIX . 'meta-address-before' ); ?>
+
 <p><?php _e( 'Enter the address of the placemark. You can type in anything that you would type into a Google Maps search field, from a full address to an intersection, landmark, city or just a zip code.', 'bgmp' ); ?></p>
 
 <table id="bgmp-placemark-coordinates">	<?php // @todo should use self::PREFIX, but too late b/c users already styling w/ this ?>
@@ -17,3 +19,5 @@
 		</tr>
 	</tbody>
 </table>
+
+<?php do_action( self::PREFIX . 'meta-address-after' ); ?>

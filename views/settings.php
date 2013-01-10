@@ -5,6 +5,8 @@
 	<h2><?php printf( __( '%s Settings', 'bgmp' ), BGMP_NAME ); ?></h2>
 
 	<form method="post" action="options.php">
+		<?php do_action( self::PREFIX . 'settings-before' ); ?>
+		
 		<?php // @todo add nonce for settings? ?>
 		
 		<div id="<?php echo BasicGoogleMapsPlacemarks::PREFIX; ?>settings-fields">
@@ -20,5 +22,7 @@
 				<?php wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce' ); ?>
 			</div>
 		</div>
+		
+		<?php do_action( self::PREFIX . 'settings-after' ); ?>
 	</form>
 </div> <!-- .wrap -->

@@ -1,3 +1,5 @@
+<?php do_action( self::PREFIX . 'meta-address-before' ); ?>
+
 <script type="text/javascript">
 	var bgmpData = {
 		options: <?php echo json_encode( $this->getMapOptions( $attributes ) ); ?>,
@@ -9,3 +11,5 @@
 	<p><?php _e( 'Loading map...', 'bgmp' ); ?></p>
 	<p><img src="<?php echo plugins_url( 'images/loading.gif', dirname( __FILE__ ) ); ?>" alt="<?php _e( 'Loading', 'bgmp' ); ?>" /></p>
 </div>
+
+<?php do_action( self::PREFIX . 'shortcode-bgmp-map-after' ); ?>

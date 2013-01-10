@@ -95,7 +95,7 @@ class bgmpCoreUnitTests extends UnitTestCase
 		$this->assertEqual( $emptyArray, $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( 'asdfasdfas' ) ) );
 		$this->assertEqual( $emptyArray, $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( 234 ) ) );
 		
-		// ID - invalid
+		// Placemark - invalid
 		// @todo setup and tear down the IDs you test with for testing if post id exists in db
 		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'placemark' => 0 ) ) );
 		$this->assertFalse( isset( $cleaned[ 'placemark' ] ) );
@@ -115,14 +115,18 @@ class bgmpCoreUnitTests extends UnitTestCase
 		$this->assertFalse( isset( $cleaned[ 'placemark' ] ) );
 		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'placemark' => 9999999 ) ) );	// one that doesn't exist
 		$this->assertFalse( isset( $cleaned[ 'placemark' ] ) );
+		// @todo add coordiantes tests
 		
-		// ID - valid
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'placemark' => 5 ) ) );	// one that exists
+		// Placemark - valid
+		// Note: The corresponding posts have to actually exist in order to test. @todo add setup/teardown w/ test data instead.
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'placemark' => 16 ) ) );	// one that exists
 		$this->assertTrue( isset( $cleaned[ 'placemark' ] ) && is_int( $cleaned[ 'placemark' ] ) );
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'placemark' => '5' ) ) );
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'placemark' => '16' ) ) );
 		$this->assertTrue( isset( $cleaned[ 'placemark' ] ) && is_int( $cleaned[ 'placemark' ] ) );
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'placemark' => '5.00' ) ) );
+		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'placemark' => '16.00' ) ) );
 		$this->assertTrue( isset( $cleaned[ 'placemark' ] ) && is_int( $cleaned[ 'placemark' ] ) );
+		// @todo add coordiantes tests
+		
 		
 		
 		// Categories

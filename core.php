@@ -15,7 +15,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 	{
 		// Declare variables and constants
 		protected $settings, $options, $updatedOptions, $userMessageCount, $mapShortcodeCalled, $mapShortcodeCategories;
-		const VERSION		= '1.9.3-rc2';
+		const VERSION		= '1.9.3-rc3a';
 		const PREFIX		= 'bgmp_';
 		const POST_TYPE		= 'bgmp';
 		const TAXONOMY		= 'bgmp-category';
@@ -336,12 +336,15 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			
 			if( !is_array( $arguments ) )
 				return array();
-				
+			
+			
+			// Placemark
 			if( isset( $arguments[ 'placemark' ] ) )
 			{
 				$pass = true;
 				$originalID = $arguments[ 'placemark' ];
 				
+				// Check for valid placemark ID
 				if( !is_numeric( $arguments[ 'placemark' ] ) )
 					$pass = false;
 				
@@ -350,23 +353,48 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				if( $arguments[ 'placemark' ] <= 0 )
 					$pass = false;
 				
-				$exists = get_post( $arguments[ 'placemark' ] );
-				if( !$exists )
+				$placemark = get_post( $arguments[ 'placemark' ] );
+				if( !$placemark )
 					$pass = false;
 				
-				// if not either of those, unset
 				if( !$pass )
 				{
-					$this->enqueueMessage( sprintf(
+					$error = sprintf(
 						__( '%s shortcode error: %s is not a valid placemark ID.', 'bgmp' ),
 						BGMP_NAME,
 						is_scalar( $originalID ) ? (string) $originalID : gettype( $originalID )
-					), 'error' );
+					);
+				}
+				
+				// Check for valid coordinates
+				if( $pass )
+				{
+					$latitude		= get_post_meta( $arguments[ 'placemark' ], self::PREFIX . 'latitude', true );
+					$longitude		= get_post_meta( $arguments[ 'placemark' ], self::PREFIX . 'longitude', true );
+					$coordinates	= $this->validateCoordinates( $latitude .','. $longitude );
 					
+					if( $coordinates === false )
+					{
+						$pass = false;
+						$error = sprintf(
+							__( '%s shortcode error: %s does not have a valid address.', 'bgmp' ),
+							BGMP_NAME,
+							(string) $originalID
+						);
+					}
+				}
+				
+				
+				// Remove the option if it isn't a valid placemark
+				if( !$pass )
+				{
+					$this->enqueueMessage( $error, 'error' );
 					unset( $arguments[ 'placemark' ] );
 				}
 			}
 			
+			
+			// Categories
 			if( isset( $arguments[ 'categories' ] ) )
 			{
 				if( is_string( $arguments[ 'categories' ] ) )
@@ -427,6 +455,8 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				unset( $arguments[ 'height' ] );
 			}
 			
+			
+			// Center
 			if( isset( $arguments[ 'center' ] ) )
 			{
 				// Note: Google's API has a daily request limit, which could be a problem when geocoding map shortcode center address each time page loads. Users could get around that by using a caching plugin, though.
@@ -437,7 +467,9 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				
 				unset( $arguments[ 'center' ] );
 			}
-		
+			
+			
+			// Zoom
 			if( isset( $arguments[ 'zoom' ] ) )
 			{
 				if( !is_numeric( $arguments[ 'zoom' ] ) || $arguments[ 'zoom' ] < self::ZOOM_MIN || $arguments[ 'zoom' ] > self::ZOOM_MAX )
@@ -452,6 +484,8 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				}
 			}
 			
+			
+			// Type
 			if( isset( $arguments[ 'type' ] ) )
 			{
 				$arguments[ 'type' ] = strtoupper( $arguments[ 'type' ] );
@@ -468,7 +502,8 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				}
 			}
 			
-			return $arguments;
+			
+			return apply_filters( self::PREFIX . 'clean-map-shortcode-arguments-return', $arguments );
 		}
 		
 		/**
@@ -687,8 +722,23 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			if( did_action( 'admin_init' ) !== 1 )
 				return;
 			
-			add_meta_box( self::PREFIX . 'placemark-address', __( 'Placemark Address', 'bgmp' ), array( $this, 'markupAddressFields' ), self::POST_TYPE, 'normal', 'high' );
-			add_meta_box( self::PREFIX . 'placemark-zIndex', __( 'Stacking Order', 'bgmp' ), array( $this, 'markupZIndexField' ), self::POST_TYPE, 'side', 'low' );
+			add_meta_box(
+				self::PREFIX . 'placemark-address',
+				__( 'Placemark Address', 'bgmp' ),
+				array( $this, 'markupAddressFields' ),
+				self::POST_TYPE,
+				'normal',
+				'high'
+			);
+			
+			add_meta_box(
+				self::PREFIX . 'placemark-zIndex',
+				__( 'Stacking Order', 'bgmp' ),
+				array( $this, 'markupZIndexField' ),
+				self::POST_TYPE,
+				'side',
+				'low'
+			);
 		}
 		
 		/**
@@ -735,9 +785,10 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			
 			global $post;
 			$coordinates = false;
+			$ignoredActions = array( 'trash', 'untrash', 'restore' );
 			
 			// Check preconditions
-			if( isset( $_GET[ 'action' ] ) && ( $_GET[ 'action' ] == 'trash' || $_GET[ 'action' ] == 'untrash' ) )
+			if( isset( $_GET[ 'action' ] ) && in_array( $_GET[ 'action' ], $ignoredActions ) )
 				return;
 			
 			if(	!$post || $post->post_type != self::POST_TYPE || !current_user_can( 'edit_posts' ) )
@@ -1113,7 +1164,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 					)
 				)
 			);
-					
+			
 			$options = array(
 				'mapWidth'				=> $this->settings->mapWidth,					// @todo move these into 'map' subarray? but then have to worry about backwards compat
 				'mapHeight'				=> $this->settings->mapHeight,
@@ -1134,6 +1185,21 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 					'styles'			=> $clusterStyles
 				)
 			);
+			
+			// Reset center/zoom when only displaying single placemark
+			if( isset( $attributes[ 'placemark' ] ) && apply_filters( self::PREFIX . 'reset-individual-map-center-zoom', true ) )
+			{
+				$latitude		= get_post_meta( $attributes[ 'placemark' ], self::PREFIX . 'latitude', true );
+				$longitude		= get_post_meta( $attributes[ 'placemark' ], self::PREFIX . 'longitude', true );
+				$coordinates	= $this->validateCoordinates( $latitude .','. $longitude );
+				
+				if( $coordinates !== false )
+				{
+					$options[ 'latitude' ]	= $latitude;
+					$options[ 'longitude' ]	= $longitude;
+					$options[ 'zoom' ]		= apply_filters( self::PREFIX . 'individual-map-default-zoom', 13 );
+				}
+			}
 			
 			$options = shortcode_atts( $options, $attributes );
 			

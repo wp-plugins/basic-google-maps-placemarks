@@ -25,7 +25,7 @@ BGMP creates a [custom post type](http://www.youtube.com/watch?v=FWkLBPpGOmo#!) 
 * Compatible with WordPress MultiSite.
 * Internationalized (see [Other Notes](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/other_notes/) for a current list of supported languages)
 
-You can see a live example of the plugin running at [the Australian Polio Register](http://www.polioaustralia.org.au/?page_id=6098).
+You can see live examples of the plugin running at [the Australian Polio Register](http://www.polioaustralia.org.au/?page_id=6098) and [the North Carolina Fire Station Mapping Project(http://fdmaps.com/forestry-ncfs-and-usfs-combined/).
 
 Basic instructions are on [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/). Check [the FAQ](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/faq/) and [support forums](http://wordpress.org/support/plugin/basic-google-maps-placemarks) for help.
 
@@ -354,11 +354,12 @@ If you just need some minor customizations or are looking for someone with a low
 
 
 == Screenshots ==
-1. This is an example of how the map looks once it's been embedded into a page.
-2. The Placemarks page, where you can add/edit/delete map markers.
-3. A example placemark. 
-4. The Categories screen.
-5. The map settings.
+1. One example of how the map looks once it's been embedded into a page.
+2. Another example of how the map looks on a live site.
+3. The Placemarks page, where you can add/edit/delete map markers.
+4. A example placemark. 
+5. The Categories screen.
+6. The map settings.
 
 
 == Changelog ==
