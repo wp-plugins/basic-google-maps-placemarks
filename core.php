@@ -15,7 +15,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 	{
 		// Declare variables and constants
 		protected $settings, $options, $updatedOptions, $userMessageCount, $mapShortcodeCalled, $mapShortcodeCategories;
-		const VERSION		= '1.9.3-rc3a';
+		const VERSION		= '1.10a';
 		const PREFIX		= 'bgmp_';
 		const POST_TYPE		= 'bgmp';
 		const TAXONOMY		= 'bgmp-category';
@@ -322,7 +322,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		 * Validates and cleans the map shortcode arguments
 		 * @author Ian Dunn <ian@iandunn.name>
 		 * @param array
-		 * return array
+		 * @return array
 		 */
 		protected function cleanMapShortcodeArguments( $arguments )
 		{
@@ -619,7 +619,11 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				return;
 			
 			if( $this->mapShortcodeCalled )
+			{
+				do_action( BasicGoogleMapsPlacemarks::PREFIX . 'head-before' );
 				require_once( dirname(__FILE__) . '/views/front-end-head.php' );
+				do_action( BasicGoogleMapsPlacemarks::PREFIX . 'head-after' );
+			}
 		}
 		
 		/**
@@ -633,8 +637,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			
 			if( !post_type_exists( self::POST_TYPE ) )
 			{
-				$labels = array
-				(
+				$labels = array(
 					'name'					=> __( 'Placemarks', 'bgmp' ),
 					'singular_name'			=> __( 'Placemark', 'bgmp' ),
 					'add_new'				=> __( 'Add New', 'bgmp' ),
@@ -651,15 +654,15 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				);
 				
 				$postTypeParams = array(
-					'labels'			=> $labels,
-					'singular_label'	=> __( 'Placemarks', 'bgmp' ),
-					'public'			=> true,
-					'menu_position'		=> 20,
-					'hierarchical'		=> false,
-					'capability_type'	=> 'post',
-					'rewrite'			=> array( 'slug' => 'placemarks', 'with_front' => false ),
-					'query_var'			=> true,
-					'supports'			=> array( 'title', 'editor', 'author', 'thumbnail', 'comments', 'revisions' )
+					'labels'				=> $labels,
+					'singular_label'		=> __( 'Placemarks', 'bgmp' ),
+					'public'				=> true,
+					'menu_position'			=> 20,
+					'hierarchical'			=> false,
+					'capability_type'		=> 'post',
+					'rewrite'				=> array( 'slug' => 'placemarks', 'with_front' => false ),
+					'query_var'				=> true,
+					'supports'				=> array( 'title', 'editor', 'author', 'thumbnail', 'comments', 'revisions' )
 				);
 				
 				register_post_type(
@@ -997,7 +1000,9 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			$attributes = $this->cleanMapShortcodeArguments( $attributes );
 			
 			ob_start();
+			do_action( BasicGoogleMapsPlacemarks::PREFIX . 'meta-address-before' );
 			require_once( dirname( __FILE__ ) . '/views/shortcode-bgmp-map.php' );
+			do_action( BasicGoogleMapsPlacemarks::PREFIX . 'shortcode-bgmp-map-after' );
 			$output = ob_get_clean();
 			
 			return $output;
@@ -1175,7 +1180,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				'typeControl'			=> $this->settings->mapTypeControl,
 				'navigationControl'		=> $this->settings->mapNavigationControl,
 				'infoWindowMaxWidth'	=> $this->settings->mapInfoWindowMaxWidth,
-				'streetViewControl'		=> true,
+				'streetViewControl'		=> apply_filters( self::PREFIX . 'street-view-control', true ),
 				
 				'clustering'			=> array(
 					'enabled'			=> $this->settings->markerClustering,

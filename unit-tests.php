@@ -423,3 +423,5 @@ class bgmpCoreUnitTests extends UnitTestCase
 } // end bgmpCoreUnitTests
 
 // setup another class to test settings.php - maybe should setup separate file and testsuite functions?
+
+?>

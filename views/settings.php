@@ -5,7 +5,7 @@
 	<h2><?php printf( __( '%s Settings', 'bgmp' ), BGMP_NAME ); ?></h2>
 
 	<form method="post" action="options.php">
-		<?php do_action( self::PREFIX . 'settings-before' ); ?>
+		<?php do_action( BasicGoogleMapsPlacemarks::PREFIX . 'settings-before' ); ?>
 		
 		<?php // @todo add nonce for settings? ?>
 		
@@ -23,6 +23,6 @@
 			</div>
 		</div>
 		
-		<?php do_action( self::PREFIX . 'settings-after' ); ?>
+		<?php do_action( BasicGoogleMapsPlacemarks::PREFIX . 'settings-after' ); ?>
 	</form>
 </div> <!-- .wrap -->

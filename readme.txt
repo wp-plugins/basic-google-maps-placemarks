@@ -364,13 +364,15 @@ If you just need some minor customizations or are looking for someone with a low
 
 == Changelog ==
 
-= v1.9.3 () =
+= v1.10 () =
 * [FIX] Fixed persistent bugs in previous 1.9.x releases.
-* [FIX] Fixed [bgmp-map shortcode bug](http://wordpress.org/support/topic/incompatibility-between-bgmp-193-rc1-and-jetpack-204) that led to conflicts with Jetpack.
-* [NEW] German translation added (thanks to Jens).
-* [NEW] Added a filter to allow [changing the language the map is displayed in](http://wordpress.org/support/topic/displaying-the-map-in-difeerent-language).
-* [NEW] Added get-map-placemarks-individual-placemark filter.
+* [FIX] Fixed bgmp-map shortcode [bug that led to conflicts with Jetpack](http://wordpress.org/support/topic/incompatibility-between-bgmp-193-rc1-and-jetpack-204).
+* [NEW] [bgmp-list] links now focus on the map marker, if it's present. 
 * [NEW] Added placemark ID parameter to [bgmp-map] shortcode.
+* [NEW] Added get-map-placemarks-individual-placemark filter.
+* [NEW] Added a filter to allow [changing the language the map is displayed in](http://wordpress.org/support/topic/displaying-the-map-in-difeerent-language).
+* [NEW] German translation added (thanks to Jens).
+* [NEW] Added do_action() calls to views so they can be more easily extended.
 * [UPDATE] Attached bgmp JavaScript object to jQuery object, so it can be accessed from other scripts.
 * [UPDATE] Added category data available to JavaScript bgmpData object.
 
