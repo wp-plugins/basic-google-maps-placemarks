@@ -76,7 +76,7 @@
 
 ** Roadmap **
 
-1.9.3
+1.10
 	fix 'not valid cateory' error
 		done
 	
@@ -122,17 +122,7 @@
 			update all of them, not just the first two
 	
 	add ability to link from outside / 	have links in [bgmp-list] open repsective info on map.
-		maybe change bgmp-list markers to do that
-			but only if bgmp-map is present
-			maybe leave links as is to begin, then have js loop through and check if there's a corresponding marker on map. if there is, js changes link href to point to marker
-			that's prog enhanced and allows list to be used on its own
-			add a filter so people can go back to old behavior if they want
-		remove from requested list
-		add those request threads to list below
-		test
-		update readme
-		http://econym.org.uk/gmap/example_maptips.htm - example
-		etc
+		done
 		
 	release this as 1.10 since so many changes from 1.9.2, even though 1.9 was only briefly released
 	
@@ -153,6 +143,7 @@
 		http://wordpress.org/support/topic/incompatibility-between-bgmp-193-rc1-and-jetpack-204?replies=4#post-3675859
 		http://wordpress.org/support/topic/bgmp-193-rc2-available?replies=3#post-3694645 - reset center/zoom
 		http://wordpress.org/support/topic/bgmp-193-rc1-available?replies=8
+		http://wordpress.org/support/topic/hide-street-view-option?replies=3
 		external links
 			http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-place-marker-links?replies=1#post-2554607
 			http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-onclick-from-external-link?replies=1

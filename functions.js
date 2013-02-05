@@ -22,12 +22,18 @@ function bgmp_wrapper( $ )
 		 */
 		init : function()
 		{
+			$.bgmp.prefix				= 'bgmp_';
 			$.bgmp.name					= 'Basic Google Maps Placemarks';
-			$.bgmp.canvas				= document.getElementById( 'bgmp_map-canvas' );		// We have to use getElementById instead of a jQuery selector here in order to pass it to the Maps API.
-			$.bgmp.previousInfoWindow	= undefined;
+			$.bgmp.canvas				= document.getElementById( $.bgmp.prefix + 'map-canvas' );		// We have to use getElementById instead of a jQuery selector here in order to pass it to the Maps API.
 			$.bgmp.map					= undefined;
 			$.bgmp.markerClusterer		= undefined;
 			$.bgmp.markers				= [];
+			$.bgmp.infoWindowContent	= [];
+			
+			$.bgmp.infoWindow = new google.maps.InfoWindow( {
+				content		: 'temp',	// @todo temp
+				maxWidth	: bgmpData.options.infoWindowMaxWidth
+			} );
 			
 			// @todo make this loop through array instead of manual. also add any other numbers
 			bgmpData.options.zoom					= parseInt( bgmpData.options.zoom ),
@@ -35,6 +41,8 @@ function bgmp_wrapper( $ )
 			bgmpData.options.longitude				= parseFloat( bgmpData.options.longitude );
 			bgmpData.options.clustering.maxZoom		= parseInt( bgmpData.options.clustering.maxZoom );
 			bgmpData.options.clustering.gridSize	= parseInt( bgmpData.options.clustering.gridSize );
+			
+			$( '#' + $.bgmp.prefix + 'list' ).find( 'a' ).filter( '.' + $.bgmp.prefix + 'view-on-map' ).click( $.bgmp.viewOnMap ); 
 								
 			if( $.bgmp.canvas )
 				$.bgmp.buildMap();
@@ -71,8 +79,8 @@ function bgmp_wrapper( $ )
 			};
 			
 			// Override default width/heights from settings
-			$( '#bgmp_map-canvas' ).css( 'width', bgmpData.options.mapWidth );		// @todo use $.bgmp.canvas intead of hardcoding it?
-			$( '#bgmp_map-canvas' ).css( 'height', bgmpData.options.mapHeight );
+			$( '#' + $.bgmp.prefix + 'map-canvas' ).css( 'width', bgmpData.options.mapWidth );		// @todo use $.bgmp.canvas intead of hardcoding it?
+			$( '#' + $.bgmp.prefix + 'map-canvas' ).css( 'height', bgmpData.options.mapHeight );
 			// @todo this prevents users from using their own stylesheet?
 			
 			
@@ -85,7 +93,7 @@ function bgmp_wrapper( $ )
 			{
 				$( $.bgmp.canvas ).html( $.bgmp.name + " error: couln't build map." );
 				if( window.console )
-					console.log( 'bgmp_buildMap: '+ e );
+					console.log( $.bgmp.prefix + 'buildMap: '+ e );
 					
 				return;
 			}
@@ -136,6 +144,7 @@ function bgmp_wrapper( $ )
 				{
 					$.bgmp.createMarker(
 						map,
+						bgmpData.markers[ m ][ 'id' ],
 						bgmpData.markers[ m ][ 'title' ],
 						bgmpData.markers[ m ][ 'latitude' ],
 						bgmpData.markers[ m ][ 'longitude' ],
@@ -151,6 +160,7 @@ function bgmp_wrapper( $ )
 		 * Create a marker with an information window
 		 * @author Ian Dunn <ian@iandunn.name>
 		 * @param object map Google Maps map
+		 * @param int id ID of the marker post
 		 * @param string title Placemark title
 		 * @param float latituded
 		 * @param float longitude
@@ -159,16 +169,14 @@ function bgmp_wrapper( $ )
 		 * @param int zIndex The desired position in the placemark stacking order
 		 * @return bool True on success, false on failure
 		 */
-		createMarker : function( map, title, latitude, longitude, details, icon, zIndex )
+		createMarker : function( map, id, title, latitude, longitude, details, icon, zIndex )
 		{
-			// @todo - clean up variable names
-			
-			var infowindowcontent, infowindow, marker;
+			var infoWindowContent, marker;
 			
 			if( isNaN( latitude ) || isNaN( longitude ) )
 			{
 				if( window.console )
-					console.log( "bgmp_createMarker(): "+ title +" latitude and longitude weren't valid." );
+					console.log( $.bgmp.prefix + "createMarker(): "+ title +" latitude and longitude weren't valid." );
 					
 				return false;
 			}
@@ -178,27 +186,22 @@ function bgmp_wrapper( $ )
 				// @todo - this check may not be needed anymore
 				
 				if( window.console )
-					console.log( "bgmp_createMarker(): "+ title +"  icon wasn't passed in." );
+					console.log( $.bgmp.prefix + "createMarker(): "+ title +"  icon wasn't passed in." );
 				return false;
 			}
 			
 			if( !$.bgmp.isInt( zIndex ) )
 			{
 				//if( window.console )
-					//console.log( "bgmp_createMarker():  "+ title +" z-index wasn't valid." );	// this would fire any time it's empty
+					//console.log( $.bgmp.prefix + "createMarker():  "+ title +" z-index wasn't valid." );	// this would fire any time it's empty
 				
 				zIndex = 0;
 			}
 			
-			infowindowcontent = '<div class="bgmp_placemark"> <h3>'+ title +'</h3> <div>'+ details +'</div> </div>';
+			infoWindowContent = '<div class='+ $.bgmp.prefix + '"placemark"> <h3>'+ title +'</h3> <div>'+ details +'</div> </div>';
 			
 			try
-			{
-				infowindow = new google.maps.InfoWindow( {
-					content		: infowindowcontent,
-					maxWidth	: bgmpData.options.infoWindowMaxWidth
-				} );
-				
+			{	
 				// Replace commas with periods. Some (human) languages use commas to delimit the fraction from the whole number, but Google Maps doesn't accept that.
 				latitude = parseFloat( latitude.replace( ',', '.' ) );
 				longitude = parseFloat( longitude.replace( ',', '.' ) );
@@ -210,15 +213,13 @@ function bgmp_wrapper( $ )
 					'title'		: title,
 					'zIndex'	: zIndex
 				} );
-				$.bgmp.markers.push( marker );
 				
-				google.maps.event.addListener( marker, 'click', function()
+				$.bgmp.markers[ id ] = marker;
+				$.bgmp.infoWindowContent[ id ] = infoWindowContent;
+				
+				google.maps.event.addListener( marker, 'click', function() 
 				{
-					if( $.bgmp.previousInfoWindow != undefined )
-						$.bgmp.previousInfoWindow.close();
-					
-					infowindow.open( map, marker );
-					$.bgmp.previousInfoWindow = infowindow;
+					$.bgmp.openInfoWindow( map, marker, infoWindowContent );
 				} );
 				
 				return true;
@@ -227,8 +228,38 @@ function bgmp_wrapper( $ )
 			{
 				//$( $.bgmp.canvas ).append( '<p>' + $.bgmp.name + " error: couldn't add map placemarks.</p>");		// add class for making red? other places need this too?	// @todo - need to figure out a good way to alert user that placemarks couldn't be added
 				if( window.console )
-					console.log( 'bgmp_createMarker: '+ e );
+					console.log( $.bgmp.prefix + 'createMarker: '+ e );
 			}
+		},
+		
+		/**
+		 * Opens an info window on the map
+		 * @author Ian Dunn <ian@iandunn.name>
+		 * @param object event
+		 */
+		openInfoWindow : function( map, marker, infoWindowContent )
+		{
+			$.bgmp.infoWindow.setContent( infoWindowContent );
+			$.bgmp.infoWindow.open( map, marker );
+
+			if( bgmpData.options.viewOnMapScroll )
+			{			
+				$( 'html, body' ).animate(
+				{
+					scrollTop: $( '#' + $.bgmp.prefix + 'map-canvas' ).offset().top
+				}, 900 );
+			}
+		},
+		
+		/**
+		 * Focuses the [bgmp-map] on the marker that corresponds to the [bgmp-list] link that was clicked
+		 * @author Ian Dunn <ian@iandunn.name>
+		 * @param object event
+		 */
+		viewOnMap : function( event )
+		{
+			var id = $( this ).data( 'marker-id' );
+			$.bgmp.openInfoWindow( $.bgmp.map, $.bgmp.markers[ id ], $.bgmp.infoWindowContent[ id ] );
 		}
 	}; // end bgmp
 	

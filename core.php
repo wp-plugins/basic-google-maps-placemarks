@@ -1014,8 +1014,10 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		 * @param array $attributes Array of parameters automatically passed in by Wordpress
 		 * return string The output of the shortcode
 		 */
-		public function listShortcode( $attributes ) 
+		public function listShortcode( $attributes )
 		{
+			// @todo shortcode_atts()
+			
 			$params = array(
 				'numberposts'	=> -1,
 				'post_type'		=> self::POST_TYPE,
@@ -1038,6 +1040,8 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				);
 			}
 			
+			$viewOnMap = isset( $attributes[ 'viewonmap' ] ) && $attributes[ 'viewonmap' ] == true;
+			
 			$posts = get_posts( apply_filters( self::PREFIX . 'list-shortcode-params', $params ) );
 			$posts = apply_filters( self::PREFIX . 'list-shortcode-posts', $posts );
 			
@@ -1047,21 +1051,11 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				
 				foreach( $posts as $p )
 				{
-					// @todo - make this an external view file - can't easily b/c filter on individual marker output. maybe create template loop view for it
-					
 					$address = get_post_meta( $p->ID, self::PREFIX . 'address', true );
 						
-					$markerHTML = sprintf('
-						<li class="'. self::PREFIX .'list-item">
-							<h3 class="'. self::PREFIX .'list-placemark-title">%s</h3>
-							<div class="'. self::PREFIX .'list-description">%s</div>
-							<p class="'. self::PREFIX .'list-link"><a href="%s">%s</a></p>
-						</li>',
-						apply_filters( 'the_title', $p->post_title ),
-						apply_filters( 'the_content', $p->post_content ),		// note: don't use setup_postdata/get_the_content() in this instance -- http://lists.automattic.com/pipermail/wp-hackers/2013-January/045053.html
-						'http://google.com/maps?q='. $address,
-						$address
-					);
+					ob_start();
+					require( __DIR__ . '/views/shortcode-bgmp-list-marker.php' );
+					$markerHTML = ob_get_clean(); 
 					
 					$output .= apply_filters( self::PREFIX . 'list-marker-output', $markerHTML, $p->ID );
 				}
@@ -1180,9 +1174,10 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				'typeControl'			=> $this->settings->mapTypeControl,
 				'navigationControl'		=> $this->settings->mapNavigationControl,
 				'infoWindowMaxWidth'	=> $this->settings->mapInfoWindowMaxWidth,
-				'streetViewControl'		=> apply_filters( self::PREFIX . 'street-view-control', true ),
+				'streetViewControl'		=> apply_filters( self::PREFIX . 'street-view-control', true ),			// deprecated b/c of bgmp_map-options filter?
+				'viewOnMapScroll'		=> false,
 				
-				'clustering'			=> array(
+				'clustering' => array(
 					'enabled'			=> $this->settings->markerClustering,
 					'maxZoom'			=> $this->settings->clusterMaxZoom,
 					'gridSize'			=> $this->settings->clusterGridSize,
@@ -1202,7 +1197,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				{
 					$options[ 'latitude' ]	= $latitude;
 					$options[ 'longitude' ]	= $longitude;
-					$options[ 'zoom' ]		= apply_filters( self::PREFIX . 'individual-map-default-zoom', 13 );
+					$options[ 'zoom' ]		= apply_filters( self::PREFIX . 'individual-map-default-zoom', 13 );	// deprecated b/c of bgmp_map-options filter?
 				}
 			}
 			

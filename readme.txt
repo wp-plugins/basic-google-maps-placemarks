@@ -29,8 +29,6 @@ You can see live examples of the plugin running at [the Australian Polio Registe
 
 Basic instructions are on [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/). Check [the FAQ](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/faq/) and [support forums](http://wordpress.org/support/plugin/basic-google-maps-placemarks) for help.
 
-**Note**: Support is *not* guaranteed. See [the FAQ](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/faq/) for details.
-
 
 == Installation ==
 
@@ -90,6 +88,7 @@ Basic instructions are on [the Installation page](http://wordpress.org/extend/pl
 2. Type `[bgmp-list]` in the context area.
 3. Click the 'Publish' or 'Update' button.
 4. (optional) You can specifiy a specific category or categories to pull from. e.g., [bgmp-list categories="record-stores,parks"]
+5. (optional) You can add "View on Map" links to each item in the list, which will open the corresponding marker's info window. e.g., [bgmp-list viewonmap="true"] 
 
 *Using [bgmp-map] in a template file with do_shortcode():*
 
@@ -367,12 +366,13 @@ If you just need some minor customizations or are looking for someone with a low
 = v1.10 () =
 * [FIX] Fixed persistent bugs in previous 1.9.x releases.
 * [FIX] Fixed bgmp-map shortcode [bug that led to conflicts with Jetpack](http://wordpress.org/support/topic/incompatibility-between-bgmp-193-rc1-and-jetpack-204).
-* [NEW] [bgmp-list] links now focus on the map marker, if it's present. 
+* [NEW] Added viewonmap parameter to [bgmp-list] shortcode. 
 * [NEW] Added placemark ID parameter to [bgmp-map] shortcode.
 * [NEW] Added get-map-placemarks-individual-placemark filter.
 * [NEW] Added a filter to allow [changing the language the map is displayed in](http://wordpress.org/support/topic/displaying-the-map-in-difeerent-language).
 * [NEW] German translation added (thanks to Jens).
 * [NEW] Added do_action() calls to views so they can be more easily extended.
+* [NEW] Added a filter to allow [disabling the Street View control](http://wordpress.org/support/topic/hide-street-view-option).
 * [UPDATE] Attached bgmp JavaScript object to jQuery object, so it can be accessed from other scripts.
 * [UPDATE] Added category data available to JavaScript bgmpData object.
 
@@ -428,79 +428,79 @@ If you just need some minor customizations or are looking for someone with a low
 * Updated readme.txt to reflect that the Wordpress version requirement is 3.1 as of BGMP 1.5.
 
 = v1.5 (10/9/2011) =
-* Added a custom taxonomy to categorize placemarks. Thanks to [Marcel Bootsman](http://nostromo.nl) for contributing code to this.
-* Added support for [placemark comments](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-comments-the-placemarks).
-* Fixed a [fatal error when geocoding the map center](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-that-address-couldnt-be-geocoded-fatal-error).
-* Fixed a warning on 404 pages.
+* [NEW] Added a custom taxonomy to categorize placemarks. Thanks to [Marcel Bootsman](http://nostromo.nl) for contributing code to this.
+* [UPDATE] Added support for [placemark comments](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-comments-the-placemarks).
+* [FIX] Fixed a [fatal error when geocoding the map center](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-that-address-couldnt-be-geocoded-fatal-error).
+* [FIX] Fixed a warning on 404 pages.
 
 = v1.4 (8/21/2011) =
-* Added meta box for placemark stacking order. Thanks to Jesper Lofgren for contributing code for this.
-* Upgraded PHP requirement to version 5.2 in order to use filter_var().
-* Moved settings from the Writing page to their own page.
-* Fixed bug where [multiple shortcodes on a page would prevent detection of map shortcode when called from do_shortcode()](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-javascript-andor-css-files-arent-loaded#post-2280215).
-* Fixed bug where [empty address would sometimes prevent placemarks from appearing](http://wordpress.org/support/topic/basic-google-maps-placemark-firefox-not-rendering-all-placemarks).
-* Stopped trying to geocode empty addresses.
-* Updated the FAQ to mention that [do_shortcode() has to be called from a registered page template that's been assiged to a page](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-javascript-andor-css-files-arent-loaded?replies=14#post-2287781).
+* [NEW] Added meta box for placemark stacking order. Thanks to Jesper Lofgren for contributing code for this.
+* [UPDATE] Upgraded PHP requirement to version 5.2 in order to use filter_var().
+* [UPDATE] Moved settings from the Writing page to their own page.
+* [FIX] Fixed bug where [multiple shortcodes on a page would prevent detection of map shortcode when called from do_shortcode()](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-javascript-andor-css-files-arent-loaded#post-2280215).
+* [FIX] Fixed bug where [empty address would sometimes prevent placemarks from appearing](http://wordpress.org/support/topic/basic-google-maps-placemark-firefox-not-rendering-all-placemarks).
+* [UPDATE] Stopped trying to geocode empty addresses.
+* [UPDATE] Updated the FAQ to mention that [do_shortcode() has to be called from a registered page template that's been assiged to a page](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-javascript-andor-css-files-arent-loaded?replies=14#post-2287781).
 
 = v1.3.2 (8/8/2011) =
-* The markers are now sorted alphabetically in the [bgmp-list] shortcode
-* More theme styles are overriden to prevent the Maps API infowindow scroller bug
-* The View screen in the Administration Panels is now sorted alphabetically
-* enqueuemessage() is now declared protected instead of public
+* [UPDATE] The markers are now sorted alphabetically in the [bgmp-list] shortcode
+* [FIX] More theme styles are overriden to prevent the Maps API infowindow scroller bug
+* [UPDATE] The View screen in the Administration Panels is now sorted alphabetically
+* [UPDATE] enqueuemessage() is now declared protected instead of public
 
 = v1.3.1 (7/24/2011) =
-* Fixes bug where [standard posts and pages would lose the 'Set Featured Image' meta box](http://wordpress.org/support/topic/featured-image-option-not-showing)
+* [FIX] Fixes bug where [standard posts and pages would lose the 'Set Featured Image' meta box](http://wordpress.org/support/topic/featured-image-option-not-showing)
 
 = v1.3 (7/24/2011) =
-* Removed AJAX because unnecessary, slow and causing several bugs
-* Removed now-unnecessary front-end-footer.php
-* Fixed bug where [placemarks weren't showing up when theme didn't support post-thumbnails](http://wordpress.org/support/topic/no-placemarks-on-theme-raindrops)
-* Fixed bug where non-string value passed to enqueueMessage() would cause an error
-* Set loadResources() to fire on 'wp' action instead of 'the_posts' filter
-* [Added title to markers](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-add-mouseover-title-to-marker)
-* Enabled support for BGMP post type revisions
+* [UPDATE] Removed AJAX because unnecessary, slow and causing several bugs
+* [UPDATE] Removed now-unnecessary front-end-footer.php
+* [FIX] Fixed bug where [placemarks weren't showing up when theme didn't support post-thumbnails](http://wordpress.org/support/topic/no-placemarks-on-theme-raindrops)
+* [FIX] Fixed bug where non-string value passed to enqueueMessage() would cause an error
+* [UPDATE] Set loadResources() to fire on 'wp' action instead of 'the_posts' filter
+* [UPDATE] [Added title to markers](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-add-mouseover-title-to-marker)
+* [UPDATE] Enabled support for BGMP post type revisions
 
 = v1.2.1 (7/18/2011) = 
-* Fixes the [info window height bug](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-info-window-width-height)
+* [FIX] Fixes the [info window height bug](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-info-window-width-height)
 
 = v1.2 (7/3/2011) =
-* Fixes bug from 1.1.3 where the default options weren't set on activation
-* MultiSite - Fixed [activation error](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-call-to-undefined-function-wp_get_current_user) from relative require paths
-* MultiSite - Added support for network activation, new site activation
-* MultiSite - Enabled image upload button at activation
-* Fixed [bugs](http://wordpress.stackexchange.com/questions/20130/custom-admin-notices-messages-ignored-during-redirects) in message handling functions
-* Fixed ['active version' stats bug](http://wordpress.stackexchange.com/questions/21132/repository-reporting-incorrect-plugin-active-version-stat)
-* Added notification when geocode couldn't resolve correct coordinates
+* [FIX] Fixes bug from 1.1.3 where the default options weren't set on activation
+* [FIX] MultiSite - Fixed [activation error](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-call-to-undefined-function-wp_get_current_user) from relative require paths
+* [NEW] MultiSite - Added support for network activation, new site activation
+* [NEW] MultiSite - Enabled image upload button at activation
+* [FIX] Fixed [bugs](http://wordpress.stackexchange.com/questions/20130/custom-admin-notices-messages-ignored-during-redirects) in message handling functions
+* [FIX] Fixed ['active version' stats bug](http://wordpress.stackexchange.com/questions/21132/repository-reporting-incorrect-plugin-active-version-stat)
+* [UPDATE] Added notification when geocode couldn't resolve correct coordinates
 
 = v1.1.3 (6/26/2011) = 
-* CSS and JavaScript files are only loaded on pages where the map shortcode is called
-* Fixed [fatal error when trying to activate on PHP 4 servers](http://wordpress.org/support/topic/fatal-error-when-activating-basic-google-maps-placemarks)
-* Styles updated for twentyeleven based themes
-* Switched to wrapper function for $ instead of *$ = jQuery.noConflict();*
-* JavaScript functions moved inside an object literal
+* [NEW] CSS and JavaScript files are only loaded on pages where the map shortcode is called
+* [FIX] Fixed [fatal error when trying to activate on PHP 4 servers](http://wordpress.org/support/topic/fatal-error-when-activating-basic-google-maps-placemarks)
+* [UPDATE] Styles updated for twentyeleven based themes
+* [UPDATE] Switched to wrapper function for $ instead of *$ = jQuery.noConflict();*
+* [UPDATE] JavaScript functions moved inside an object literal
 
 = v1.1.2 (6/14/2011) = 
-* Settings moved to separate class
-* Updated Wordpress requirement to 3.0. Listing it at 2.9 in previous versions was a mistake.
+* [UPDATE] Settings moved to separate class
+* [UPDATE] Updated Wordpress requirement to 3.0. Listing it at 2.9 in previous versions was a mistake.
 
 = v1.1.1 (6/11/2011) =
-* JavaScript files only loaded when needed
-* Fixed bug where [JavaScript files were loaded over HTTP when they should have been over HTTPS](http://iandunn.name/basic-google-maps-placemarks-plugin/)
-* A few minor back-end changes
+* [UPDATE] JavaScript files only loaded when needed
+* [FIX] Fixed bug where [JavaScript files were loaded over HTTP when they should have been over HTTPS](http://iandunn.name/basic-google-maps-placemarks-plugin/)
+* [UPDATE] A few minor back-end changes
 
 = v1.1 (6/5/2011) = 
-* Addresses are automatically geocoded
-* Default markers used when no featured image set
-* Default settings saved to database upon activation
+* [NEW] Addresses are automatically geocoded
+* [NEW] Default markers used when no featured image set
+* [NEW] Default settings saved to database upon activation
 
 = v1.0 (5/29/2011) =
-* Initial release
+* [NEW] Initial release
 
 
 == Upgrade Notice ==
 
-= 1.9.3 =
-BGMP 1.9.3 fixes bugs in previous 1.9.x releases, and adds a German translation.
+= 1.10 =
+BGMP 1.9.3 fixes several bugs, adds a few new shortcode options, and adds a German translation.
 
 = 1.9.2 =
 BGMP 1.9.2 fixes a bug where a [bgmp-map] shortcode category error would incorrectly be displayed in the Admin Panel.
