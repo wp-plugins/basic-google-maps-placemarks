@@ -123,6 +123,7 @@
 	
 	add ability to link from outside / 	have links in [bgmp-list] open repsective info on map.
 		done
+		test once more b/c made bgmp.markers object instead of array 
 		
 	release this as 1.10 since so many changes from 1.9.2, even though 1.9 was only briefly released
 	

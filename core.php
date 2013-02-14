@@ -978,7 +978,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		 * @param array $attributes Array of parameters automatically passed in by WordPress
 		 * return string The output of the shortcode
 		 */
-		public function mapShortcode( $attributes ) 
+		public function mapShortcode( $attributes )
 		{
 			if( !wp_script_is( 'googleMapsAPI', 'queue' ) || !wp_script_is( 'bgmp', 'queue' ) || !wp_style_is( self::PREFIX .'style', 'queue' ) )
 			{
@@ -1016,6 +1016,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		 */
 		public function listShortcode( $attributes )
 		{
+			$attributes = apply_filters( self::PREFIX . 'list-shortcode-arguments', $attributes );
 			// @todo shortcode_atts()
 			
 			$params = array(
@@ -1259,7 +1260,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 						'longitude'		=> get_post_meta( $postID, self::PREFIX . 'longitude', true ),
 						'details'		=> apply_filters( 'the_content', $pp->post_content ),		// note: don't use setup_postdata/get_the_content() in this instance -- http://lists.automattic.com/pipermail/wp-hackers/2013-January/045053.html
 						'categories'	=> $categories,
-						'icon'			=> is_array( $icon ) ? $icon[0] : $defaultIcon,
+						'icon'			=> is_array( $icon ) ? $icon[ 0 ] : $defaultIcon,
 						'zIndex'		=> get_post_meta( $postID, self::PREFIX . 'zIndex', true )
 					);
 					

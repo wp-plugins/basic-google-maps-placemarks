@@ -19,6 +19,7 @@ BGMP creates a [custom post type](http://www.youtube.com/watch?v=FWkLBPpGOmo#!) 
 * Options to set the map type (street, satellite, etc), center location, size, zoom level, navigation controls, etc.
 * Setup unique maps on different pages with their own placemarks, map types, center locations, etc.
 * Placemarks can be assigned to categories, and you can control which categories are displayed on a individual map.
+* Marker clustering for large numbers of placemarks
 * Extra shortcode to output a text-based list of markers for mobile devices, search engines, etc.
 * Lots of filters so that developers can customize and extend the plugin.
 * Use HTML, images, etc inside the information window.

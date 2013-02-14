@@ -22,28 +22,32 @@ function bgmp_wrapper( $ )
 		 */
 		init : function()
 		{
+			// Initialize variables
 			$.bgmp.prefix				= 'bgmp_';
 			$.bgmp.name					= 'Basic Google Maps Placemarks';
 			$.bgmp.canvas				= document.getElementById( $.bgmp.prefix + 'map-canvas' );		// We have to use getElementById instead of a jQuery selector here in order to pass it to the Maps API.
 			$.bgmp.map					= undefined;
 			$.bgmp.markerClusterer		= undefined;
-			$.bgmp.markers				= [];
-			$.bgmp.infoWindowContent	= [];
+			$.bgmp.markers				= {};
+			$.bgmp.infoWindowContent	= {};
 			
+			// Initialize single info window to reuse for each placemark
 			$.bgmp.infoWindow = new google.maps.InfoWindow( {
-				content		: 'temp',	// @todo temp
+				content		: '',
 				maxWidth	: bgmpData.options.infoWindowMaxWidth
 			} );
 			
-			// @todo make this loop through array instead of manual. also add any other numbers
+			// Format numbers
 			bgmpData.options.zoom					= parseInt( bgmpData.options.zoom ),
 			bgmpData.options.latitude				= parseFloat( bgmpData.options.latitude );
 			bgmpData.options.longitude				= parseFloat( bgmpData.options.longitude );
 			bgmpData.options.clustering.maxZoom		= parseInt( bgmpData.options.clustering.maxZoom );
 			bgmpData.options.clustering.gridSize	= parseInt( bgmpData.options.clustering.gridSize );
 			
+			// Register event handlers
 			$( '#' + $.bgmp.prefix + 'list' ).find( 'a' ).filter( '.' + $.bgmp.prefix + 'view-on-map' ).click( $.bgmp.viewOnMap ); 
 								
+			// Build map
 			if( $.bgmp.canvas )
 				$.bgmp.buildMap();
 			else
@@ -100,11 +104,18 @@ function bgmp_wrapper( $ )
 			
 			$.bgmp.addPlacemarks( $.bgmp.map );		// @todo not supposed to add them when clustering is enabled? http://www.youtube.com/watch?v=Z2VF9uKbQjI
 			
+			
+			// Activate marker clustering
 			if( bgmpData.options.clustering.enabled )
 			{
-				$.bgmp.markerCluster = new MarkerClusterer(		// @todo should be .markerClusterer ?
+				// BGMP stores markers in an object for direct access (e.g., markers[ 15 ] for ID 15), but MarkerCluster requires an array instead, so we convert them 
+				var markersArray = [];
+				for( var m in $.bgmp.markers )
+					markersArray.push( $.bgmp.markers[ m ] );
+				
+				$.bgmp.markerClusterer = new MarkerClusterer(
 					$.bgmp.map,
-					$.bgmp.markers,
+					markersArray,
 					{
 						maxZoom		: bgmpData.options.clustering.maxZoom,
 						gridSize	: bgmpData.options.clustering.gridSize,
@@ -207,6 +218,7 @@ function bgmp_wrapper( $ )
 				longitude = parseFloat( longitude.replace( ',', '.' ) );
 				
 				marker = new google.maps.Marker( {
+					'bgmpID'	: id,
 					'position'	: new google.maps.LatLng( latitude, longitude ),
 					'map'		: map,
 					'icon'		: icon,
@@ -235,7 +247,9 @@ function bgmp_wrapper( $ )
 		/**
 		 * Opens an info window on the map
 		 * @author Ian Dunn <ian@iandunn.name>
-		 * @param object event
+		 * @param object map
+		 * @param object marker
+		 * @param string infoWindowContent
 		 */
 		openInfoWindow : function( map, marker, infoWindowContent )
 		{
