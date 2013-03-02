@@ -1,9 +1,9 @@
 === Basic Google Maps Placemarks ===
 Contributors: iandunn
 Donate link: http://www.doctorswithoutborders.org
-Tags: google maps, maps, embed, marker, placemark, icon, geocode, shortcode, custom post type, multisite
+Tags: map, google maps, embed, marker, placemark, icon, geocode, shortcode, custom post type, multisite, marker clustering
 Requires at least: 3.1
-Tested up to: 3.5
+Tested up to: 3.5.1
 Stable tag: 1.8
 License: GPL2
 
@@ -26,9 +26,9 @@ BGMP creates a [custom post type](http://www.youtube.com/watch?v=FWkLBPpGOmo#!) 
 * Compatible with WordPress MultiSite.
 * Internationalized (see [Other Notes](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/other_notes/) for a current list of supported languages)
 
-You can see live examples of the plugin running at [the Australian Polio Register](http://www.polioaustralia.org.au/?page_id=6098) and [the North Carolina Fire Station Mapping Project(http://fdmaps.com/forestry-ncfs-and-usfs-combined/).
+You can see live examples of the plugin running at [the Australian Polio Register](http://www.polioaustralia.org.au/?page_id=6098), [the North Carolina Fire Station Mapping Project](http://fdmaps.com/forestry-ncfs-and-usfs-combined/) and [Washington House Churches](http://washingtonhousechurches.net).
 
-Basic instructions are on [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/). Check [the FAQ](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/faq/) and [support forums](http://wordpress.org/support/plugin/basic-google-maps-placemarks) for help.
+Instructions are on [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/), and [the FAQ](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/faq/) has a lot of documentation and troubleshooting resources.
 
 
 == Installation ==
@@ -140,7 +140,7 @@ Check [the FAQ](http://wordpress.org/extend/plugins/basic-google-maps-placemarks
 == Frequently Asked Questions ==
 
 = How do I use the plugin? =
-Read the Basic Usage section of [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/) for instructions. If you still have questions, read this FAQ and check [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks).
+Read the instructions on [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/). If you still have questions, read this FAQ and look for answers on [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks). If you can't find an answer, start a new thread on the forums.
 
 
 = How can I get help when I'm having a problem? =
@@ -163,8 +163,8 @@ I monitor the forums and respond to a lot of the requests. I do this in my spare
 If you can't find a solution, you can always hire a developer to create one for you. See the Customization section on the [Other Notes](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/other_notes/) page for more info on that.
 
 
-= Does the plugin support [non-standard feature]? / How can I get the plugin to do [non-standard feature]? =
-All of the features that the plugin supports are documented on these pages. If you don't see a feature mentioned, then that means that the plugin doesn't support it. You'll need to write the extra code yourself if you want to add that feature to the plugin, or hire someone to do it for you (see the Customization section on the [Other Notes](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/other_notes/) page. There are filters throughout the core code to support customization. If you need a hook or filter that doesn't currently exist, add a post to [the support forums](http://wordpress.org/support/plugin/basic-google-maps-placemarks) to request it and I'll add it to the next version.
+= Does the plugin support [feature]? / How can I get the plugin to do [feature]? =
+All of the features that the plugin supports are documented on these pages. If you don't see a feature mentioned, then that means that the plugin doesn't support it. You'll need to write the extra code yourself if you want to add that feature to the plugin, or hire someone to do it for you (see the Customization section on the [Other Notes](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/other_notes/) page). There are filters throughout the core code to support customization. If you need a hook or filter that doesn't currently exist, add a post to [the support forums](http://wordpress.org/support/plugin/basic-google-maps-placemarks) to request it and I'll add it to the next version.
 
 You can also try searching [the support forums](http://wordpress.org/support/plugin/basic-google-maps-placemarks) in case others have already worked out a way to do it.
 
@@ -319,7 +319,7 @@ Yes, I've tried to add filters for everything you might reasonably want, just br
 * French (thanks to Romain Fevre)
 * German (thanks to Jens)
 
-If there isn't a translation for your language (or it is incomplete/inaccurate) please consider making one and contributing it to the plugin. You can learn how by reading [Translating WordPress](http://codex.wordpress.org/Translating_WordPress) and [How to Create a .po Language Translation](http://www.wdmac.com/how-to-create-a-po-language-translation). The .pot file you'll need is inside the *languages* directory in the plugin's folder. Once you're done, just [contact me](http://iandunn.name/contact) and send me the .po and .mo files, and I'll add them to the plugin. You can also subscribe to [the BGMP Translators e-mail list](http://iandunn.us6.list-manage1.com/subscribe?u=38510a08f1d822cc1c358e644&id=b7ff5f7393) to be notified when updated versions have new strings to translate.
+If there isn't a translation for your language (or it is incomplete/inaccurate) please consider making one and contributing it to the plugin. You can learn how by reading [Translating WordPress](http://codex.wordpress.org/Translating_WordPress) and [How to Create a .po Language Translation](http://www.wdmac.com/how-to-create-a-po-language-translation). The .pot file you'll need is inside the *languages* directory in the plugin's folder. Once you're done, just start a thread on [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks) with links to the .po and .mo files, and I'll add them to the next release. You can also subscribe to [the BGMP Translators e-mail list](http://iandunn.us6.list-manage1.com/subscribe?u=38510a08f1d822cc1c358e644&id=b7ff5f7393) to be notified when updated versions have new strings to translate.
 
 
 **Known conflicts**
@@ -337,7 +337,7 @@ If there isn't a translation for your language (or it is incomplete/inaccurate) 
 * Volunteer to test new versions before they're officially released. Sign up for [the BGMP Testers e-mail list](http://iandunn.us6.list-manage.com/subscribe?u=38510a08f1d822cc1c358e644&id=b183d686c6) to be notified when new release candidates are available for testing.  
 * If you find a bug, create a post on [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks) with as much information as possible. If you're a developer, create a patch and include a link to it in the post.
 * Send me feedback on how easy or difficult the plugin is to use, and where you think things could be improved. Add a post to [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks) with details.   
-* Review the code for security vulnerabilities and best practices. If you find a security issue, please [contact me](http://iandunn.name/contact) privately so that I can release a patched version before the issue is publicly disclosed.
+* Review the code for security vulnerabilities and best practices. If you find a security issue, please [contact me](http://iandunn.name/contact) privately so that I can release a fix for it before publicly disclosing it.
 * Check the TODO.txt file for features that need to be added and submit a patch.
 
 
@@ -348,14 +348,14 @@ I do this as a way to give back to the WordPress community, so I don't want to t
 
 **Customization**
 
-If you need to hire a developer to add a feature that the plugin doesn't currently have, or to make extensive customizations in order to fit your specific needs, please [contact me](http://iandunn.name/contact) and we can discuss the details. I typically have projects booked at least 3 months in advance, so I'm not able to accomidate "urgent" requests. My minimum project size for this plugin is 10 hours worth of work.
+If you need to hire a developer to add a feature that the plugin doesn't currently have, or to make extensive customizations in order to fit your specific needs, please [contact me](http://iandunn.name/contact) and we can discuss the details. I typically have projects booked at least 3 months in advance, so I'm not able to accommodate "urgent" requests. My minimum project size for this plugin is 5 hours worth of work.
 
 If you just need some minor customizations or are looking for someone with a low hourly rate, I'd recommend checking out some of the [WordPress job-posting sites](http://wpmu.org/12-places-to-find-and-post-wordpress-jobs/). If you make customizations that could be benefitial to other users, please start a thread on [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks) with a description of them and a link to the source code.
 
 
 == Screenshots ==
-1. One example of how the map looks once it's been embedded into a page.
-2. Another example of how the map looks on a live site.
+1. Custom marker icons on the map and a text list of markers below the map
+2. Marker clusterings and custom map icons
 3. The Placemarks page, where you can add/edit/delete map markers.
 4. A example placemark. 
 5. The Categories screen.
@@ -390,7 +390,7 @@ If you just need some minor customizations or are looking for someone with a low
 * [UPDATE] Moved `mapShortcode()` markup into external view file.
 * [FIX] Ensured action callbacks only run once. This fixes the bug where admin notices would be enqueued 2-3 times.
 
-= v1.8 (8/11/2012)=
+= v1.8 (8/11/2012) =
 * [NEW] Added internationalization support.
 * [NEW] Added localizations for Chinese and French.
 * [REMOVE] Removed height:auto CSS rule because it was [distorting the Google logo](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-google-logo-is-zoomed-and-ipad-safari-cant-zoom-the-page) and [prevented info. windows with images from sizing properly](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-placemarks-content-to-display-fully).
@@ -501,7 +501,7 @@ If you just need some minor customizations or are looking for someone with a low
 == Upgrade Notice ==
 
 = 1.10 =
-BGMP 1.9.3 fixes several bugs, adds a few new shortcode options, and adds a German translation.
+BGMP 1.10 adds some new shortcode options, fixes a few bugs, add more hooks for developers and adds a German translation. 
 
 = 1.9.2 =
 BGMP 1.9.2 fixes a bug where a [bgmp-map] shortcode category error would incorrectly be displayed in the Admin Panel.

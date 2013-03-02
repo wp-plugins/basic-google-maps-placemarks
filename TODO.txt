@@ -28,7 +28,7 @@
 		Perform tests
 			Smoke
 			Unit
-			All action/filter callbacks in Readme
+			All action/filter callbacks in readme
 		Commit to SVN trunk
 	
 	Upgrade playground/wpms to latest WordPress release
@@ -40,7 +40,7 @@
 	
 	Update localizations
 		Generate new .pot file and update header values inside it
-			cd wordpress-i18n-tools
+			cd wp-i18n-tools
 			php makepot.php wp-plugin ../wp/content/plugins/basic-google-maps-placemarks/
 			mv basic-google-maps-placemarks.pot ../wp/content/plugins/basic-google-maps-placemarks/languages/
 		Commit to trunk (but don't tag or update readme.txt Stable tag yet)
@@ -56,7 +56,8 @@
 		Fix any reported bugs, release additional RCs if necessary
 		Release final version
 	
-	Remove any notes from TODO for current release	
+	Remove any notes from TODO for current release
+	Run readme.txt through validator
 	Update final version numbers in basic-google-maps-placemarks.php comment and core.php constant
 	Update readme stable tag
 	Update changelog date
@@ -118,12 +119,12 @@
 		
 	update wahc link to these instead
 		done
-		update screenshots when releasing
-			update all of them, not just the first two
+	
+	update screenshots
+		done, but have to wait until releasing to commit
 	
 	add ability to link from outside / 	have links in [bgmp-list] open repsective info on map.
 		done
-		test once more b/c made bgmp.markers object instead of array 
 		
 	release this as 1.10 since so many changes from 1.9.2, even though 1.9 was only briefly released
 	
@@ -151,8 +152,13 @@
 			http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-categories-feature-requests?replies=13#post-2558220
 			http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-several-questions-about-categories-and-links?replies=1
 			http://wordpress.org/support/topic/placemarker-links?replies=2
+			http://wordpress.org/support/topic/anchor-tag-opens-placemark-on-map?replies=2#post-3914795
 
-1.9.4
+
+
+
+
+1.minor.x
 	Add all the readme filter callbacks to unit tests if possible, or at least twentytwelve child theme for manual testing
 	
 	Maybe refactor markercluster stuff into a subplugin architecture
@@ -197,7 +203,7 @@
 	
 	improve documentation by adding list of shortcode params w/ details, and also list of filters/actions
 
-1.9.2
+1.minor.x
 	add credits section to other notes
 		list people who've contributed code, helped out in forums, translators in future
 		Ridgididgi - help on forums, link to profile?
@@ -232,7 +238,7 @@
 	refactor markupmetabox methods into single one, like nrp merchant team directory plugin does
 		callback's 2nd param is an array w/ the box id, so switch on it and include the view files
 
-1.9.3
+1.minor.x
 	internationalize functions.js
 
 	add more machine language translations
@@ -268,7 +274,7 @@
 				ukranian
 				vietnamiese
 
-1.9.4
+1.minor.x
 	output buffering for shortcode views instead of inline html
 
 	inline documentation
@@ -298,7 +304,7 @@
 
 	check js file for unnecessary $( this ) calls -- http://whattheheadsaid.com/2010/10/utilizing-the-awesome-power-of-jquery-to-access-properties-of-an-element
 
-1.9.5
+1.minor.x
 	savecustomfields() should use $postid that was passed in instead of global $post->id ?
 
 	ensure filtered varaable data types don't change, like you did for ODCG
@@ -328,7 +334,7 @@
 		maybe only keep it in the WP settings menu for existing installs? new installs would only have it in the Placemarks menu
 		update documentation
 
-1.9.6
+1.minor.x
 	mapShortcode()
 		shouldn't check for stylesheet here? only really need the two scripts, so removing stylesheet check would let users dequeue stylesheet and use their own w/out having to keep same name. update readme
 
@@ -344,7 +350,7 @@
 	clean up options page, make it less cluttered and busy
 		maybe divide into several pages: 'basic settings', 'marker clustering', 're-abolish slavery'
 	
-1.10
+1.major
 	move files to subdirectories
 		core.php, settings.php => classes/
 		functions.js => javascript/
