@@ -1055,8 +1055,8 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 					$address = get_post_meta( $p->ID, self::PREFIX . 'address', true );
 						
 					ob_start();
-					require( __DIR__ . '/views/shortcode-bgmp-list-marker.php' );
-					$markerHTML = ob_get_clean(); 
+					require( dirname( __FILE__ ) . '/views/shortcode-bgmp-list-marker.php' );
+					$markerHTML = ob_get_clean();
 					
 					$output .= apply_filters( self::PREFIX . 'list-marker-output', $markerHTML, $p->ID );
 				}
