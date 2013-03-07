@@ -24,7 +24,7 @@ BGMP creates a [custom post type](http://www.youtube.com/watch?v=FWkLBPpGOmo#!) 
 * Lots of filters so that developers can customize and extend the plugin.
 * Use HTML, images, etc inside the information window.
 * Compatible with WordPress MultiSite.
-* Internationalized (see [Other Notes](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/other_notes/) for a current list of supported languages)
+* Internationalized (see [Other Notes](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/other_notes/) for a list of supported languages)
 
 You can see live examples of the plugin running at [the Australian Polio Register](http://www.polioaustralia.org.au/?page_id=6098), [the North Carolina Fire Station Mapping Project](http://fdmaps.com/forestry-ncfs-and-usfs-combined/) and [Washington House Churches](http://washingtonhousechurches.net).
 
@@ -385,8 +385,8 @@ If you just need some minor customizations or are looking for someone with a low
 
 = v1.9 (10/8/2012) =
 * [NEW] Added the MarkerClusterer library.
-* [UPDATE] bgmpData moved to mapShortcode(), so users no longer need to use the `bgmp_map-shortcode-arguments` filter to use shortcode parameters from template files calling `do_shortcode()`. They can just be passed in like normal now.
 * [NEW] Added proper French translation, thanks to Romain Fèvre.
+* [UPDATE] bgmpData moved to mapShortcode(), so users no longer need to use the `bgmp_map-shortcode-arguments` filter to use shortcode parameters from template files calling `do_shortcode()`. They can just be passed in like normal now.
 * [UPDATE] Moved `mapShortcode()` markup into external view file.
 * [FIX] Ensured action callbacks only run once. This fixes the bug where admin notices would be enqueued 2-3 times.
 
@@ -501,7 +501,7 @@ If you just need some minor customizations or are looking for someone with a low
 == Upgrade Notice ==
 
 = 1.10 =
-BGMP 1.10 adds some new shortcode options, fixes a few bugs, add more hooks for developers and adds a German translation. 
+BGMP 1.10 adds some new shortcode options, fixes a few bugs, adds more hooks for developers and adds a German translation. 
 
 = 1.9.2 =
 BGMP 1.9.2 fixes a bug where a [bgmp-map] shortcode category error would incorrectly be displayed in the Admin Panel.

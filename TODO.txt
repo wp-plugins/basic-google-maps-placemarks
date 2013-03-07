@@ -98,6 +98,8 @@
 				not applied by get_the_content anyway?
 				maybe don't wrap getthecontent w/ wpautop, but apply it as a filter so people can remove it?
 				maybe it's ok to apply_filters() to it, as long as you don't setup_postdata() ?
+		
+		one report on rc1 thread said fixed. also might have been caused by his theme.
 
 	make cat data available to js / make bgmp object accessible to outside scripts
 		done
@@ -127,7 +129,7 @@
 		done
 		
 	release this as 1.10 since so many changes from 1.9.2, even though 1.9 was only briefly released
-	
+		maybe find a way to let people know markerclustered was added in 1.9, since they might not notice otherwise?
 
 		
 		
@@ -146,10 +148,8 @@
 		http://wordpress.org/support/topic/bgmp-193-rc2-available?replies=3#post-3694645 - reset center/zoom
 		http://wordpress.org/support/topic/bgmp-193-rc1-available?replies=8
 		http://wordpress.org/support/topic/hide-street-view-option?replies=3
+		
 		external links
-			http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-place-marker-links?replies=1#post-2554607
-			http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-onclick-from-external-link?replies=1
-			http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-categories-feature-requests?replies=13#post-2558220
 			http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-several-questions-about-categories-and-links?replies=1
 			http://wordpress.org/support/topic/placemarker-links?replies=2
 			http://wordpress.org/support/topic/anchor-tag-opens-placemark-on-map?replies=2#post-3914795
