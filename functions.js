@@ -209,7 +209,7 @@ function bgmp_wrapper( $ )
 				zIndex = 0;
 			}
 			
-			infoWindowContent = '<div class='+ $.bgmp.prefix + '"placemark"> <h3>'+ title +'</h3> <div>'+ details +'</div> </div>';
+			infoWindowContent = '<div class="'+ $.bgmp.prefix + 'placemark"> <h3>'+ title +'</h3> <div>'+ details +'</div> </div>';
 			
 			try
 			{	

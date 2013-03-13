@@ -159,6 +159,10 @@
 
 
 1.minor.x
+	the `width: auto !important` rule from #bgmp_map-canvas image is applying to .bgmp_placemark img, but it shouldn't
+		makes it ignore the inline width/height wp sets so users can't specific sizes
+		also, might cause resize issues - http://wordpress.org/support/topic/set-up-of-the-size-of-the-info-windowsboubble?replies=6#post-3964238
+		
 	Add all the readme filter callbacks to unit tests if possible, or at least twentytwelve child theme for manual testing
 	
 	Maybe refactor markercluster stuff into a subplugin architecture
@@ -280,6 +284,7 @@
 	inline documentation
 		add 3.3 pointers for intro to main things the first time they install
 		add inline docu for reference - http://wpdevel.wordpress.com/2011/12/06/help-and-screen-api-changes-in-3-3/
+			see drafts for friends plugin as example
 			add pointer to the help tab, since people don't normally think about it. (the way that 'simple facebook connect' does it)
 
 	parse shortcodes inside the info window. (would have to parse it before passed to js)
