@@ -15,7 +15,7 @@
 	</div>
 	
 	<p class="<?php esc_attr_e( self::PREFIX ); ?>list-link">
-		<a href="http://google.com/maps?q=<?php echo esc_url( $address ); ?>">
+		<a href="<?php echo esc_url( 'http://google.com/maps?q=' . str_replace( ' ', '+', $address ) ); ?>">
 			<?php echo wp_kses( $address, wp_kses_allowed_html( 'post' ) ); ?>
 		</a>
 	</p>
