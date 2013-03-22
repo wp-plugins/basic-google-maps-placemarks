@@ -1048,7 +1048,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			
 			if( $posts )
 			{
-				$output = '<ul id="'. self::PREFIX .'list">';
+				$output = '<ul id="'. self::PREFIX .'list" class="'. self::PREFIX .'list">';	// Note: id should be removed and everything switched to class, because there could be more than one list on a page. That would be backwards-compatability, though.
 				
 				foreach( $posts as $p )
 				{

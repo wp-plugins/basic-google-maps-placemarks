@@ -161,7 +161,9 @@
 1.minor.x
 	the `width: auto !important` rule from #bgmp_map-canvas image is applying to .bgmp_placemark img, but it shouldn't
 		makes it ignore the inline width/height wp sets so users can't specific sizes
-		also, might cause resize issues - http://wordpress.org/support/topic/set-up-of-the-size-of-the-info-windowsboubble?replies=6#post-3964238
+		also, cause resize issues - http://wordpress.org/support/topic/set-up-of-the-size-of-the-info-windowsboubble?replies=6#post-3964238
+		still has to apply to rest of map, though, to override theme styles that bleed over
+		need to get it to apply to map, but then not to .bgmp_placemark img
 		
 	Add all the readme filter callbacks to unit tests if possible, or at least twentytwelve child theme for manual testing
 	

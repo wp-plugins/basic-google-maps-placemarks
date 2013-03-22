@@ -45,7 +45,7 @@ function bgmp_wrapper( $ )
 			bgmpData.options.clustering.gridSize	= parseInt( bgmpData.options.clustering.gridSize );
 			
 			// Register event handlers
-			$( '#' + $.bgmp.prefix + 'list' ).find( 'a' ).filter( '.' + $.bgmp.prefix + 'view-on-map' ).click( $.bgmp.viewOnMap ); 
+			$( '.' + $.bgmp.prefix + 'list' ).find( 'a' ).filter( '.' + $.bgmp.prefix + 'view-on-map' ).click( $.bgmp.viewOnMap ); 
 								
 			// Build map
 			if( $.bgmp.canvas )

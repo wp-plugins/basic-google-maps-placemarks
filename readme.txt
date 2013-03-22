@@ -343,7 +343,7 @@ If there isn't a translation for your language (or it is incomplete/inaccurate) 
 
 **Donations**
 
-I do this as a way to give back to the WordPress community, so I don't want to take any donations. If you'd like to give something, though, I'd encourage you to make a donation to [Doctors Without Borders](http://www.doctorswithoutborders.org) or the [Electronic Frontier Foundation](https://www.eff.org).
+I do this as a way to give back to the WordPress community, so I don't want to take any donations. If you'd like to give something, though, I'd encourage you to make a donation to [Doctors Without Borders](http://www.doctorswithoutborders.org) or the [WordPress Foundation](http://wordpressfoundation.org).
 
 
 **Customization**
