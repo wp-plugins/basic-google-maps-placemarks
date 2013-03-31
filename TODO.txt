@@ -64,6 +64,7 @@
 	
 	Commit latest changes to SVN trunk
 	Tag trunk
+	Update assets dir if banner or screenshots changed
 	Download .zip file and test extracting
 	Respond to any relevant open forum posts, and mark as resolved where appropriate
 
@@ -76,87 +77,6 @@
 
 
 ** Roadmap **
-
-1.10
-	fix 'not valid cateory' error
-		done
-	
-	fix line break bug in json
-		release rc2 to see if using apply_filters( 'the_content' ) fixed it.
-		
-		if not
-			get db backup or access to staging server from reporters
-			
-			json_encode bug? search php.net
-			
-			ask on wordpress answers
-			
-			maybe try using the_content() or the_content_feed() instead of $post->content
-			so that it gets passed through filters
-			
-			remove_filter wpautop ?
-				not applied by get_the_content anyway?
-				maybe don't wrap getthecontent w/ wpautop, but apply it as a filter so people can remove it?
-				maybe it's ok to apply_filters() to it, as long as you don't setup_postdata() ?
-		
-		one report on rc1 thread said fixed. also might have been caused by his theme.
-
-	make cat data available to js / make bgmp object accessible to outside scripts
-		done
-	
-	added get-map-placemarks-individual-placemark filter
-		done
-		
-	geocode error details
-		done
-		
-	add single id to shortcode
-		done
-		
-	do some manual browser/integration testing
-		done
-		
-	shortcode bug
-		done
-		
-	update wahc link to these instead
-		done
-	
-	update screenshots
-		done, but have to wait until releasing to commit
-	
-	add ability to link from outside / 	have links in [bgmp-list] open repsective info on map.
-		done
-		
-	release this as 1.10 since so many changes from 1.9.2, even though 1.9 was only briefly released
-		maybe find a way to let people know markerclustered was added in 1.9, since they might not notice otherwise?
-
-		
-		
-		
-	
-	push a release candidate out and ask for feedback before releasing stable
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-map-not-loading-after-update?replies=12
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-corephp-on-line-346?replies=4
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-shortcode-errornot-valid-category?replies=4
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-error-msg-after-upgrade-to-v191?replies=5
-		http://wordpress.org/support/topic/displaying-the-map-in-difeerent-language?replies=4
-		http://wordpress.org/support/topic/filter-placemarks-revisited?replies=5#post-3538177
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-single-placemark-on-maps-and-functionsphp-question?replies=1#post-3185988
-		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-possibility-to-show-a-single-placemark?replies=1
-		http://wordpress.org/support/topic/incompatibility-between-bgmp-193-rc1-and-jetpack-204?replies=4#post-3675859
-		http://wordpress.org/support/topic/bgmp-193-rc2-available?replies=3#post-3694645 - reset center/zoom
-		http://wordpress.org/support/topic/bgmp-193-rc1-available?replies=8
-		http://wordpress.org/support/topic/hide-street-view-option?replies=3
-		
-		external links
-			http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-several-questions-about-categories-and-links?replies=1
-			http://wordpress.org/support/topic/placemarker-links?replies=2
-			http://wordpress.org/support/topic/anchor-tag-opens-placemark-on-map?replies=2#post-3914795
-
-
-
-
 
 1.minor.x
 	the `width: auto !important` rule from #bgmp_map-canvas image is applying to .bgmp_placemark img, but it shouldn't

@@ -4,7 +4,7 @@ Donate link: http://www.doctorswithoutborders.org
 Tags: map, google maps, embed, marker, placemark, icon, geocode, shortcode, custom post type, multisite, marker clustering
 Requires at least: 3.1
 Tested up to: 3.5.1
-Stable tag: 1.8
+Stable tag: 1.10
 License: GPL2
 
 Embeds a Google Map into your site and lets you add map markers with custom icons and information windows.
@@ -149,13 +149,13 @@ Read the instructions on [the Installation page](http://wordpress.org/extend/plu
 
 1. Read the [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/).
 2. Read the answers in this FAQ.
-3. Check [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks), because there's a good chance your problem has already been addressed there.
+3. Look through [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks), because there's a good chance your problem has already been addressed there.
 4. Check the [Other Notes](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/other_notes/) page for known conflicts with other plugins.
 
 If you still need help, then follow these instructions:
 
 1. Disable all other plugins and switch to the default theme, then check if the problem is still happening. If it isn't, then the problem may actually be with your theme or other plugins you have installed.
-3. If the problem is still happening, then start a new thread in the forum with a **detailed description** of your problem and **the URL to the page on your site where you placed the map**. Please copy/paste any error messages verbatim. Screenshots can be very helpful, too.
+3. If the problem is still happening, then start a new thread in the forum with a **detailed description** of your problem and **the URL to the page on your site where you placed the map**. Please copy/paste any error messages verbatim. Screenshots can be very helpful, too. And please [be respectful](http://helpfulnerd.com/be-respectful-of-wordpress-plugin-developers/).
 5. Check the 'Notify me of follow-up posts via e-mail' box so you won't miss any replies.
 
 I monitor the forums and respond to a lot of the requests. I do this in my spare time, though, and can't respond to all of them. I typically only have time to help with problems that are within the plugin's scope. That means that I probably won't respond if the issue is actually caused by your theme or another plugin, or if you're trying to modify the plugin to do something it doesn't natively do. It's still a good idea to post something on the forums, though, because other users may be able to help out when I can't.
@@ -364,7 +364,7 @@ If you just need some minor customizations or are looking for someone with a low
 
 == Changelog ==
 
-= v1.10 () =
+= v1.10 (3/30/2013) =
 * [FIX] Fixed persistent bugs in previous 1.9.x releases.
 * [FIX] Fixed bgmp-map shortcode [bug that led to conflicts with Jetpack](http://wordpress.org/support/topic/incompatibility-between-bgmp-193-rc1-and-jetpack-204).
 * [NEW] Added viewonmap parameter to [bgmp-list] shortcode. 
