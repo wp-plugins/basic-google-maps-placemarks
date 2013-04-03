@@ -31,6 +31,12 @@ function bgmp_wrapper( $ )
 			$.bgmp.markers				= {};
 			$.bgmp.infoWindowContent	= {};
 			
+			if( typeof bgmpData === 'undefined' )
+			{
+				$( $.bgmp.canvas ).html( $.bgmp.name + " error: bgmpData undefined." );
+				return; 
+			}
+			
 			// Initialize single info window to reuse for each placemark
 			$.bgmp.infoWindow = new google.maps.InfoWindow( {
 				content		: '',
