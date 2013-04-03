@@ -364,6 +364,9 @@ If you just need some minor customizations or are looking for someone with a low
 
 == Changelog ==
 
+= v1.10.1 (?) =
+* [FIX] Fixed a bug where [the plugin's JavaScript broke if bgmpData was undefined](http://wordpress.org/support/topic/bgmp-110-rc1-available).
+
 = v1.10 (3/30/2013) =
 * [FIX] Fixed persistent bugs in previous 1.9.x releases.
 * [FIX] Fixed bgmp-map shortcode [bug that led to conflicts with Jetpack](http://wordpress.org/support/topic/incompatibility-between-bgmp-193-rc1-and-jetpack-204).
@@ -499,6 +502,9 @@ If you just need some minor customizations or are looking for someone with a low
 
 
 == Upgrade Notice ==
+
+= 1.10.1 =
+BGMP 1.10.1 ?
 
 = 1.10 =
 BGMP 1.10 adds some new shortcode options, fixes a few bugs, adds more hooks for developers and adds a German translation. 
