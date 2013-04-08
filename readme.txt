@@ -11,11 +11,11 @@ Embeds a Google Map into your site and lets you add map markers with custom icon
 
 
 == Description ==
-BGMP creates a [custom post type](http://www.youtube.com/watch?v=FWkLBPpGOmo#!) for placemarks (markers) on a Google Map. The map is embedded into pages or posts using a shortcode, and there are settings to affect how it's displayed. Then you can create markers that will show up on the map using the featured image as the map icon. When a marker is clicked on, a box will appear showing its title and description.
+BGMP creates a [custom post type](http://www.youtube.com/watch?v=FWkLBPpGOmo#!) for placemarks (markers) on a Google Map. The map is embedded into pages or posts using a shortcode, and there are settings to affect how it's displayed. You can create markers that will show up on the map, and set their icons using the Featured Image meta box. When a marker is clicked on, a box will appear and show the marker's title and description.
 
 **Features**
 
-* Each map marker can have a unique custom icon, share a common custom icon, or use the default icon.
+* Each map marker can have a unique custom Installation icon, share a common custom icon, or use the default icon.
 * Options to set the map type (street, satellite, etc), center location, size, zoom level, navigation controls, etc.
 * Setup unique maps on different pages with their own placemarks, map types, center locations, etc.
 * Placemarks can be assigned to categories, and you can control which categories are displayed on a individual map.
@@ -26,9 +26,17 @@ BGMP creates a [custom post type](http://www.youtube.com/watch?v=FWkLBPpGOmo#!) 
 * Compatible with WordPress MultiSite.
 * Internationalized (see [Other Notes](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/other_notes/) for a list of supported languages)
 
-You can see live examples of the plugin running at [the Australian Polio Register](http://www.polioaustralia.org.au/?page_id=6098), [the North Carolina Fire Station Mapping Project](http://fdmaps.com/forestry-ncfs-and-usfs-combined/) and [Washington House Churches](http://washingtonhousechurches.net).
+**Live Examples**
 
-Instructions are on [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/), and [the FAQ](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/faq/) has a lot of documentation and troubleshooting resources.
+* [The Australian Polio Register](http://www.polioaustralia.org.au/?page_id=6098)
+* [The North Carolina Fire Station Mapping Project](http://fdmaps.com/forestry-ncfs-and-usfs-combined/)
+* [Washington House Churches](http://washingtonhousechurches.net)
+
+**Support**
+
+* [Instructions](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/) - Basic and advanced documentation on how to use the plugin.
+* [FAQ](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/faq/) - Answers to common questions/problems, and troubleshooting tips.
+* [Support Forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks) - Most problems have already been answered in the existing threads. Before starting a new thread, please [read this post](http://wordpress.org/support/topic/read-this-before-starting-a-thread).
 
 
 == Installation ==
@@ -171,8 +179,36 @@ You can also try searching [the support forums](http://wordpress.org/support/plu
 If you do get it working with your custom code, please share it on [the support forums](http://wordpress.org/support/plugin/basic-google-maps-placemarks) so that others can benefit from your work.
 
 
-= The map doesn't look right. =
-This is probably because some rules from your theme's stylesheet are being applied to the map. Contact your theme developer for advice on how to override the rules.
+= What does the, "That address couldn't be geocoded, please make sure that it's correct" error mean? =
+There are several possible causes for this error, but they generally fall into two different categories.
+
+1. Google Maps didn’t recognize the address you entered. 
+2. The plugin couldn’t connect to the Google Maps API to geocode the address. 
+
+If the error is followed by something similar to the example below, then the problem was with connecting to the Maps API:
+
+`
+Geocode response:
+
+stdClass Object
+(
+[results] => Array
+(
+)
+[status] => OVER_QUERY_LIMIT
+)
+`
+
+*If the problem is with the address,* you can try entering it in a different format. For example, instead of “5th Ave and Blanchard St, Seattle”, try “2124 5th Ave, 98121”. You can also try using latitude/longitude coordinates to bypass the geocoding process entirely; see the other FAQ answers for details on that. 
+
+
+*If the problem is with the connection,* some of of the possible reasons for that are:
+
+1. Google Maps places a limit on how many geocoding requests it will serve per day. If you're using shared hosting, there could be other sites on your server or netblock that are also making requests, and you've hit the limit for the day. If this is the problem, you’ll probably need to ask your web host to move you to your own VPS, or just wait until tomorrow and try again.
+2. There could be problems with your network or server that are interfering with the connection. If this is the problem, your web host can help you troubleshoot it.
+3. Google could be blocking requests from your server’s IP address or netblock due to abuse or violations of their terms of service. The violations could be caused by your site, or another site on your server/netblock. If this is the problem, your web host can help you troubleshoot it. After they remove the problem then it might start working again after a delay (probably 1-7 days), or they may need to contact Google to ask that the server be removed from the blacklist.
+
+You can also try using latitude/longitude coordinates to bypass the geocoding process entirely; see the other FAQ answers for details on that. 
 
 
 = The page says 'Loading map...', but the map never shows up. =
@@ -181,10 +217,9 @@ Check to see if there are any Javascript errors by [opening the JavaScript conso
 Also, make sure your theme is calling *[wp_footer()](http://codex.wordpress.org/Function_Reference/wp_footer)* right before the closing *body* tag in footer.php. 
 
 
-= None of the placemarks are showing up on the map =
-If your theme is calling `add_theme_support( 'post-thumbnails' )` and passing in a specific list of post types -- rather than enabling support for all post types -- then it should check if some post types are already registered and include those as well. This only applies if it's hooking into `after_theme_setup` with a priority higher than 10. Contact your theme developer and ask them to fix their code.
+= The map doesn't look right. =
+This is probably because some rules from your theme's stylesheet are being applied to the map. Contact your theme developer for advice on how to override the rules.
 
-Also check the [Other Notes](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/other_notes/) page for known conflicts with other plugins.
 
 = Can I use coordinates to set the marker, instead of an address? =
 Yes. You can type anything into the Address field that you would type into a standard Google Maps search field, which includes coordinates. 
@@ -192,6 +227,12 @@ Yes. You can type anything into the Address field that you would type into a sta
 If the plugin recognizes your input as coordinates then it will create the marker at that exact point on the map. If it doesn't, it will attempt to geocode them, which can sometimes result in a different location than you intended. To help the plugin recognize the coordinates, make sure they're in decimal notation (e.g. 48.61322,-123.3465) instead of minutes/seconds notation. The latitude and longitude must be separated by a comma and cannot contain any letters or symbols. If your input has been geocoded, you'll see a note next to the address field that gives the geocoded coordinates, and the plugin will use those to create the marker on the map; if you don't see that note then that means that your input was not geocoded and your exact coordates will be used to place the marker.
 
 If you're having a hard time getting a set of coordinates to work, try visiting <a href="http://www.itouchmap.com/latlong.html">Latitude and Longitude of a Point</a> and use the coordinates they give you.
+
+
+= None of the placemarks are showing up on the map =
+If your theme is calling `add_theme_support( 'post-thumbnails' )` and passing in a specific list of post types -- rather than enabling support for all post types -- then it should check if some post types are already registered and include those as well. This only applies if it's hooking into `after_theme_setup` with a priority higher than 10. Contact your theme developer and ask them to fix their code.
+
+Also check the [Other Notes](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/other_notes/) page for known conflicts with other plugins.
 
 
 = Can I change the default icon? =
@@ -206,6 +247,7 @@ add_filter( 'bgmp_default-icon', 'setBGMPDefaultIcon' );
 `
 
 The string you return needs to be the full URL to the new icon.
+
 
 = How can I set the default icon by category or other condition? =
 If you only want to replace the default marker under certain conditions (e.g., when the marker is assigned to a specific category), then you can using something like this:
@@ -336,7 +378,8 @@ If there isn't a translation for your language (or it is incomplete/inaccurate) 
 * Translate the plugin into your language. See the *Localizations* section above for details.
 * Volunteer to test new versions before they're officially released. Sign up for [the BGMP Testers e-mail list](http://iandunn.us6.list-manage.com/subscribe?u=38510a08f1d822cc1c358e644&id=b183d686c6) to be notified when new release candidates are available for testing.  
 * If you find a bug, create a post on [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks) with as much information as possible. If you're a developer, create a patch and include a link to it in the post.
-* Send me feedback on how easy or difficult the plugin is to use, and where you think things could be improved. Add a post to [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks) with details.   
+* Send me feedback on how easy or difficult the plugin is to use, and where you think things could be improved. Add a post to [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks) with details.
+* Send me feedback on ways the documentation could be more clear or complete. Add a post to [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks) with details.
 * Review the code for security vulnerabilities and best practices. If you find a security issue, please [contact me](http://iandunn.name/contact) privately so that I can release a fix for it before publicly disclosing it.
 * Check the TODO.txt file for features that need to be added and submit a patch.
 
