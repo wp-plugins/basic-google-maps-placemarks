@@ -50,7 +50,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			
 			register_activation_hook( dirname(__FILE__) . '/basic-google-maps-placemarks.php', array( $this, 'networkActivate') );
 			
-			require_once( dirname(__FILE__) . '/settings.php' );
+			require_once( dirname( __FILE__ ) . '/settings.php' );
 			$this->settings = new BGMPSettings();
 		}
 		
@@ -621,7 +621,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			if( $this->mapShortcodeCalled )
 			{
 				do_action( BasicGoogleMapsPlacemarks::PREFIX . 'head-before' );
-				require_once( dirname(__FILE__) . '/views/front-end-head.php' );
+				require_once( dirname( __FILE__ ) . '/views/front-end-head.php' );
 				do_action( BasicGoogleMapsPlacemarks::PREFIX . 'head-after' );
 			}
 		}
@@ -758,7 +758,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			$showGeocodeResults = ( $address && !self::validateCoordinates( $address ) && $latitude && $longitude ) ? true : false;
 			$showGeocodeError	= ( $address && ( !$latitude || !$longitude ) ) ? true : false;
 			
-			require_once( dirname(__FILE__) . '/views/meta-address.php' );
+			require_once( dirname( __FILE__ ) . '/views/meta-address.php' );
 		}
 		
 		/**
@@ -773,7 +773,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			if( filter_var( $zIndex, FILTER_VALIDATE_INT ) === FALSE )
 				$zIndex = 0;
 				
-			require_once( dirname(__FILE__) . '/views/meta-z-index.php' );
+			require_once( dirname( __FILE__ ) . '/views/meta-z-index.php' );
 		}
 		
 		/**
@@ -802,11 +802,14 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 				
 			
 			// Save address
-			update_post_meta( $post->ID, self::PREFIX . 'address', $_POST[ self::PREFIX . 'address' ] );
+			if( isset( $_POST[ self::PREFIX . 'address' ] ) )
+			{
+				update_post_meta( $post->ID, self::PREFIX . 'address', $_POST[ self::PREFIX . 'address' ] );
 
-			if( $_POST[ self::PREFIX . 'address'] )
-				$coordinates = $this->geocode( $_POST[ self::PREFIX . 'address' ] );
-				
+				if( $_POST[ self::PREFIX . 'address'] )
+					$coordinates = $this->geocode( $_POST[ self::PREFIX . 'address' ] );
+			}
+
 			if( $coordinates )
 			{
 				update_post_meta( $post->ID, self::PREFIX . 'latitude', $coordinates[ 'latitude' ] );
@@ -819,15 +822,18 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			}
 			
 			// Save z-index
-			if( filter_var( $_POST[ self::PREFIX . 'zIndex'], FILTER_VALIDATE_INT ) === FALSE )
+			if( isset( $_POST[ self::PREFIX . 'zIndex' ] ) )
 			{
-				update_post_meta( $post->ID, self::PREFIX . 'zIndex', 0 );
-				$this->enqueueMessage( __( 'The stacking order has to be an integer.', 'bgmp' ), 'error' );
-			}	
-			else
-				update_post_meta( $post->ID, self::PREFIX . 'zIndex', $_POST[ self::PREFIX . 'zIndex'] );
+				if( filter_var( $_POST[ self::PREFIX . 'zIndex'], FILTER_VALIDATE_INT ) === FALSE )
+				{
+					update_post_meta( $post->ID, self::PREFIX . 'zIndex', 0 );
+					$this->enqueueMessage( __( 'The stacking order has to be an integer.', 'bgmp' ), 'error' );
+				}
+				else
+					update_post_meta( $post->ID, self::PREFIX . 'zIndex', $_POST[ self::PREFIX . 'zIndex'] );
+			}
 		}
-		
+
 		/**
 		 * Geocodes an address
 		 * @param string $address
@@ -1294,7 +1300,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 						if( $messageData[ 'mode' ] == 'user' || self::DEBUG_MODE )
 							$message .= '<p>'. $messageData[ 'message' ] .'</p>';
 					
-					require( dirname(__FILE__) . '/views/message.php' );
+					require( dirname( __FILE__ ) . '/views/message.php' );
 					
 					$this->options[ $type ] = array();
 					$this->updatedOptions = true;

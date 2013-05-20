@@ -78,6 +78,22 @@
 
 ** Roadmap **
 
+1.10.1
+	fix bgmpdata undefined bug
+		done
+
+	http://make.wordpress.org/plugins/2013/04/11/google-maps-javascript-v2-api-to-be-removed/
+		pretty sure it's already using v3, but double check
+		probably specify api version # in the url, to make it obvious and future-proof
+		check setup instructions for v3, seems like doing it a bit different than what they recommend
+			maybe need to specify api key. that might help solve (or make worse) the various geocoding problems
+
+	add 'infoWindowLinks' array to mapoptions, default to empty, put filter around it
+		then if there are links, add them to info window
+		example: 'http://google.com/maps?saddr=X' => 'Directions'
+		email grant when committed to trunk so he can take a look, give feedback
+
+
 1.minor.x
 	the `width: auto !important` rule from #bgmp_map-canvas image is applying to .bgmp_placemark img, but it shouldn't
 		makes it ignore the inline width/height wp sets so users can't specific sizes

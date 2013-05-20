@@ -74,13 +74,13 @@ function bgmp_requirementsNotMet()
 		esc_html( $wp_version )
 	);
 	
-	require( dirname(__FILE__) . '/views/message.php' );
+	require( dirname( __FILE__ ) . '/views/message.php' );
 }
 
 // Check requirements and instantiate
 if( bgmp_requirementsMet() )
 {
-	require_once( dirname(__FILE__) . '/core.php' );
+	require_once( dirname( __FILE__ ) . '/core.php' );
 	
 	if( class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		$bgmp = new BasicGoogleMapsPlacemarks();
