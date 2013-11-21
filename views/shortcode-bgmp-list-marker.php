@@ -1,4 +1,4 @@
-<li class="<?php esc_attr_e( self::PREFIX ); ?>list-item">
+<li id="<?php esc_attr_e( self::PREFIX ); ?>list-item-<?php esc_attr_e( $p->ID ); ?>" class="<?php esc_attr_e( self::PREFIX ); ?>list-item">
 	<h3 class="<?php esc_attr_e( self::PREFIX ); ?>list-placemark-title">
 		<?php echo apply_filters( 'the_title', $p->post_title ); ?>
 		
