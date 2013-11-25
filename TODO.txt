@@ -7,7 +7,7 @@
 
 
 ** Development Workflow / New Release Checklist **
-	Upgrade plaground/wp to latest WordPress release
+	Upgrade playground/wp to latest WordPress release
 	Update SVN trunk in playground/wp
 	Update alpha version numbers in basic-google-maps-placemarks.php comment and core.php constant
 	Update readme compatible tag to latest WP version
@@ -37,6 +37,8 @@
 		Various test sites with different placemarks/options
 		Debug tools site to catch warnings
 		Plugin compatability site to check for conflicts with popular plugins
+		Against WP trunk and last few releases
+		On current PHP release and last few releases
 	
 	Update localizations
 		Generate new .pot file and update header values inside it
@@ -78,10 +80,7 @@
 
 ** Roadmap **
 
-1.10.1
-	fix bgmpdata undefined bug
-		done
-
+1.10.2
 	http://make.wordpress.org/plugins/2013/04/11/google-maps-javascript-v2-api-to-be-removed/
 		pretty sure it's already using v3, but double check
 		probably specify api version # in the url, to make it obvious and future-proof
@@ -92,6 +91,11 @@
 		then if there are links, add them to info window
 		example: 'http://google.com/maps?saddr=X' => 'Directions'
 		email grant when committed to trunk so he can take a look, give feedback
+	
+	language packs support
+		change text domain to match plugin slug so language packs will work
+		load_plugin_textdomain should run during plugins_loaoded hook
+		http://ottopress.com/2013/language-packs-101-prepwork/
 
 
 1.minor.x
@@ -294,6 +298,9 @@
 		maybe divide into several pages: 'basic settings', 'marker clustering', 're-abolish slavery'
 	
 1.major
+	upgrade markerclusterer b/c ie10 support ?
+		http://wordpress.org/support/topic/the-marker-clustering-images-were-disappeared-under-ie?replies=9#post-4224031
+
 	move files to subdirectories
 		core.php, settings.php => classes/
 		functions.js => javascript/
