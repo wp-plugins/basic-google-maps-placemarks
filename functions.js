@@ -44,7 +44,7 @@ function bgmp_wrapper( $ )
 			} );
 			
 			// Format numbers
-			bgmpData.options.zoom					= parseInt( bgmpData.options.zoom ),
+			bgmpData.options.zoom					= parseInt( bgmpData.options.zoom );
 			bgmpData.options.latitude				= parseFloat( bgmpData.options.latitude );
 			bgmpData.options.longitude				= parseFloat( bgmpData.options.longitude );
 			bgmpData.options.clustering.maxZoom		= parseInt( bgmpData.options.clustering.maxZoom );
