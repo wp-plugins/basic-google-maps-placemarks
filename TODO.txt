@@ -194,12 +194,10 @@
 			http://potranslate.prabhatgupta.com/ - see email
 
 			blog about it if it works
-			french
 			german
 			japanese
 			russian
-			spanish
-
+			
 			later
 				arabic
 				czech

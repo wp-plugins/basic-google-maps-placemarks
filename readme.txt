@@ -219,7 +219,7 @@ This is probably because some rules from your theme's stylesheet are being appli
 = Can I use coordinates to set the marker, instead of an address? =
 Yes. You can type anything into the Address field that you would type into a standard Google Maps search field, which includes coordinates. 
 
-If the plugin recognizes your input as coordinates then it will create the marker at that exact point on the map. If it doesn't, it will attempt to geocode them, which can sometimes result in a different location than you intended. To help the plugin recognize the coordinates, make sure they're in decimal notation (e.g. 48.61322,-123.3465) instead of minutes/seconds notation. The latitude and longitude must be separated by a comma and cannot contain any letters or symbols. If your input has been geocoded, you'll see a note next to the address field that gives the geocoded coordinates, and the plugin will use those to create the marker on the map; if you don't see that note then that means that your input was not geocoded and your exact coordates will be used to place the marker.
+If the plugin recognizes your input as coordinates then it will create the marker at that exact point on the map. If it doesn't, it will attempt to geocode them, which can sometimes result in a different location than you intended. To help the plugin recognize the coordinates, make sure they're in decimal notation (e.g. 48.61322,-123.3465) instead of minutes/seconds notation. The latitude and longitude must be separated by a comma and cannot contain any letters or symbols. If your input has been geocoded, you'll see a note next to the address field that gives the geocoded coordinates, and the plugin will use those to create the marker on the map; if you don't see that note then that means that your input was not geocoded and your exact coordinates will be used to place the marker.
 
 If you're having a hard time getting a set of coordinates to work, try visiting <a href="http://www.itouchmap.com/latlong.html">Latitude and Longitude of a Point</a> and use the coordinates they give you.
 
@@ -257,7 +257,7 @@ function setBGMPDefaultIconByCategory( $iconURL, $placemarkID )
 		switch( $pc->slug )
 		{
 			case 'restaurants':
-				$iconURL = get_bloginfo( 'stylesheet_directory' ) . '/images/marker-icons/resturants.png';
+				$iconURL = get_bloginfo( 'stylesheet_directory' ) . '/images/marker-icons/restaurants.png';
 			break;
 			
 			case 'book-stores':
@@ -352,6 +352,7 @@ Yes, I've tried to add filters for everything you might reasonably want, just br
 
 **Localizations**
 
+* Spanish (thanks to Andrew Kurtis from [WebHostingHub](http://www.webhostinghub.com/))
 * Chinese (thanks to [yzqiang](http://wordpress.org/support/profile/yzqiang))
 * French (thanks to Romain Fevre)
 * German (thanks to Jens)
@@ -402,6 +403,9 @@ If you make customizations that could be beneficial to other users, please start
 
 
 == Changelog ==
+
+= ? (?) =
+* [NEW] Added Spanish translation
 
 = v1.10.1 (11/25/2013) =
 * [FIX] Fixed a bug where [the plugin's JavaScript broke if bgmpData was undefined](http://wordpress.org/support/topic/bgmp-110-rc1-available).
