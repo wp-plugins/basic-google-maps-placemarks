@@ -390,7 +390,7 @@ If you make customizations that could be beneficial to other users, please start
 
 = ? (?) =
 * [NEW] Added Spanish translation
-* [NEW] Added [bgmp_featured-image-size filter](http://wordpress.org/support/topic/icon-sizes).
+* [NEW] Added [bgmp_featured-icon-size filter](http://wordpress.org/support/topic/icon-sizes).
 
 = v1.10.1 (11/25/2013) =
 * [FIX] Fixed a bug where [the plugin's JavaScript broke if bgmpData was undefined](http://wordpress.org/support/topic/bgmp-110-rc1-available).

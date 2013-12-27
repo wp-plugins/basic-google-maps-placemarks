@@ -1256,7 +1256,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 					if( !is_array( $categories ) )
 						$categories = array();
 						
-					$icon = wp_get_attachment_image_src( get_post_thumbnail_id( $postID ) );
+					$icon = wp_get_attachment_image_src( get_post_thumbnail_id( $postID ), apply_filters( self::PREFIX . 'featured-icon-size', 'thumbnail' ) );
 					$defaultIcon = apply_filters( self::PREFIX .'default-icon', plugins_url( 'images/default-marker.png', __FILE__ ), $postID );
 
 					$placemark = array(
