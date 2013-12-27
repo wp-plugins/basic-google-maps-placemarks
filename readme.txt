@@ -39,26 +39,9 @@ I'm happy to fix reproducible bugs, but don't have time to help you customize th
 
 == Installation ==
 
-**Automatic Installation**
 
-1. Login to your blog and go to the Plugins page.
-2. Click on the 'Add New' button.
-3. Search for 'Basic Google Maps Placemarks'.
-4. Click 'Install now'.
-5. Enter your FTP or FTPS username and password. If you don't know it, you can ask your web host for it.
-6. Click 'Activate plugin'.
-8. Follow the Basic Usage instructions below
+For help installing this (or any other) WordPress plugin, please read the [Managing Plugins](http://codex.wordpress.org/Managing_Plugins) article on the Codex.
 
-**Manual Installation**
-
-1. Download the plugin and un-zip it.
-2. Upload the *basic-google-maps-placemarks* folder to your *wp-content/plugins/* directory.
-3. Activate the plugin through the 'Plugins' menu in WordPress.
-4. Follow the Basic Usage instructions below
-
-**Manual Upgrading:**
-
-1. Just re-upload the plugin folder to the wp-content/plugins directory to overwrite the old files.
 
 **Basic Usage:**
 
@@ -75,6 +58,7 @@ I'm happy to fix reproducible bugs, but don't have time to help you customize th
 1. Just add the extra parameters to the [bgmp-map] shortcode. Here's an example of the different ones you can use:
 
 > [bgmp-map categories="parks,restaurants" width="500" height="500"]
+
 > [bgmp-map placemark="105" center="chicago" zoom="10" type="terrain"]
 
 *Multiple maps with different placemarks:*
@@ -187,10 +171,10 @@ Geocode response:
 
 stdClass Object
 (
-[results] => Array
-(
-)
-[status] => OVER_QUERY_LIMIT
+	[results] => Array
+	(
+	)
+	[status] => OVER_QUERY_LIMIT
 )
 `
 
@@ -406,6 +390,7 @@ If you make customizations that could be beneficial to other users, please start
 
 = ? (?) =
 * [NEW] Added Spanish translation
+* [NEW] Added [bgmp_featured-image-size filter](http://wordpress.org/support/topic/icon-sizes).
 
 = v1.10.1 (11/25/2013) =
 * [FIX] Fixed a bug where [the plugin's JavaScript broke if bgmpData was undefined](http://wordpress.org/support/topic/bgmp-110-rc1-available).
@@ -548,6 +533,9 @@ If you make customizations that could be beneficial to other users, please start
 
 
 == Upgrade Notice ==
+
+= ? =
+?
 
 = 1.10.1 =
 BGMP 1.10.1 fixes a JavaScript bug and adds an Italian translation.
