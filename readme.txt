@@ -460,7 +460,7 @@ If you make customizations that could be beneficial to other users, please start
 * [NEW] Added error message when wp_remote_get() fails in geocode()
 
 = v1.5.1 (10/15/2011) =
-* Updated readme.txt to reflect that the Wordpress version requirement is 3.1 as of BGMP 1.5.
+* Updated readme.txt to reflect that the WordPress version requirement is 3.1 as of BGMP 1.5.
 
 = v1.5 (10/9/2011) =
 * [NEW] Added a custom taxonomy to categorize placemarks. Thanks to [Marcel Bootsman](http://nostromo.nl) for contributing code to this.
@@ -516,7 +516,7 @@ If you make customizations that could be beneficial to other users, please start
 
 = v1.1.2 (6/14/2011) = 
 * [UPDATE] Settings moved to separate class
-* [UPDATE] Updated Wordpress requirement to 3.0. Listing it at 2.9 in previous versions was a mistake.
+* [UPDATE] Updated WordPress requirement to 3.0. Listing it at 2.9 in previous versions was a mistake.
 
 = v1.1.1 (6/11/2011) =
 * [UPDATE] JavaScript files only loaded when needed

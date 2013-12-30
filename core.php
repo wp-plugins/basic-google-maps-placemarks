@@ -6,7 +6,7 @@ if( $_SERVER['SCRIPT_FILENAME'] == __FILE__ )
 if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 {
 	/**
-	 * A Wordpress plugin that adds a custom post type for placemarks and builds a Google Map with them
+	 * A WordPress plugin that adds a custom post type for placemarks and builds a Google Map with them
 	 * @package BasicGoogleMapsPlacemarks
 	 * @author Ian Dunn <ian@iandunn.name>
 	 * @link http://wordpress.org/extend/plugins/basic-google-maps-placemarks/
@@ -1017,7 +1017,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		/**
 		 * Defines the [bgmp-list] shortcode
 		 * @author Ian Dunn <ian@iandunn.name>
-		 * @param array $attributes Array of parameters automatically passed in by Wordpress
+		 * @param array $attributes Array of parameters automatically passed in by WordPress
 		 * return string The output of the shortcode
 		 */
 		public function listShortcode( $attributes )

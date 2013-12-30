@@ -61,7 +61,7 @@ function bgmp_wrapper( $ )
 		},
 		
 		/**
-		 * Pull in the map options from Wordpress' database and create the map
+		 * Pull in the map options from WordPress' database and create the map
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		buildMap : function()
@@ -147,7 +147,7 @@ function bgmp_wrapper( $ )
 		},
 
 		/**
-		 * Pull the placemark posts from Wordpress' database and add them to the map
+		 * Pull the placemark posts from WordPress' database and add them to the map
 		 * @author Ian Dunn <ian@iandunn.name>
 		 * @param object map Google Maps map
 		 */
