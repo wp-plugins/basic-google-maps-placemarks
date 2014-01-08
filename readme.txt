@@ -1,10 +1,10 @@
 === Basic Google Maps Placemarks ===
 Contributors: iandunn
 Donate link: http://www.doctorswithoutborders.org
-Tags: map, google maps, embed, marker, placemark, icon, geocode, shortcode, custom post type, multisite, marker clustering
+Tags: map, google maps, marker, placemark, geocode, shortcode, marker clustering
 Requires at least: 3.1
-Tested up to: 3.8-beta1
-Stable tag: 1.10.1
+Tested up to: 3.8
+Stable tag: 1.10.2
 License: GPL2
 
 Embeds a Google Map into your site and lets you add map markers with custom icons and information windows.
@@ -388,7 +388,7 @@ If you make customizations that could be beneficial to other users, please start
 
 == Changelog ==
 
-= ? (?) =
+= v1.10.2 (1/8/2014) =
 * [NEW] Added Spanish translation
 * [NEW] Added [bgmp_featured-icon-size filter](http://wordpress.org/support/topic/icon-sizes).
 
@@ -534,8 +534,8 @@ If you make customizations that could be beneficial to other users, please start
 
 == Upgrade Notice ==
 
-= ? =
-?
+= 1.10.2 =
+BGMP 1.10.2 adds a Spanish translation.
 
 = 1.10.1 =
 BGMP 1.10.1 fixes a JavaScript bug and adds an Italian translation.
