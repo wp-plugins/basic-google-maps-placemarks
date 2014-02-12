@@ -47,7 +47,7 @@ For help installing this (or any other) WordPress plugin, please read the [Manag
 
 1. After activating the plugin, go to the 'Basic Google Maps Placemarks' page under the Settings menu. Enter the address that the map should be centered on.
 2. Create a page or post where you'd like to embed the map, and type `[bgmp-map]` in the content area.
-3. Go to the Placemarks menu and click 'Add New'. Enter the title, address, etc.
+3. Go to the Placemarks menu in the Administration Panels and click 'Add New'. Enter the title, address, etc.
 4. Click on 'Set Featured Image' to upload the icon.
 5. Click on the 'Publish' or 'Update' button to save the placemark.
 
@@ -63,9 +63,9 @@ For help installing this (or any other) WordPress plugin, please read the [Manag
 
 *Multiple maps with different placemarks:*
 
-1. Go to the Placemarks menu and click on Categories, and add a category for each set of placemarks.
+1. Go to the Placemarks menu in the Administration Panels and click on Categories, and add a category for each set of placemarks.
 2. Edit your placemarks and click on the category you want to assign them to.
-3. Edit the place where the map is embedded and add the category parameter to the shortcode. For example: [bgmp-map categories="restaurants,record-stores"] or [bgmp-map categories="parks"]. Use the category's slug, which is displayed on the Categories page in step 1. Separate each slug with a comma.
+3. Edit the place where the map is embedded and add the category parameter to the shortcode. For example: [bgmp-map categories="restaurants,record-stores"] or [bgmp-map2 categories="parks"]. Use the category's slug, which is displayed on the Categories page in step 1. Separate each slug with a comma.
 4. You can add the [bgmp-map] shortcode to multiple pages, each time using a different set of categories.
 
 *Setting the stacking order of overlapping markers:*
