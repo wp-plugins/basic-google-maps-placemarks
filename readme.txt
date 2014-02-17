@@ -342,7 +342,9 @@ Yes, I've tried to add filters for everything you might reasonably want, just br
 * German (thanks to Jens)
 * Italian (thanks to [Andrea Colombo](http://www.acolombodesign.com/))
 
-If there isn't a translation for your language (or it is incomplete/inaccurate) please consider making one and contributing it to the plugin. You can learn how by reading [Translating WordPress](http://codex.wordpress.org/Translating_WordPress) and [How to Create a .po Language Translation](http://www.wdmac.com/how-to-create-a-po-language-translation). The .pot file you'll need is inside the *languages* directory in the plugin's folder. Once you're done, just start a thread on [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks) with links to the .po and .mo files, and I'll add them to the next release. You can also subscribe to [the BGMP Translators e-mail list](http://iandunn.us6.list-manage1.com/subscribe?u=38510a08f1d822cc1c358e644&id=b7ff5f7393) to be notified when updated versions have new strings to translate.
+If there isn't a translation for your language (or it is incomplete/inaccurate) please consider making one and contributing it to the plugin. You can do that from within your WordPress installation by using the [Codestyling Localization plugin](http://wordpress.org/plugins/codestyling-localization/), or using a desktop application like Poedit. To learn more, please read [A Guide for WordPress Plugins Translators](http://www.gabsoftware.com/tips/a-guide-for-wordpress-plugins-translators-gettext-poedit-locale/). The .pot file you'll need is inside the *languages* directory in the plugin's folder. 
+
+Once you're done, just start a thread on [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks) with links to the .po and .mo files, and I'll add them to the next release. You can also subscribe to [the BGMP Translators e-mail list](http://iandunn.us6.list-manage1.com/subscribe?u=38510a08f1d822cc1c358e644&id=b7ff5f7393) to be notified when updated versions have new strings to translate.
 
 
 **Known conflicts**
