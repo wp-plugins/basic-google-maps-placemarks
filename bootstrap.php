@@ -80,7 +80,7 @@ function bgmp_requirementsNotMet()
 // Check requirements and instantiate
 if( bgmp_requirementsMet() )
 {
-	require_once( dirname( __FILE__ ) . '/core.php' );
+	require_once( dirname( __FILE__ ) . '/classes/core.php' );
 	
 	if( class_exists( 'BasicGoogleMapsPlacemarks' ) )
 		$bgmp = new BasicGoogleMapsPlacemarks();

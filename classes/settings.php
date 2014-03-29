@@ -130,7 +130,7 @@ if( !class_exists( 'BGMPSettings' ) )
 			// @todo some of above may not be needed
 			
 			if( current_user_can( 'manage_options' ) )
-				require_once( dirname( __FILE__ ) . '/views/settings.php' );
+				require_once( dirname( dirname( __FILE__ ) ) . '/views/settings/settings.php' );
 			else
 				wp_die( 'Access denied.' );
 		}
@@ -141,7 +141,7 @@ if( !class_exists( 'BGMPSettings' ) )
 		 */
 		public function markupRASRMetaBox()
 		{
-			require_once( dirname( __FILE__ ) . '/views/meta-re-abolish-slavery.php' );
+			require_once( dirname( dirname( __FILE__ ) ) . '/views/settings/meta-re-abolish-slavery.php' );
 		}
 		
 		/**
@@ -314,7 +314,7 @@ if( !class_exists( 'BGMPSettings' ) )
 		 */
 		public function markupMarkerClusterFields( $field )
 		{
-			require( dirname( __FILE__ ) . '/views/settings-marker-clusterer.php' );
+			require( dirname( dirname( __FILE__ ) ) . '/views/settings/fields-marker-clusterer.php' );
 		}
 	} // end BGMPSettings
 }

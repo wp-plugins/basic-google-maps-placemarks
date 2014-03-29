@@ -80,7 +80,20 @@
 
 ** Roadmap **
 
-1.10.2
+1.11
+    coding stanrdards
+    render_template
+       plus moving everything into views
+
+	rename functions to underscore
+		what about back-compat?
+    modularitity / oop design not just oop functions
+    	core.php
+    	unit tests into suite too
+    	break css/js into front/back end
+
+
+1.minor.x
 	http://make.wordpress.org/plugins/2013/04/11/google-maps-javascript-v2-api-to-be-removed/
 		pretty sure it's already using v3, but double check
 		probably specify api version # in the url, to make it obvious and future-proof

@@ -565,7 +565,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			
 			wp_register_script(
 				'markerClusterer',
-				plugins_url( 'includes/marker-clusterer/markerclusterer_packed.js', __FILE__ ),
+				plugins_url( 'includes/marker-clusterer/markerclusterer_packed.js', dirname( __FILE__ ) ),
 				array(),
 				'1.0',
 				true
@@ -573,7 +573,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			
 			wp_register_script(
 				'bgmp',
-				plugins_url( 'functions.js', __FILE__ ),
+				plugins_url( 'javascript/functions.js', dirname( __FILE__ ) ),
 				array( 'googleMapsAPI', 'jquery' ),
 				self::VERSION,
 				true
@@ -581,7 +581,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			
 			wp_register_style(
 				self::PREFIX .'style',
-				plugins_url( 'style.css', __FILE__ ),
+				plugins_url( 'css/style.css', dirname( __FILE__ ) ),
 				false,
 				self::VERSION
 			);
@@ -621,7 +621,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			if( $this->mapShortcodeCalled )
 			{
 				do_action( BasicGoogleMapsPlacemarks::PREFIX . 'head-before' );
-				require_once( dirname( __FILE__ ) . '/views/front-end-head.php' );
+				require_once( dirname( dirname( __FILE__ ) ) . '/views/core/front-end-head.php' );
 				do_action( BasicGoogleMapsPlacemarks::PREFIX . 'head-after' );
 			}
 		}
@@ -758,7 +758,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			$showGeocodeResults = ( $address && !self::validateCoordinates( $address ) && $latitude && $longitude ) ? true : false;
 			$showGeocodeError	= ( $address && ( !$latitude || !$longitude ) ) ? true : false;
 			
-			require_once( dirname( __FILE__ ) . '/views/meta-address.php' );
+			require_once( dirname( dirname( __FILE__ ) ) . '/views/core/meta-address.php' );
 		}
 		
 		/**
@@ -773,7 +773,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			if( filter_var( $zIndex, FILTER_VALIDATE_INT ) === FALSE )
 				$zIndex = 0;
 				
-			require_once( dirname( __FILE__ ) . '/views/meta-z-index.php' );
+			require_once( dirname( dirname( __FILE__ ) ) . '/views/core/meta-z-index.php' );
 		}
 		
 		/**
@@ -994,7 +994,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 					'http://wordpress.org/extend/plugins/basic-google-maps-placemarks/faq/'
 				);
 				
-				// @todo maybe change this to use views/message.php
+				// @todo maybe change this to use core/views/message.php
 				
 				return $error;
 			}
@@ -1007,7 +1007,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 			
 			ob_start();
 			do_action( BasicGoogleMapsPlacemarks::PREFIX . 'meta-address-before' );
-			require_once( dirname( __FILE__ ) . '/views/shortcode-bgmp-map.php' );
+			require_once( dirname( dirname( __FILE__ ) ) . '/views/core/shortcode-bgmp-map.php' );
 			do_action( BasicGoogleMapsPlacemarks::PREFIX . 'shortcode-bgmp-map-after' );
 			$output = ob_get_clean();
 			
@@ -1061,7 +1061,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 					$address = get_post_meta( $p->ID, self::PREFIX . 'address', true );
 						
 					ob_start();
-					require( dirname( __FILE__ ) . '/views/shortcode-bgmp-list-marker.php' );
+					require( dirname( dirname( __FILE__ ) ) . '/views/core/shortcode-bgmp-list-marker.php' );
 					$markerHTML = ob_get_clean();
 					
 					$output .= apply_filters( self::PREFIX . 'list-marker-output', $markerHTML, $p->ID );
@@ -1257,7 +1257,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 						$categories = array();
 						
 					$icon = wp_get_attachment_image_src( get_post_thumbnail_id( $postID ), apply_filters( self::PREFIX . 'featured-icon-size', 'thumbnail' ) );
-					$defaultIcon = apply_filters( self::PREFIX .'default-icon', plugins_url( 'images/default-marker.png', __FILE__ ), $postID );
+					$defaultIcon = apply_filters( self::PREFIX .'default-icon', plugins_url( 'images/default-marker.png', dirname( __FILE__ ) ), $postID );
 
 					$placemark = array(
 						'id'			=> $postID,
@@ -1300,7 +1300,7 @@ if( !class_exists( 'BasicGoogleMapsPlacemarks' ) )
 						if( $messageData[ 'mode' ] == 'user' || self::DEBUG_MODE )
 							$message .= '<p>'. $messageData[ 'message' ] .'</p>';
 					
-					require( dirname( __FILE__ ) . '/views/message.php' );
+					require( dirname( dirname( __FILE__ ) ) . '/views/core/message.php' );
 					
 					$this->options[ $type ] = array();
 					$this->updatedOptions = true;

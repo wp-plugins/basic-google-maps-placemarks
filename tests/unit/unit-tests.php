@@ -10,7 +10,7 @@
  */
 
 require_once( WP_PLUGIN_DIR . '/simpletest-for-wordpress/WpSimpleTest.php' );
-require_once( WP_PLUGIN_DIR . '/basic-google-maps-placemarks/core.php' );
+require_once( WP_PLUGIN_DIR . '/basic-google-maps-placemarks/classes/core.php' );
 
 // how to do for functhions that don't return anything and just do api stuff? is that where integration tests come in?
 // setUp() backs up all postmarks then deletes. tearDown() restores backup? 
