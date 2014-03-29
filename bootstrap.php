@@ -1,14 +1,14 @@
 <?php
 /*
 Plugin Name: Basic Google Maps Placemarks
-Plugin URI: http://wordpress.org/extend/plugins/basic-google-maps-placemarks/
+Plugin URI:  http://wordpress.org/extend/plugins/basic-google-maps-placemarks/
 Description: Embeds a Google Map into your site and lets you add map markers with custom icons and information windows. Each marker can have a different icon.
-Version: 1.10.2
-Author: Ian Dunn
-Author URI: http://iandunn.name
+Version:     1.10.2
+Author:      Ian Dunn
+Author URI:  http://iandunn.name
 Text Domain: bgmp
 Domain Path: /languages
-License: GPL2
+License:     GPL2
 */
 
 /*  
@@ -28,43 +28,44 @@ License: GPL2
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-if( $_SERVER['SCRIPT_FILENAME'] == __FILE__ )
+if ( ! defined( 'ABSPATH' ) ) {
 	die( 'Access denied.' );
+}
 
 load_plugin_textdomain( 'bgmp', false, basename( dirname( __FILE__ ) ) . '/languages' );
-	
-define( 'BGMP_NAME',					__( 'Basic Google Maps Placemarks', 'bgmp' ) );
-define( 'BGMP_REQUIRED_PHP_VERSION',	'5.2' );	// because of filter_var()
-define( 'BGMP_REQUIRED_WP_VERSION',		'3.1' );	// because of WP_Query[ 'tax_query' ] support
+
+define( 'BGMP_NAME',                 __( 'Basic Google Maps Placemarks', 'bgmp' ) );
+define( 'BGMP_REQUIRED_PHP_VERSION', '5.2' );    // because of filter_var()
+define( 'BGMP_REQUIRED_WP_VERSION',  '3.1' );    // because of WP_Query[ 'tax_query' ] support
 
 
 /**
  * Checks if the system requirements are met
+ *
  * @author Ian Dunn <ian@iandunn.name>
  * @return bool True if system requirements are met, false if not
  */
-function bgmp_requirementsMet()
-{
+function bgmp_requirements_met() {
 	global $wp_version;
-	
-	if( version_compare( PHP_VERSION, BGMP_REQUIRED_PHP_VERSION, '<') )
+
+	if ( version_compare( PHP_VERSION, BGMP_REQUIRED_PHP_VERSION, '<' ) )
 		return false;
-	
-	if( version_compare( $wp_version, BGMP_REQUIRED_WP_VERSION, "<") )
+
+	if ( version_compare( $wp_version, BGMP_REQUIRED_WP_VERSION, "<" ) )
 		return false;
-	
+
 	return true;
 }
 
 /**
  * Prints an error that the system requirements weren't met.
+ *
  * @author Ian Dunn <ian@iandunn.name>
  */
-function bgmp_requirementsNotMet()
-{
+function bgmp_requirements_not_met() {
 	global $wp_version;
-	
-	$class = 'error';
+
+	$class   = 'error';
 	$message = sprintf(
 		__( '%s <strong>requires PHP %s</strong> and <strong>WordPress %s</strong> in order to work. You\'re running PHP %s and WordPress %s. You\'ll need to upgrade in order to use this plugin. If you\'re not sure how to <a href="http://codex.wordpress.org/Switching_to_PHP5">upgrade to PHP 5</a> you can ask your hosting company for assistance, and if you need help upgrading WordPress you can refer to <a href="http://codex.wordpress.org/Upgrading_WordPress">the Codex</a>.', 'bgmp' ),
 		BGMP_NAME,
@@ -73,19 +74,17 @@ function bgmp_requirementsNotMet()
 		PHP_VERSION,
 		esc_html( $wp_version )
 	);
-	
-	require( dirname( __FILE__ ) . '/views/message.php' );
+
+	require( dirname( __FILE__ ) . '/views/core/message.php' );
 }
 
 // Check requirements and instantiate
-if( bgmp_requirementsMet() )
-{
+if ( bgmp_requirements_met() ) {
 	require_once( dirname( __FILE__ ) . '/classes/core.php' );
-	
-	if( class_exists( 'BasicGoogleMapsPlacemarks' ) )
-		$bgmp = new BasicGoogleMapsPlacemarks();
-}
-else
-	add_action( 'admin_notices', 'bgmp_requirementsNotMet' );
 
-?>
+	if ( class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
+		$GLOBALS['bgmp'] = new BasicGoogleMapsPlacemarks();
+	}
+} else {
+	add_action( 'admin_notices', 'bgmp_requirements_not_met' );
+}

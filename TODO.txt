@@ -81,7 +81,7 @@
 ** Roadmap **
 
 1.11
-    coding stanrdards
+    remove cruft like did_action() and @author and singleactivate, dsecribe
     render_template
        plus moving everything into views
 
@@ -91,7 +91,9 @@
     	core.php
     	unit tests into suite too
     	break css/js into front/back end
+    	modernize idadminnotices, then include it instead of having duplicate
 
+    check that readme instructions and customizations still work
 
 1.minor.x
 	http://make.wordpress.org/plugins/2013/04/11/google-maps-javascript-v2-api-to-be-removed/

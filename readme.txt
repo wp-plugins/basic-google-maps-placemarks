@@ -1,11 +1,11 @@
 === Basic Google Maps Placemarks ===
-Contributors: iandunn
-Donate link: http://www.doctorswithoutborders.org
-Tags: map, google maps, marker, placemark, geocode, shortcode, marker clustering
+Contributors:      iandunn
+Donate link:       http://www.doctorswithoutborders.org
+Tags:              map, google maps, marker, placemark, geocode, shortcode, marker clustering
 Requires at least: 3.1
-Tested up to: 3.9
-Stable tag: 1.10.2
-License: GPL2
+Tested up to:      3.9
+Stable tag:        1.10.2
+License:           GPL2
 
 Embeds a Google Map into your site and lets you add map markers with custom icons and information windows.
 
@@ -391,7 +391,8 @@ If you make customizations that could be beneficial to other users, please start
 == Changelog ==
 
 = v1.11 () =
-* [UPDATE] Organized files into more subdirectories
+* [UPDATE] Organized files into more subdirectories.
+* [UPDATE] Conformed files to WordPress coding standards.
 
 = v1.10.2 (1/8/2014) =
 * [NEW] Added Spanish translation
