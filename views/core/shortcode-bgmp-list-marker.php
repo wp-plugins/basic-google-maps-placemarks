@@ -19,4 +19,4 @@
 			<?php echo wp_kses( $address, wp_kses_allowed_html( 'post' ) ); ?>
 		</a>
 	</p>
-</li>	
+</li>
