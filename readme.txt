@@ -393,6 +393,7 @@ If you make customizations that could be beneficial to other users, please start
 = v1.11 () =
 * [UPDATE] Organized files into more subdirectories.
 * [UPDATE] Conformed files to WordPress coding standards.
+* [UPDATE] Removed some bloated and unnecessary code.
 
 = v1.10.2 (1/8/2014) =
 * [NEW] Added Spanish translation

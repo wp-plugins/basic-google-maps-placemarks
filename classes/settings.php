@@ -3,10 +3,6 @@
 if ( ! class_exists( 'BGMPSettings' ) ) {
 	/**
 	 * Registers and handles the plugin's settings
-	 *
-	 * @package BasicGoogleMapsPlacemarks
-	 * @author  Ian Dunn <ian@iandunn.name>
-	 * @link    http://wordpress.org/extend/plugins/basic-google-maps-placemarks/
 	 */
 	class BGMPSettings {
 		public $mapWidth, $mapHeight, $mapAddress, $mapLatitude, $mapLongitude, $mapZoom, $mapType, $mapTypes, $mapTypeControl, $mapNavigationControl, $mapInfoWindowMaxWidth;
@@ -14,7 +10,6 @@ if ( ! class_exists( 'BGMPSettings' ) ) {
 		/**
 		 * Constructor
 		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 * @param object BasicGoogleMapsPlacemarks object
 		 */
 		public function __construct() {
@@ -28,8 +23,6 @@ if ( ! class_exists( 'BGMPSettings' ) ) {
 
 		/**
 		 * Performs various initialization functions
-		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function init() {
 			// @todo saving this as a single array instead of separate options
@@ -63,9 +56,8 @@ if ( ! class_exists( 'BGMPSettings' ) ) {
 
 		/**
 		 * Get the map center coordinates from the address and update the database values
-		 * The latitude/longitude need to be updated when the address changes, but there's no way to do that with the settings API
 		 *
-		 * @author Ian Dunn <ian@iandunn.name>
+		 * The latitude/longitude need to be updated when the address changes, but there's no way to do that with the settings API
 		 */
 		public function updateMapCoordinates() {
 			// @todo - this could be done during a settings validation callback?
@@ -98,8 +90,6 @@ if ( ! class_exists( 'BGMPSettings' ) ) {
 
 		/**
 		 * Adds a page to Settings menu
-		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function addSettingsPage() {
 			add_options_page(
@@ -119,8 +109,6 @@ if ( ! class_exists( 'BGMPSettings' ) ) {
 
 		/**
 		 * Creates the markup for the settings page
-		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function markupSettingsPage() {
 			$rasrMetaBoxID   = BasicGoogleMapsPlacemarks::PREFIX . 'rasr-plug';
@@ -138,8 +126,6 @@ if ( ! class_exists( 'BGMPSettings' ) ) {
 
 		/**
 		 * Creates the markup for the Re-Abolish Slavery Ribbon meta box
-		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function markupRASRMetaBox() {
 			require_once( dirname( dirname( __FILE__ ) ) . '/views/settings/meta-re-abolish-slavery.php' );
@@ -148,7 +134,6 @@ if ( ! class_exists( 'BGMPSettings' ) ) {
 		/**
 		 * Adds a 'Settings' link to the Plugins page
 		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 * @param array $links The links currently mapped to the plugin
 		 * @return array
 		 */
@@ -161,9 +146,8 @@ if ( ! class_exists( 'BGMPSettings' ) ) {
 
 		/**
 		 * Adds our custom settings to the admin Settings pages
-		 * We intentionally don't register the map-latitude and map-longitude settings because they're set by updateMapCoordinates()
 		 *
-		 * @author Ian Dunn <ian@iandunn.name>
+		 * We intentionally don't register the map-latitude and map-longitude settings because they're set by updateMapCoordinates()
 		 */
 		public function addSettings() {
 			add_settings_section(
@@ -313,7 +297,6 @@ if ( ! class_exists( 'BGMPSettings' ) ) {
 		/**
 		 * Adds the markup for the  section introduction text to the Settings page
 		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 * @param array $section
 		 */
 		public function markupSettingsSections( $section ) {
@@ -335,7 +318,6 @@ if ( ! class_exists( 'BGMPSettings' ) ) {
 		/**
 		 * Adds the markup for the all of the fields in the Map Settings section
 		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 * @param array $field
 		 */
 		public function markupMapSettingsFields( $field ) {
@@ -414,7 +396,6 @@ if ( ! class_exists( 'BGMPSettings' ) ) {
 		/**
 		 * Adds the markup for the all of the fields in the Map Settings section
 		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 * @param array $field
 		 */
 		public function markupMarkerClusterFields( $field ) {

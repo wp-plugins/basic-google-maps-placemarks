@@ -1,15 +1,7 @@
 <?php
 
 if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
-	/**
-	 * A WordPress plugin that adds a custom post type for placemarks and builds a Google Map with them
-	 *
-	 * @package BasicGoogleMapsPlacemarks
-	 * @author  Ian Dunn <ian@iandunn.name>
-	 * @link    http://wordpress.org/extend/plugins/basic-google-maps-placemarks/
-	 */
 	class BasicGoogleMapsPlacemarks {
-		// Declare variables and constants
 		protected $settings, $options, $updatedOptions, $userMessageCount, $mapShortcodeCalled, $mapShortcodeCategories;
 		const VERSION    = '1.10.2';
 		const PREFIX     = 'bgmp_';
@@ -21,8 +13,6 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 		/**
 		 * Constructor
-		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function __construct() {
 			add_action( 'init',                     array( $this, 'init' ), 8 );                        // lower priority so that variables defined here will be available to BGMPSettings class and other init callbacks
@@ -52,22 +42,22 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 		/**
 		 * Performs various initialization functions
-		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function init() {
-			if ( did_action( 'init' ) !== 1 )
-				return;
-
 			$defaultOptions = array( 'updates' => array(), 'errors' => array(), 'dbVersion' => '0' );
 			$this->options  = array_merge( $defaultOptions, get_option( self::PREFIX . 'options', array() ) );
 
-			if ( ! is_array( $this->options ) )
+			if ( ! is_array( $this->options ) ) {
 				$this->options = $defaultOptions;
-			if ( ! is_array( $this->options['updates'] ) )
+			}
+
+			if ( ! is_array( $this->options['updates'] ) ) {
 				$this->options['updates'] = array();
-			if ( ! is_array( $this->options['errors'] ) )
+			}
+
+			if ( ! is_array( $this->options['errors'] ) ) {
 				$this->options['errors'] = array();
+			}
 
 			$this->userMessageCount       = array( 'updates' => count( $this->options['updates'] ), 'errors' => count( $this->options['errors'] ) );
 			$this->updatedOptions         = false;
@@ -77,8 +67,6 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 		/**
 		 * Getter method for instance of the BGMPSettings class, used for unit testing
-		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function &getSettings() {
 			return $this->settings;
@@ -87,7 +75,6 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		/**
 		 * Handles extra activation tasks for MultiSite installations
 		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 * @param bool $networkWide True if the activation was network-wide
 		 */
 		public function networkActivate( $networkWide ) {
@@ -109,91 +96,16 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 					) );
 					*/
 				}
-
-				// Activate the plugin across the network if requested
-				if ( $networkWide ) {
-					$blogs = $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs" );
-
-					foreach ( $blogs as $b ) {
-						switch_to_blog( $b );
-						$this->singleActivate();
-					}
-
-					restore_current_blog();
-				}
-				else
-					$this->singleActivate();
 			}
-			else
-				$this->singleActivate();
-		}
-
-		/**
-		 * Prepares a single blog to use the plugin
-		 *
-		 * @author Ian Dunn <ian@iandunn.name>
-		 */
-		protected function singleActivate() {
-			// Save default settings
-			if ( ! get_option( self::PREFIX . 'map-width' ) )
-				add_option( self::PREFIX . 'map-width', 600 );
-			if ( ! get_option( self::PREFIX . 'map-height' ) )
-				add_option( self::PREFIX . 'map-height', 400 );
-			if ( ! get_option( self::PREFIX . 'map-address' ) )
-				add_option( self::PREFIX . 'map-address', __( 'Seattle', 'bgmp' ) );
-			if ( ! get_option( self::PREFIX . 'map-latitude' ) )
-				add_option( self::PREFIX . 'map-latitude', 47.6062095 );
-			if ( ! get_option( self::PREFIX . 'map-longitude' ) )
-				add_option( self::PREFIX . 'map-longitude', - 122.3320708 );
-			if ( ! get_option( self::PREFIX . 'map-zoom' ) )
-				add_option( self::PREFIX . 'map-zoom', 7 );
-			if ( ! get_option( self::PREFIX . 'map-type' ) )
-				add_option( self::PREFIX . 'map-type', 'ROADMAP' );
-			if ( ! get_option( self::PREFIX . 'map-type-control' ) )
-				add_option( self::PREFIX . 'map-type-control', 'off' );
-			if ( ! get_option( self::PREFIX . 'map-navigation-control' ) )
-				add_option( self::PREFIX . 'map-navigation-control', 'DEFAULT' );
-			if ( ! get_option( self::PREFIX . 'map-info-window-width' ) )
-				add_option( self::PREFIX . 'map-info-window-width', 500 );
-
-			if ( ! get_option( self::PREFIX . 'marker-clustering' ) )
-				add_option( self::PREFIX . 'marker-clustering', '' );
-			if ( ! get_option( self::PREFIX . 'cluster-max-zoom' ) )
-				add_option( self::PREFIX . 'cluster-max-zoom', '7' );
-			if ( ! get_option( self::PREFIX . 'cluster-grid-size' ) )
-				add_option( self::PREFIX . 'cluster-grid-size', '40' );
-			if ( ! get_option( self::PREFIX . 'cluster-style' ) )
-				add_option( self::PREFIX . 'cluster-style', 'default' );
-
-			// @todo - this isn't DRY, same values in BGMPSettings::__construct() and upgrade()
-		}
-
-		/**
-		 * Runs activation code on a new WPMS site when it's created
-		 *
-		 * @author Ian Dunn <ian@iandunn.name>
-		 * @param int $blogID
-		 */
-		public function activateNewSite( $blogID ) {
-			if ( did_action( 'wpmu_new_blog' ) !== 1 )
-				return;
-
-			switch_to_blog( $blogID );
-			$this->singleActivate();
-			restore_current_blog();
 		}
 
 		/**
 		 * Checks if the plugin was recently updated and upgrades if necessary
-		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function upgrade() {
-			if ( did_action( 'init' ) !== 1 )
+			if ( version_compare( $this->options['dbVersion'], self::VERSION, '==' ) ) {
 				return;
-
-			if ( version_compare( $this->options['dbVersion'], self::VERSION, '==' ) )
-				return;
+			}
 
 			if ( version_compare( $this->options['dbVersion'], '1.1', '<' ) ) {
 				// Populate new Address field from existing coordinate fields
@@ -213,25 +125,6 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 				}
 			}
 
-			if ( version_compare( $this->options['dbVersion'], '1.6', '<' ) ) {
-				// Add new options
-				add_option( self::PREFIX . 'map-type', 'ROADMAP' );
-				add_option( self::PREFIX . 'map-type-control', 'off' );
-				add_option( self::PREFIX . 'map-navigation-control', 'DEFAULT' );
-
-				// @todo - this isn't DRY, those default values appear in activate and settings->construct. should have single array to hold them all
-			}
-
-			if ( version_compare( $this->options['dbVersion'], '1.9', '<' ) ) {
-				// Add new options
-				add_option( self::PREFIX . 'marker-clustering', '' );
-				add_option( self::PREFIX . 'cluster-max-zoom', '7' );
-				add_option( self::PREFIX . 'cluster-grid-size', '40' );
-				add_option( self::PREFIX . 'cluster-style', 'default' );
-
-				// @todo - this isn't DRY, those default values appear in activate and settings->construct. should have single array to hold them all
-			}
-
 			$this->options['dbVersion'] = self::VERSION;
 			$this->updatedOptions       = true;
 
@@ -249,14 +142,9 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 		/**
 		 * Adds featured image support
-		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function addFeaturedImageSupport() {
 			global $wp_version;
-
-			if ( did_action( 'after_setup_theme' ) !== 1 )
-				return;
 
 			// We enabled image media buttons for MultiSite on activation, but the admin may have turned it back off
 			if ( version_compare( $wp_version, '3.3', "<=" ) && is_admin() && function_exists( 'is_multisite' ) && is_multisite() ) {
@@ -286,7 +174,6 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		/**
 		 * Gets all of the shortcodes in the current post
 		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 * @param string $content
 		 * @return mixed false | array
 		 */
@@ -303,7 +190,6 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		/**
 		 * Validates and cleans the map shortcode arguments
 		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 * @param array
 		 * @return array
 		 */
@@ -472,7 +358,6 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		/**
 		 * Checks the current post to see if they contain the map shortcode
 		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 * @link   http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-can-i-use-the-shortcode-on-any-php-without-assign-it-in-functionphp
 		 * @return bool
 		 */
@@ -502,18 +387,8 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 		/**
 		 * Load CSS and JavaScript files
-		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function loadResources() {
-			if ( is_admin() ) {
-				if ( did_action( 'admin_enqueue_scripts' ) !== 1 )
-					return;
-			} else {
-				if ( did_action( 'wp' ) !== 1 )
-					return;
-			}
-
 			$googleMapsLanguage = apply_filters( self::PREFIX . 'map-language', '' );
 			if ( $googleMapsLanguage ) {
 				$googleMapsLanguage = '&language=' . $googleMapsLanguage;
@@ -577,14 +452,8 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 		/**
 		 * Outputs elements in the <head> section of the front-end
-		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function outputHead() {
-			if ( did_action( 'wp_head' ) !== 1 ) {
-				return;
-			}
-
 			if ( $this->mapShortcodeCalled ) {
 				do_action( BasicGoogleMapsPlacemarks::PREFIX . 'head-before' );
 				require_once( dirname( dirname( __FILE__ ) ) . '/views/core/front-end-head.php' );
@@ -594,14 +463,8 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 		/**
 		 * Registers the custom post type
-		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function createPostType() {
-			if ( did_action( 'init' ) !== 1 ) {
-				return;
-			}
-
 			if ( ! post_type_exists( self::POST_TYPE ) ) {
 				$labels = array(
 					'name'               => __( 'Placemarks', 'bgmp' ),
@@ -640,14 +503,8 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 		/**
 		 * Registers the category taxonomy
-		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function createCategoryTaxonomy() {
-			if ( did_action( 'init' ) !== 1 ) {
-				return;
-			}
-
 			if ( ! taxonomy_exists( self::TAXONOMY ) ) {
 				$taxonomyParams = array(
 					'label'                 => __( 'Category', 'bgmp' ),
@@ -667,8 +524,6 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 		/**
 		 * Sorts the posts by the title in the admin view posts screen
-		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		function sortAdminView( $query ) {
 			global $pagenow;
@@ -683,14 +538,8 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 		/**
 		 * Adds meta boxes for the custom post type
-		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function addMetaBoxes() {
-			if ( did_action( 'admin_init' ) !== 1 ) {
-				return;
-			}
-
 			add_meta_box(
 				self::PREFIX . 'placemark-address',
 				__( 'Placemark Address', 'bgmp' ),
@@ -712,8 +561,6 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 		/**
 		 * Outputs the markup for the address fields
-		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function markupAddressFields() {
 			global $post;
@@ -729,8 +576,6 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 		/**
 		 * Outputs the markup for the stacking order field
-		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function markupZIndexField() {
 			global $post;
@@ -747,12 +592,8 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		 * Saves values of the the custom post type's extra fields
 		 *
 		 * @param int $postID
-		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function saveCustomFields( $postID ) {
-			if ( did_action( 'save_post' ) !== 1 )
-				return;
-
 			global $post;
 			$coordinates    = false;
 			$ignoredActions = array( 'trash', 'untrash', 'restore' );
@@ -802,7 +643,6 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		 * Geocodes an address
 		 *
 		 * @param string $address
-		 * @author Ian Dunn <ian@iandunn.name>
 		 * @return mixed
 		 */
 		public function geocode( $address ) {
@@ -888,7 +728,6 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		 * Checks if a given string represents a valid set of geographic coordinates
 		 * Expects latitude/longitude notation, not minutes/seconds
 		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 * @param string $coordinates
 		 * @return mixed false if any of the tests fails | an array with 'latitude' and 'longitude' keys/value pairs if all of the tests succeed
 		 */
@@ -926,7 +765,6 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		 *
 		 * @param string $latitude
 		 * @param string $longitude
-		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		protected function reverseGeocode( $latitude, $longitude ) {
 			$geocodeResponse = wp_remote_get( 'http://maps.googleapis.com/maps/api/geocode/json?latlng=' . $latitude . ',' . $longitude . '&sensor=false' );
@@ -942,9 +780,8 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		/**
 		 * Defines the [bgmp-map] shortcode
 		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 * @param array $attributes Array of parameters automatically passed in by WordPress
-		 *                          return string The output of the shortcode
+		 * @return string The output of the shortcode
 		 */
 		public function mapShortcode( $attributes ) {
 			if ( ! wp_script_is( 'googleMapsAPI', 'queue' ) || ! wp_script_is( 'bgmp', 'queue' ) || ! wp_style_is( self::PREFIX . 'style', 'queue' ) ) {
@@ -977,9 +814,8 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		/**
 		 * Defines the [bgmp-list] shortcode
 		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 * @param array $attributes Array of parameters automatically passed in by WordPress
-		 *                          return string The output of the shortcode
+		 * @return string The output of the shortcode
 		 */
 		public function listShortcode( $attributes ) {
 			$attributes = apply_filters( self::PREFIX . 'list-shortcode-arguments', $attributes );
@@ -1035,7 +871,6 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		/**
 		 * Gets map options
 		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 * @param array $attributes
 		 * @return string JSON-encoded array
 		 */
@@ -1170,7 +1005,6 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		/**
 		 * Gets the published placemarks from the database, formats and outputs them.
 		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 * @param array $attributes
 		 * @return string JSON-encoded array
 		 */
@@ -1232,14 +1066,10 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 		/**
 		 * Displays updates and errors
-		 * NOTE: In order to allow HTML in the output, any unsafe variables passed to enqueueMessage() need to be escaped before they're passed in, instead of escaping here.
 		 *
-		 * @author Ian Dunn <ian@iandunn.name>
+		 * NOTE: In order to allow HTML in the output, any unsafe variables passed to enqueueMessage() need to be escaped before they're passed in, instead of escaping here.
 		 */
 		public function printMessages() {
-			if ( did_action( 'admin_notices' ) !== 1 )
-				return;
-
 			foreach ( array( 'updates', 'errors' ) as $type ) {
 				if ( $this->options[$type] && ( self::DEBUG_MODE || $this->userMessageCount[$type] ) ) {
 					$message = '';
@@ -1261,9 +1091,9 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 		/**
 		 * Queues up a message to be displayed to the user
+		 *
 		 * NOTE: In order to allow HTML in the output, any unsafe variables in $message need to be escaped before they're passed in, instead of escaping here.
 		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 * @param string $message The text to show the user
 		 * @param string $type    'update' for a success or notification message, or 'error' for an error message
 		 * @param string $mode    'user' if it's intended for the user, or 'debug' if it's intended for the developer
@@ -1293,92 +1123,11 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		}
 
 		/**
-		 * Prints the output in various ways for debugging.
-		 *
-		 * @author Ian Dunn <ian@iandunn.name>
-		 * @param mixed  $data
-		 * @param string $output  'message' will be sent to an admin notice; 'die' will be output inside wp_die(); 'transient' will create a transient in the database; 'return' will be returned;
-		 * @param string $message Optionally message to output before description
-		 * @return mixed
-		 */
-		protected function describe( $data, $output = 'die', $message = '' ) {
-			$type = gettype( $data );
-
-			// Build description
-			switch ( $type ) {
-				case 'array':
-				case 'object':
-					$length = count( $data );
-					$data   = print_r( $data, true );
-					break;
-
-				case 'string';
-					$length = strlen( $data );
-					break;
-
-				default:
-					$length = count( $data );
-
-					ob_start();
-					var_dump( $data );
-					$data = ob_get_contents();
-					ob_end_clean();
-
-					$data = print_r( $data, true );
-					break;
-			}
-
-			$description = sprintf( '
-				<p>
-					%s
-					%s: %s<br />
-					%s: %s<br />
-					%s: <br /><blockquote><pre>%s</pre></blockquote>
-				</p>',
-				( $message ? 'Message: ' . $message . '<br />' : '' ),
-				__( 'Type', 'bgmp' ),
-				$type,
-				__( 'Length', 'bgmp' ),
-				$length,
-				__( 'Content', 'bgmp' ),
-				htmlspecialchars( $data )
-			);
-
-			// Output description
-			switch ( $output ) {
-				case 'notice':
-					$this->enqueueMessage( $description, 'error' );
-					break;
-
-				case 'die':
-					wp_die( $description );
-					break;
-
-				case 'output':
-					return $description;
-					break;
-
-				case 'transient':
-					$uniqueKey = $message ? str_replace( array( ' ', '-', '/', '\\', '.' ), '_', $message ) : mt_rand(); // removes characters that are invalid in MySQL column names
-					set_transient( self::PREFIX . 'describe_' . $uniqueKey, $description, 60 * 5 );
-					break;
-
-				case 'echo':
-				default:
-					echo $description; // @todo - want to esc_html on message, but not entire description. can't do to $message above because don't want to escape for other switch cases
-					break;
-			}
-		}
-
-		/**
 		 * Writes options to the database
 		 *
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function shutdown() {
-			if ( did_action( 'shutdown' ) !== 1 )
-				return;
-
 			if ( $this->updatedOptions )
 				update_option( self::PREFIX . 'options', $this->options );
 		}

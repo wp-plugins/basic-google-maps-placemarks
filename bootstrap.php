@@ -42,7 +42,6 @@ define( 'BGMP_REQUIRED_WP_VERSION',  '3.1' );    // because of WP_Query[ 'tax_qu
 /**
  * Checks if the system requirements are met
  *
- * @author Ian Dunn <ian@iandunn.name>
  * @return bool True if system requirements are met, false if not
  */
 function bgmp_requirements_met() {
@@ -59,8 +58,6 @@ function bgmp_requirements_met() {
 
 /**
  * Prints an error that the system requirements weren't met.
- *
- * @author Ian Dunn <ian@iandunn.name>
  */
 function bgmp_requirements_not_met() {
 	global $wp_version;
