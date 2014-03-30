@@ -77,18 +77,17 @@
     render_template
        move hardcoded html into views
        maybe deprecate the actions in existing views, or move them into generic ones in render_template
-    remove PREFIX and use 'bgmp_' directly
-	remove networkActivate b/c mubuttons no longer needed?
+    rename functions to underscore
+    		what about back-compat?
+        modularitity / oop design not just oop functions
+        	base module that has render_template
+        	core.php broken up
+        	unit tests into suite too
+        	break css/js into front/back end
+
+    remove networkActivate b/c mubuttons no longer needed?
 		would also affect addFeaturedImageSupport
 		if not, switch to use add_notice
-	rename functions to underscore
-		what about back-compat?
-    modularitity / oop design not just oop functions
-    	base module that has render_template
-    	core.php broken up
-    	unit tests into suite too
-    	break css/js into front/back end
-
 	$updatedOptions and shutdown() no longer needed in core.php ? should probably be handled in settings, but looks like needs a bit of work to get there
 	call clenmapshortcodes so users will get erorrs immediately when entering bad data
 
@@ -170,11 +169,6 @@
 		Ridgididgi - help on forums, link to profile?
 		guy who contributed code - check changelog
 
-	change all instance of "bgmp_" in FAQ to BasicGoogleMapsPlacemarks::PREFIX ?
-		also post type, category, etc
-		test out first
-			both in theme and functionality plugin that loads before bgmp
-
 	change to mpango contact form instead of iandunn for customizations?
 
 	use "@deprecated" instead of just "deprecated" or @todo
@@ -183,8 +177,6 @@
 		take wpms into account
 		uninstall settings but not data. note that on the installation page under an 'uninstall' section
 		removed the infowindow height and renamed the infowindow width (to maxwidth) option in v1.2.1 or 1.3. remember that you still need to remove from db here
-
-	shouuld be using $this::PREFIX instead of self::PREFIX ?
 
 	bgmp add filter for gmaps url so guy can do language=no w/out moding core
 		what was forum url? add to list below
@@ -249,7 +241,7 @@
 	cleanup, refactor stuff?
 		lots of TODOs in code
 
-	if( !get_option( self::PREFIX . 'map-width' ) ), etc should be necessary in singleActivate(). add_option() already checks if it exists
+	if( !get_option( 'bgmp_map-width' ) ), etc should be necessary in singleActivate(). add_option() already checks if it exists
 		remove and test
 
 
@@ -451,12 +443,6 @@
 		create a bgmp.log() that's a wrapper for if(window.console) console.log
 	width px and % -- http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-how-to-tweak-the-code-to-get-width-instead-of-fixed-px?replies=4#post-2242249
 		test to make sure it can work as he described across browsers. if so, probalby just leave as is and update docs to let people know
-	describe()
-		add 'transient' as option
-			set_transient( self::PREFIX .'consturct', 'blah', 60 );
-		add 'echo' behavior, and return another option
-			already copy/pasted, but need to test
-		make it a switch instead of if else ifelse
 
 1.major.minor
 	loadresources isn't specifiying a version number for the maps api. if they switch to v4 i don't want to plugin to automatically do it

@@ -5,27 +5,27 @@
 	<h2><?php printf( __( '%s Settings', 'bgmp' ), BGMP_NAME ); ?></h2>
 
 	<form method="post" action="options.php">
-		<?php do_action( BasicGoogleMapsPlacemarks::PREFIX . 'settings-before' ); ?>
+		<?php do_action( 'bgmp_settings-before' ); ?>
 
 		<?php // @todo add nonce for settings? ?>
 
-		<div id="<?php echo BasicGoogleMapsPlacemarks::PREFIX; ?>settings-fields">
-			<?php settings_fields( BasicGoogleMapsPlacemarks::PREFIX . 'settings' ); ?>
-			<?php do_settings_sections( BasicGoogleMapsPlacemarks::PREFIX . 'settings' ); ?>
+		<div id="bgmp_settings-fields">
+			<?php settings_fields( 'bgmp_settings' ); ?>
+			<?php do_settings_sections( 'bgmp_settings' ); ?>
 
 			<p class="submit">
 				<input type="submit" name="submit" id="submit" class="button-primary" value="<?php esc_attr_e( 'Save Changes' ); ?>" />
 			</p>
 		</div>
-		<!-- /#<?php echo BasicGoogleMapsPlacemarks::PREFIX; ?>settings-fields -->
+		<!-- /#bgmp_settings-fields -->
 
-		<div id="<?php echo BasicGoogleMapsPlacemarks::PREFIX; ?>settings-meta-boxes" class="metabox-holder">
+		<div id="bgmp_settings-meta-boxes" class="metabox-holder">
 			<div class="postbox-container">
-				<?php do_meta_boxes( 'settings_page_' . BasicGoogleMapsPlacemarks::PREFIX . 'settings', 'side', NULL ); ?>
+				<?php do_meta_boxes( 'settings_page_' . 'bgmp_settings', 'side', NULL ); ?>
 				<?php wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce' ); ?>
 			</div>
 		</div>
 
-		<?php do_action( BasicGoogleMapsPlacemarks::PREFIX . 'settings-after' ); ?>
+		<?php do_action( 'bgmp_settings-after' ); ?>
 	</form>
 </div> <!-- .wrap -->

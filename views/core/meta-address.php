@@ -1,13 +1,13 @@
-<?php do_action( self::PREFIX . 'meta-address-before' ); ?>
+<?php do_action( 'bgmp_meta-address-before' ); ?>
 
 	<p><?php _e( 'Enter the address of the placemark. You can type in anything that you would type into a Google Maps search field, from a full address to an intersection, landmark, city or just a zip code.', 'bgmp' ); ?></p>
 
-	<table id="bgmp-placemark-coordinates">    <?php // @todo should use self::PREFIX, but too late b/c users already styling w/ this ?>
+	<table id="bgmp-placemark-coordinates">    <?php // @todo should use bgmp_, but too late b/c users already styling w/ this ?>
 		<tbody>
 		<tr>
-			<th><label for="<?php echo self::PREFIX; ?>address"><?php _e( 'Address:', 'bgmp' ); ?></label></th>
+			<th><label for="bgmp_address"><?php _e( 'Address:', 'bgmp' ); ?></label></th>
 			<td>
-				<input id="<?php echo self::PREFIX; ?>address" name="<?php echo self::PREFIX; ?>address" type="text" class="regular-text" value="<?php echo $address; ?>" />
+				<input id="bgmp_address" name="bgmp_address" type="text" class="regular-text" value="<?php echo $address; ?>" />
 
 				<?php if ( $showGeocodeResults ) : ?>
 					<em><?php printf( __( '(Geocoded to: %f, %f)', 'bgmp' ), $latitude, $longitude ); ?></em>
@@ -20,4 +20,4 @@
 		</tbody>
 	</table>
 
-<?php do_action( self::PREFIX . 'meta-address-after' ); ?>
+<?php do_action( 'bgmp_meta-address-after' ); ?>

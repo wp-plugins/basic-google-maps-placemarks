@@ -20,9 +20,8 @@ function bgmp_wrapper( $ ) {
 		 */
 		init: function () {
 			// Initialize variables
-			$.bgmp.prefix            = 'bgmp_';
 			$.bgmp.name              = 'Basic Google Maps Placemarks';
-			$.bgmp.canvas            = document.getElementById( $.bgmp.prefix + 'map-canvas' );    // We have to use getElementById instead of a jQuery selector here in order to pass it to the Maps API.
+			$.bgmp.canvas            = document.getElementById( 'bgmp_map-canvas' );    // We have to use getElementById instead of a jQuery selector here in order to pass it to the Maps API.
 			$.bgmp.map               = undefined;
 			$.bgmp.markerClusterer   = undefined;
 			$.bgmp.markers           = {};
@@ -47,7 +46,7 @@ function bgmp_wrapper( $ ) {
 			bgmpData.options.clustering.gridSize = parseInt( bgmpData.options.clustering.gridSize );
 
 			// Register event handlers
-			$( '.' + $.bgmp.prefix + 'list' ).find( 'a' ).filter( '.' + $.bgmp.prefix + 'view-on-map' ).click( $.bgmp.viewOnMap );
+			$( '.' + 'bgmp_list' ).find( 'a' ).filter( '.' + 'bgmp_view-on-map' ).click( $.bgmp.viewOnMap );
 
 			// Build map
 			if ( $.bgmp.canvas ) {
@@ -83,8 +82,8 @@ function bgmp_wrapper( $ ) {
 			};
 
 			// Override default width/heights from settings
-			$( '#' + $.bgmp.prefix + 'map-canvas' ).css( 'width',  bgmpData.options.mapWidth );    // @todo use $.bgmp.canvas intead of hardcoding it?
-			$( '#' + $.bgmp.prefix + 'map-canvas' ).css( 'height', bgmpData.options.mapHeight );
+			$( '#' + 'bgmp_map-canvas' ).css( 'width',  bgmpData.options.mapWidth );    // @todo use $.bgmp.canvas intead of hardcoding it?
+			$( '#' + 'bgmp_map-canvas' ).css( 'height', bgmpData.options.mapHeight );
 			// @todo this prevents users from using their own stylesheet?
 
 
@@ -94,7 +93,7 @@ function bgmp_wrapper( $ ) {
 			} catch ( e ) {
 				$( $.bgmp.canvas ).html( $.bgmp.name + " error: couln't build map." );
 				if ( window.console )
-					console.log( $.bgmp.prefix + 'buildMap: ' + e );
+					console.log( 'bgmp_buildMap: ' + e );
 
 				return;
 			}
@@ -202,7 +201,7 @@ function bgmp_wrapper( $ ) {
 				zIndex = 0;
 			}
 
-			infoWindowContent = '<div class="' + $.bgmp.prefix + 'placemark"> <h3>' + title + '</h3> <div>' + details + '</div> </div>';
+			infoWindowContent = '<div class="' + 'bgmp_placemark"> <h3>' + title + '</h3> <div>' + details + '</div> </div>';
 
 			try {
 				// Replace commas with periods. Some (human) languages use commas to delimit the fraction from the whole number, but Google Maps doesn't accept that.
@@ -230,7 +229,7 @@ function bgmp_wrapper( $ ) {
 				//$( $.bgmp.canvas ).append( '<p>' + $.bgmp.name + " error: couldn't add map placemarks.</p>");		// add class for making red? other places need this too?	// @todo - need to figure out a good way to alert user that placemarks couldn't be added
 
 				if ( window.console ) {
-					console.log( $.bgmp.prefix + 'createMarker: ' + e );
+					console.log( 'bgmp_createMarker: ' + e );
 				}
 			}
 		},
@@ -249,7 +248,7 @@ function bgmp_wrapper( $ ) {
 
 			if ( bgmpData.options.viewOnMapScroll ) {
 				$( 'html, body' ).animate(
-					{ scrollTop: $( '#' + $.bgmp.prefix + 'map-canvas' ).offset().top },
+					{ scrollTop: $( '#' + 'bgmp_map-canvas' ).offset().top },
 					900
 				);
 			}

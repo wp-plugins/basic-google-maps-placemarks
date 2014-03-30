@@ -4,7 +4,6 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 	class BasicGoogleMapsPlacemarks {
 		protected $settings, $options, $updatedOptions, $mapShortcodeCalled, $mapShortcodeCategories;
 		const VERSION    = '1.10.2';
-		const PREFIX     = 'bgmp_';
 		const POST_TYPE  = 'bgmp';
 		const TAXONOMY   = 'bgmp-category';
 		const ZOOM_MIN   = 0;
@@ -44,7 +43,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		 */
 		public function init() {
 			$defaultOptions = array( 'updates' => array(), 'errors' => array(), 'dbVersion' => '0' );
-			$this->options  = array_merge( $defaultOptions, get_option( self::PREFIX . 'options', array() ) );
+			$this->options  = array_merge( $defaultOptions, get_option( 'bgmp_options', array() ) );
 
 			if ( ! is_array( $this->options ) ) {
 				$this->options = $defaultOptions;
@@ -111,14 +110,14 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 				$posts = get_posts( array( 'numberposts' => - 1, 'post_type' => self::POST_TYPE ) );
 				if ( $posts ) {
 					foreach ( $posts as $p ) {
-						$address   = get_post_meta( $p->ID, self::PREFIX . 'address', true );
-						$latitude  = get_post_meta( $p->ID, self::PREFIX . 'latitude', true );
-						$longitude = get_post_meta( $p->ID, self::PREFIX . 'longitude', true );
+						$address   = get_post_meta( $p->ID, 'bgmp_address', true );
+						$latitude  = get_post_meta( $p->ID, 'bgmp_latitude', true );
+						$longitude = get_post_meta( $p->ID, 'bgmp_longitude', true );
 
 						if ( empty( $address ) && ! empty( $latitude ) && ! empty( $longitude ) ) {
 							$address = $this->reverseGeocode( $latitude, $longitude );
 							if ( $address )
-								update_post_meta( $p->ID, self::PREFIX . 'address', $address );
+								update_post_meta( $p->ID, 'bgmp_address', $address );
 						}
 					}
 				}
@@ -232,8 +231,8 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 				// Check for valid coordinates
 				if ( $pass ) {
-					$latitude    = get_post_meta( $arguments['placemark'], self::PREFIX . 'latitude', true );
-					$longitude   = get_post_meta( $arguments['placemark'], self::PREFIX . 'longitude', true );
+					$latitude    = get_post_meta( $arguments['placemark'], 'bgmp_latitude', true );
+					$longitude   = get_post_meta( $arguments['placemark'], 'bgmp_longitude', true );
 					$coordinates = $this->validateCoordinates( $latitude . ',' . $longitude );
 
 					if ( $coordinates === false ) {
@@ -350,7 +349,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 			}
 
 
-			return apply_filters( self::PREFIX . 'clean-map-shortcode-arguments-return', $arguments );
+			return apply_filters( 'bgmp_clean-map-shortcode-arguments-return', $arguments );
 		}
 
 		/**
@@ -362,8 +361,8 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		protected function mapShortcodeCalled() {
 			global $post;
 
-			$this->mapShortcodeCalled = apply_filters( self::PREFIX . 'mapShortcodeCalled', $this->mapShortcodeCalled ); // @todo - deprecated b/c not consistent w/ shortcode naming scheme. need a way to notify people
-			$this->mapShortcodeCalled = apply_filters( self::PREFIX . 'map-shortcode-called', $this->mapShortcodeCalled );
+			$this->mapShortcodeCalled = apply_filters( 'bgmp_mapShortcodeCalled', $this->mapShortcodeCalled ); // @todo - deprecated b/c not consistent w/ shortcode naming scheme. need a way to notify people
+			$this->mapShortcodeCalled = apply_filters( 'bgmp_map-shortcode-called', $this->mapShortcodeCalled );
 
 			if ( $this->mapShortcodeCalled ) {
 				return true;
@@ -387,7 +386,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		 * Load CSS and JavaScript files
 		 */
 		public function loadResources() {
-			$googleMapsLanguage = apply_filters( self::PREFIX . 'map-language', '' );
+			$googleMapsLanguage = apply_filters( 'bgmp_map-language', '' );
 			if ( $googleMapsLanguage ) {
 				$googleMapsLanguage = '&language=' . $googleMapsLanguage;
 			}
@@ -417,7 +416,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 			);
 
 			wp_register_style(
-				self::PREFIX . 'style',
+				'bgmp_style',
 				plugins_url( 'css/style.css', dirname( __FILE__ ) ),
 				false,
 				self::VERSION
@@ -437,13 +436,13 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 			}
 
 			if ( $this->mapShortcodeCalled ) {
-				wp_enqueue_style( self::PREFIX . 'style' );
+				wp_enqueue_style( 'bgmp_style' );
 			}
 
 
 			// Load meta box resources for settings page
-			if ( isset( $_GET['page'] ) && $_GET['page'] == self::PREFIX . 'settings' ) { // @todo better way than $_GET ?
-				wp_enqueue_style( self::PREFIX . 'style' );
+			if ( isset( $_GET['page'] ) && $_GET['page'] == 'bgmp_settings' ) { // @todo better way than $_GET ?
+				wp_enqueue_style( 'bgmp_style' );
 				wp_enqueue_script( 'dashboard' );
 			}
 		}
@@ -453,9 +452,9 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		 */
 		public function outputHead() {
 			if ( $this->mapShortcodeCalled ) {
-				do_action( BasicGoogleMapsPlacemarks::PREFIX . 'head-before' );
+				do_action( 'bgmp_head-before' );
 				echo $this->render_template( 'core/front-end-head.php' );
-				do_action( BasicGoogleMapsPlacemarks::PREFIX . 'head-after' );
+				do_action( 'bgmp_head-after' );
 			}
 		}
 
@@ -494,7 +493,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 				register_post_type(
 					self::POST_TYPE,
-					apply_filters( self::PREFIX . 'post-type-params', $postTypeParams )
+					apply_filters( 'bgmp_post-type-params', $postTypeParams )
 				);
 			}
 		}
@@ -515,7 +514,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 				register_taxonomy(
 					self::TAXONOMY,
 					self::POST_TYPE,
-					apply_filters( self::PREFIX . 'category-taxonomy-params', $taxonomyParams )
+					apply_filters( 'bgmp_category-taxonomy-params', $taxonomyParams )
 				);
 			}
 		}
@@ -527,8 +526,8 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 			global $pagenow;
 
 			if ( is_admin() && $pagenow == 'edit.php' && array_key_exists( 'post_type', $_GET ) && $_GET['post_type'] == self::POST_TYPE ) {
-				$query->query_vars['order']   = apply_filters( self::PREFIX . 'admin-sort-order', 'ASC' );
-				$query->query_vars['orderby'] = apply_filters( self::PREFIX . 'admin-sort-orderby', 'title' );
+				$query->query_vars['order']   = apply_filters( 'bgmp_admin-sort-order', 'ASC' );
+				$query->query_vars['orderby'] = apply_filters( 'bgmp_admin-sort-orderby', 'title' );
 
 				// @todo - should just have a filter on $query, or don't even need one at all, since they can filter $query directly?
 			}
@@ -539,7 +538,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		 */
 		public function addMetaBoxes() {
 			add_meta_box(
-				self::PREFIX . 'placemark-address',
+				'bgmp_placemark-address',
 				__( 'Placemark Address', 'bgmp' ),
 				array( $this, 'markupAddressFields' ),
 				self::POST_TYPE,
@@ -548,7 +547,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 			);
 
 			add_meta_box(
-				self::PREFIX . 'placemark-zIndex',
+				'bgmp_placemark-zIndex',
 				__( 'Stacking Order', 'bgmp' ),
 				array( $this, 'markupZIndexField' ),
 				self::POST_TYPE,
@@ -564,9 +563,9 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 			global $post;
 
 			$variables = array(
-				'address'            => get_post_meta( $post->ID, self::PREFIX . 'address', true ),
-				'latitude'           => get_post_meta( $post->ID, self::PREFIX . 'latitude', true ),
-				'longitude'          => get_post_meta( $post->ID, self::PREFIX . 'longitude', true ),
+				'address'            => get_post_meta( $post->ID, 'bgmp_address', true ),
+				'latitude'           => get_post_meta( $post->ID, 'bgmp_latitude', true ),
+				'longitude'          => get_post_meta( $post->ID, 'bgmp_longitude', true ),
 			);
 
 			$variables['showGeocodeResults'] = $variables['address'] && ! self::validateCoordinates( $variables['address'] ) && $variables['latitude'] && $variables['longitude'] ? true : false;
@@ -581,7 +580,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		public function markupZIndexField() {
 			global $post;
 
-			$zIndex = get_post_meta( $post->ID, self::PREFIX . 'zIndex', true );
+			$zIndex = get_post_meta( $post->ID, 'bgmp_zIndex', true );
 			if ( filter_var( $zIndex, FILTER_VALIDATE_INT ) === FALSE ) {
 				$zIndex = 0;
 			}
@@ -614,28 +613,28 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 
 			// Save address
-			if ( isset( $_POST[self::PREFIX . 'address'] ) ) {
-				update_post_meta( $post->ID, self::PREFIX . 'address', $_POST[self::PREFIX . 'address'] );
+			if ( isset( $_POST['bgmp_address'] ) ) {
+				update_post_meta( $post->ID, 'bgmp_address', $_POST['bgmp_address'] );
 
-				if ( $_POST[self::PREFIX . 'address'] )
-					$coordinates = $this->geocode( $_POST[self::PREFIX . 'address'] );
+				if ( $_POST['bgmp_address'] )
+					$coordinates = $this->geocode( $_POST['bgmp_address'] );
 			}
 
 			if ( $coordinates ) {
-				update_post_meta( $post->ID, self::PREFIX . 'latitude', $coordinates['latitude'] );
-				update_post_meta( $post->ID, self::PREFIX . 'longitude', $coordinates['longitude'] );
+				update_post_meta( $post->ID, 'bgmp_latitude', $coordinates['latitude'] );
+				update_post_meta( $post->ID, 'bgmp_longitude', $coordinates['longitude'] );
 			} else {
-				update_post_meta( $post->ID, self::PREFIX . 'latitude', '' );
-				update_post_meta( $post->ID, self::PREFIX . 'longitude', '' );
+				update_post_meta( $post->ID, 'bgmp_latitude', '' );
+				update_post_meta( $post->ID, 'bgmp_longitude', '' );
 			}
 
 			// Save z-index
-			if ( isset( $_POST[self::PREFIX . 'zIndex'] ) ) {
-				if ( filter_var( $_POST[self::PREFIX . 'zIndex'], FILTER_VALIDATE_INT ) === FALSE ) {
-					update_post_meta( $post->ID, self::PREFIX . 'zIndex', 0 );
+			if ( isset( $_POST['bgmp_zIndex'] ) ) {
+				if ( filter_var( $_POST['bgmp_zIndex'], FILTER_VALIDATE_INT ) === FALSE ) {
+					update_post_meta( $post->ID, 'bgmp_zIndex', 0 );
 					add_notice( __( 'The stacking order has to be an integer.', 'bgmp' ), 'error' );
 				} else {
-					update_post_meta( $post->ID, self::PREFIX . 'zIndex', $_POST[self::PREFIX . 'zIndex'] );
+					update_post_meta( $post->ID, 'bgmp_zIndex', $_POST['bgmp_zIndex'] );
 				}
 			}
 		}
@@ -785,7 +784,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		 * @return string The output of the shortcode
 		 */
 		public function mapShortcode( $attributes ) {
-			if ( ! wp_script_is( 'googleMapsAPI', 'queue' ) || ! wp_script_is( 'bgmp', 'queue' ) || ! wp_style_is( self::PREFIX . 'style', 'queue' ) ) {
+			if ( ! wp_script_is( 'googleMapsAPI', 'queue' ) || ! wp_script_is( 'bgmp', 'queue' ) || ! wp_style_is( 'bgmp_style', 'queue' ) ) {
 				$error = sprintf(
 					__( '<p class="error">%s error: JavaScript and/or CSS files aren\'t loaded. If you\'re using do_shortcode() you need to add a filter to your theme first. See <a href="%s">the FAQ</a> for details.</p>', 'bgmp' ),
 					BGMP_NAME,
@@ -798,16 +797,16 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 			}
 
 			if ( isset( $attributes['categories'] ) )
-				$attributes['categories'] = apply_filters( self::PREFIX . 'mapShortcodeCategories', $attributes['categories'] ); // @todo - deprecated b/c 1.9 output bgmpdata in post; can now just set args in do_shortcode() . also  not consistent w/ shortcode naming scheme and have filter for all arguments now. need a way to notify people
+				$attributes['categories'] = apply_filters( 'bgmp_mapShortcodeCategories', $attributes['categories'] ); // @todo - deprecated b/c 1.9 output bgmpdata in post; can now just set args in do_shortcode() . also  not consistent w/ shortcode naming scheme and have filter for all arguments now. need a way to notify people
 
-			$attributes = apply_filters( self::PREFIX . 'map-shortcode-arguments', $attributes ); // @todo - deprecated b/c 1.9 output bgmpdata in post...
+			$attributes = apply_filters( 'bgmp_map-shortcode-arguments', $attributes ); // @todo - deprecated b/c 1.9 output bgmpdata in post...
 			$attributes = $this->cleanMapShortcodeArguments( $attributes );
 
 			ob_start();
-			do_action( BasicGoogleMapsPlacemarks::PREFIX . 'meta-address-before' );	// @todo - deprecated b/c named incorrectly
-			do_action( BasicGoogleMapsPlacemarks::PREFIX . 'shortcode-bgmp-map-before' );
+			do_action( 'bgmp_meta-address-before' );	// @todo - deprecated b/c named incorrectly
+			do_action( 'bgmp_shortcode-bgmp-map-before' );
 			echo $this->render_template( 'core/shortcode-bgmp-map.php', array( 'attributes' => $attributes ) );
-			do_action( BasicGoogleMapsPlacemarks::PREFIX . 'shortcode-bgmp-map-after' );
+			do_action( 'bgmp_shortcode-bgmp-map-after' );
 			$output = ob_get_clean();
 
 			return $output;
@@ -820,7 +819,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		 * @return string The output of the shortcode
 		 */
 		public function listShortcode( $attributes ) {
-			$attributes = apply_filters( self::PREFIX . 'list-shortcode-arguments', $attributes );
+			$attributes = apply_filters( 'bgmp_list-shortcode-arguments', $attributes );
 			// @todo shortcode_atts()
 
 			$params = array(
@@ -846,21 +845,21 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 			$viewOnMap = isset( $attributes['viewonmap'] ) && $attributes['viewonmap'] == true;
 
-			$posts = get_posts( apply_filters( self::PREFIX . 'list-shortcode-params', $params ) );
-			$posts = apply_filters( self::PREFIX . 'list-shortcode-posts', $posts );
+			$posts = get_posts( apply_filters( 'bgmp_list-shortcode-params', $params ) );
+			$posts = apply_filters( 'bgmp_list-shortcode-posts', $posts );
 
 			if ( $posts ) {
-				$output = '<ul id="' . self::PREFIX . 'list" class="' . self::PREFIX . 'list">'; // Note: id should be removed and everything switched to class, because there could be more than one list on a page. That would be backwards-compatability, though.
+				$output = '<ul id="' . 'bgmp_list" class="' . 'bgmp_list">'; // Note: id should be removed and everything switched to class, because there could be more than one list on a page. That would be backwards-compatability, though.
 
 				foreach ( $posts as $p ) {
 					$variables = array(
 						'p'         => $p,
 						'viewOnMap' => $viewOnMap,
-						'address'   => get_post_meta( $p->ID, self::PREFIX . 'address', true ),
+						'address'   => get_post_meta( $p->ID, 'bgmp_address', true ),
 					);
 					$markerHTML = $this->render_template( 'core/shortcode-bgmp-list-marker.php', $variables, 'always' );
 
-					$output .= apply_filters( self::PREFIX . 'list-marker-output', $markerHTML, $p->ID );	// @todo deprecate b/c render_template has filter for this and everything else now
+					$output .= apply_filters( 'bgmp_list-marker-output', $markerHTML, $p->ID );	// @todo deprecate b/c render_template has filter for this and everything else now
 				}
 
 				$output .= '</ul>';
@@ -975,7 +974,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 				'typeControl'        => $this->settings->mapTypeControl,
 				'navigationControl'  => $this->settings->mapNavigationControl,
 				'infoWindowMaxWidth' => $this->settings->mapInfoWindowMaxWidth,
-				'streetViewControl'  => apply_filters( self::PREFIX . 'street-view-control', true ), // deprecated b/c of bgmp_map-options filter?
+				'streetViewControl'  => apply_filters( 'bgmp_street-view-control', true ), // deprecated b/c of bgmp_map-options filter?
 				'viewOnMapScroll'    => false,
 
 				'clustering'         => array(
@@ -988,21 +987,21 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 			);
 
 			// Reset center/zoom when only displaying single placemark
-			if ( isset( $attributes['placemark'] ) && apply_filters( self::PREFIX . 'reset-individual-map-center-zoom', true ) ) {
-				$latitude    = get_post_meta( $attributes['placemark'], self::PREFIX . 'latitude', true );
-				$longitude   = get_post_meta( $attributes['placemark'], self::PREFIX . 'longitude', true );
+			if ( isset( $attributes['placemark'] ) && apply_filters( 'bgmp_reset-individual-map-center-zoom', true ) ) {
+				$latitude    = get_post_meta( $attributes['placemark'], 'bgmp_latitude', true );
+				$longitude   = get_post_meta( $attributes['placemark'], 'bgmp_longitude', true );
 				$coordinates = $this->validateCoordinates( $latitude . ',' . $longitude );
 
 				if ( $coordinates !== false ) {
 					$options['latitude']  = $latitude;
 					$options['longitude'] = $longitude;
-					$options['zoom']      = apply_filters( self::PREFIX . 'individual-map-default-zoom', 13 ); // deprecated b/c of bgmp_map-options filter?
+					$options['zoom']      = apply_filters( 'bgmp_individual-map-default-zoom', 13 ); // deprecated b/c of bgmp_map-options filter?
 				}
 			}
 
 			$options = shortcode_atts( $options, $attributes );
 
-			return apply_filters( self::PREFIX . 'map-options', $options );
+			return apply_filters( 'bgmp_map-options', $options );
 		}
 
 		/**
@@ -1033,8 +1032,8 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 				);
 			}
 
-			$query               = apply_filters( self::PREFIX . 'get-placemarks-query', $query ); // @todo - filter name deprecated
-			$publishedPlacemarks = get_posts( apply_filters( self::PREFIX . 'get-map-placemarks-query', $query ) );
+			$query               = apply_filters( 'bgmp_get-placemarks-query', $query ); // @todo - filter name deprecated
+			$publishedPlacemarks = get_posts( apply_filters( 'bgmp_get-map-placemarks-query', $query ) );
 
 			if ( $publishedPlacemarks ) {
 				foreach ( $publishedPlacemarks as $pp ) {
@@ -1045,26 +1044,26 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 						$categories = array();
 					}
 
-					$icon        = wp_get_attachment_image_src( get_post_thumbnail_id( $postID ), apply_filters( self::PREFIX . 'featured-icon-size', 'thumbnail' ) );
-					$defaultIcon = apply_filters( self::PREFIX . 'default-icon', plugins_url( 'images/default-marker.png', dirname( __FILE__ ) ), $postID );
+					$icon        = wp_get_attachment_image_src( get_post_thumbnail_id( $postID ), apply_filters( 'bgmp_featured-icon-size', 'thumbnail' ) );
+					$defaultIcon = apply_filters( 'bgmp_default-icon', plugins_url( 'images/default-marker.png', dirname( __FILE__ ) ), $postID );
 
 					$placemark = array(
 						'id'         => $postID,
 						'title'      => apply_filters( 'the_title', $pp->post_title ),
-						'latitude'   => get_post_meta( $postID, self::PREFIX . 'latitude', true ),
-						'longitude'  => get_post_meta( $postID, self::PREFIX . 'longitude', true ),
+						'latitude'   => get_post_meta( $postID, 'bgmp_latitude', true ),
+						'longitude'  => get_post_meta( $postID, 'bgmp_longitude', true ),
 						'details'    => apply_filters( 'the_content', $pp->post_content ), // note: don't use setup_postdata/get_the_content() in this instance -- http://lists.automattic.com/pipermail/wp-hackers/2013-January/045053.html
 						'categories' => $categories,
 						'icon'       => is_array( $icon ) ? $icon[0] : $defaultIcon,
-						'zIndex'     => get_post_meta( $postID, self::PREFIX . 'zIndex', true )
+						'zIndex'     => get_post_meta( $postID, 'bgmp_zIndex', true )
 					);
 
-					$placemarks[] = apply_filters( self::PREFIX . 'get-map-placemarks-individual-placemark', $placemark );
+					$placemarks[] = apply_filters( 'bgmp_get-map-placemarks-individual-placemark', $placemark );
 				}
 			}
 
-			$placemarks = apply_filters( self::PREFIX . 'get-placemarks-return', $placemarks ); // @todo - filter name deprecated
-			return apply_filters( self::PREFIX . 'get-map-placemarks-return', $placemarks );
+			$placemarks = apply_filters( 'bgmp_get-placemarks-return', $placemarks ); // @todo - filter name deprecated
+			return apply_filters( 'bgmp_get-map-placemarks-return', $placemarks );
 		}
 
 		/**
@@ -1112,7 +1111,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		 */
 		public function shutdown() {
 			if ( $this->updatedOptions )
-				update_option( self::PREFIX . 'options', $this->options );
+				update_option( 'bgmp_options', $this->options );
 		}
 	} // end BasicGoogleMapsPlacemarks
 }

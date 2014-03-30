@@ -5,7 +5,7 @@
 	};
 </script>
 
-<div id="<?php echo self::PREFIX; ?>map-canvas">
+<div id="bgmp_map-canvas">
 	<p><?php _e( 'Loading map...', 'bgmp' ); ?></p>
 
 	<p>
