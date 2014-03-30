@@ -279,7 +279,7 @@ The string you return needs to be the full URL to the new icon.
 No, the Google Maps JavaScript API can only support one map on a page. You can have different maps on separate pages, though. See [the Installation page](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/) for instructions on making different maps have different center locations, display different sets of placemarks, etc.
 
 
-= How can I override the styles the plugin applies to the map? =
+= How can I override the CSS the plugin applies to the map? =
 The width/height of the map and marker information windows are always defined in the Settings, but you can override everything else by putting this code in your theme's functions.php file or a [functionality plugin](http://www.doitwithwp.com/create-functions-plugin/):
 
 `
@@ -296,6 +296,30 @@ add_action('init', 'setBGMPStyle');
 `
 
 Then create a bgmp-style.css file inside your theme directory or a [child theme](http://codex.wordpress.org/Child_Themes) and put your styles there. If you'd prefer, you could also just make it an empty file and put the styles in your main style.css, but either way you need to register and enqueue a style with the `bgmp_style` handle, because the plugin checks to make sure the CSS and JavaScript files are loaded before embedding the map.
+
+
+= How can I override the HTML output of the plugin? =
+All of the HTML that the plugin outputs is isolated into individual files in the plugin's `views` directory. You can override with the two methods described below. In both cases you'll have access to all of the variables that were used in the original template, so you can fully customize the output to be whatever you want.
+
+1. Copy the view file you want to customize into the root of your theme's directory, and then make your changes to it. If you'd prefer to place your custom templates in a subdirectory, you can use the `bgmp_template_path` filter to modify the path to them.
+2. Register a callback function for the `bgmp_template_content` filter.
+
+`
+add_filter( 'bgmp_template_content', 'override_bgmp_templates', 10, 4 );
+function override_bgmp_templates( $content, $default_template_path, $template_path, $variables ) {
+	switch( basename( $default_template_path ) ) {
+		case 'shortcode-bgmp-map.php':
+			$content = 'New map output goes here.';
+			break;
+
+		case 'shortcode-bgmp-list.php':
+			$content = 'New list output goes here.';
+			break;
+	}
+
+	return $content;
+}
+`
 
 
 = I get an error when using do_shortcode() to call the map shortcode =
@@ -390,7 +414,8 @@ If you make customizations that could be beneficial to other users, please start
 
 == Changelog ==
 
-= v1.11 () =
+= v2.0 () =
+* [UPDATE] Extracted all views into individual files and passed through render_view() so they can be easily overridden by other plugins and themes.
 * [UPDATE] Organized files into more subdirectories.
 * [UPDATE] Conformed files to WordPress coding standards.
 * [UPDATE] Removed some bloated and unnecessary code.
@@ -542,8 +567,8 @@ If you make customizations that could be beneficial to other users, please start
 
 == Upgrade Notice ==
 
-= 1.11 =
-BGMP 1.11 contains some internal reorganization and cleaning up. Normal users shouldn't notice any difference, but developers who've made customizations should test them before upgrading.
+= 2.0 =
+BGMP 2.0 contains some major internal reorganization and cleaning up. Regular users shouldn't notice any difference, but it could break backwards compatibility with any customizations that developers have made. It is strongly recommended that customizations be tested before upgrading production servers.
 
 = 1.10.2 =
 BGMP 1.10.2 adds a Spanish translation.

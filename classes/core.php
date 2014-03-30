@@ -454,7 +454,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		public function outputHead() {
 			if ( $this->mapShortcodeCalled ) {
 				do_action( BasicGoogleMapsPlacemarks::PREFIX . 'head-before' );
-				require_once( dirname( dirname( __FILE__ ) ) . '/views/core/front-end-head.php' );
+				echo $this->render_template( 'core/front-end-head.php' );
 				do_action( BasicGoogleMapsPlacemarks::PREFIX . 'head-after' );
 			}
 		}
@@ -563,13 +563,16 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		public function markupAddressFields() {
 			global $post;
 
-			$address            = get_post_meta( $post->ID, self::PREFIX . 'address', true );
-			$latitude           = get_post_meta( $post->ID, self::PREFIX . 'latitude', true );
-			$longitude          = get_post_meta( $post->ID, self::PREFIX . 'longitude', true );
-			$showGeocodeResults = ( $address && ! self::validateCoordinates( $address ) && $latitude && $longitude ) ? true : false;
-			$showGeocodeError   = ( $address && ( ! $latitude || ! $longitude ) ) ? true : false;
+			$variables = array(
+				'address'            => get_post_meta( $post->ID, self::PREFIX . 'address', true ),
+				'latitude'           => get_post_meta( $post->ID, self::PREFIX . 'latitude', true ),
+				'longitude'          => get_post_meta( $post->ID, self::PREFIX . 'longitude', true ),
+			);
 
-			require_once( dirname( dirname( __FILE__ ) ) . '/views/core/meta-address.php' );
+			$variables['showGeocodeResults'] = $variables['address'] && ! self::validateCoordinates( $variables['address'] ) && $variables['latitude'] && $variables['longitude'] ? true : false;
+			$variables['showGeocodeError']   = $variables['address'] && ( ! $variables['latitude'] || ! $variables['longitude'] ) ? true : false;
+
+			echo $this->render_template( 'core/meta-address.php', $variables );
 		}
 
 		/**
@@ -583,7 +586,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 				$zIndex = 0;
 			}
 
-			require_once( dirname( dirname( __FILE__ ) ) . '/views/core/meta-z-index.php' );
+			echo $this->render_template( 'core/meta-z-index.php', array( 'zIndex' => $zIndex ) );
 		}
 
 		/**
@@ -802,7 +805,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 			ob_start();
 			do_action( BasicGoogleMapsPlacemarks::PREFIX . 'meta-address-before' );
-			require_once( dirname( dirname( __FILE__ ) ) . '/views/core/shortcode-bgmp-map.php' );
+			echo $this->render_template( 'core/shortcode-bgmp-map.php', array( 'attributes' => $attributes ) );
 			do_action( BasicGoogleMapsPlacemarks::PREFIX . 'shortcode-bgmp-map-after' );
 			$output = ob_get_clean();
 
@@ -849,13 +852,14 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 				$output = '<ul id="' . self::PREFIX . 'list" class="' . self::PREFIX . 'list">'; // Note: id should be removed and everything switched to class, because there could be more than one list on a page. That would be backwards-compatability, though.
 
 				foreach ( $posts as $p ) {
-					$address = get_post_meta( $p->ID, self::PREFIX . 'address', true );
+					$variables = array(
+						'p'         => $p,
+						'viewOnMap' => $viewOnMap,
+						'address'   => get_post_meta( $p->ID, self::PREFIX . 'address', true ),
+					);
+					$markerHTML = $this->render_template( 'core/shortcode-bgmp-list-marker.php', $variables, 'always' );
 
-					ob_start();
-					require( dirname( dirname( __FILE__ ) ) . '/views/core/shortcode-bgmp-list-marker.php' );
-					$markerHTML = ob_get_clean();
-
-					$output .= apply_filters( self::PREFIX . 'list-marker-output', $markerHTML, $p->ID );
+					$output .= apply_filters( self::PREFIX . 'list-marker-output', $markerHTML, $p->ID );	// @todo deprecate b/c render_template has filter for this and everything else now
 				}
 
 				$output .= '</ul>';
@@ -1060,6 +1064,44 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 			$placemarks = apply_filters( self::PREFIX . 'get-placemarks-return', $placemarks ); // @todo - filter name deprecated
 			return apply_filters( self::PREFIX . 'get-map-placemarks-return', $placemarks );
+		}
+
+		/**
+		 * Render a template
+		 *
+		 * Allows parent/child themes to override the markup by placing the a file named basename( $default_template_path ) in their root folder,
+		 * and also allows plugins or themes to override the markup by a filter. Themes might prefer that method if they place their templates
+		 * in sub-directories to avoid cluttering the root folder. In both cases, the theme/plugin will have access to the variables so they can
+		 * fully customize the output.
+		 *
+		 * @param  string $default_template_path The path to the template, relative to the plugin's `views` folder
+		 * @param  array  $variables             An array of variables to pass into the template's scope, indexed with the variable name so that it can be extract()-ed
+		 * @param  string $require               'once' to use require_once() | 'always' to use require()
+		 * @return string
+		 */
+		public function render_template( $default_template_path = false, $variables = array(), $require = 'once' ) {
+			$template_path = locate_template( basename( $default_template_path ) );
+			if ( ! $template_path ) {
+				$template_path = dirname( dirname( __FILE__ ) ) . '/views/' . $default_template_path;
+			}
+			$template_path = apply_filters( 'bgmp_template_path', $template_path );
+
+			if ( is_file( $template_path ) ) {
+				extract( $variables );
+				ob_start();
+
+				if ( 'always' == $require ) {
+					require( $template_path );
+				} else {
+					require_once( $template_path );
+				}
+
+				$template_content = apply_filters( 'bgmp_template_content', ob_get_clean(), $default_template_path, $template_path, $variables );
+			} else {
+				$template_content = '';
+			}
+
+			return $template_content;
 		}
 
 		/**

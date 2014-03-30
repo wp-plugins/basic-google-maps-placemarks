@@ -5,7 +5,7 @@ if ( ! class_exists( 'BGMPSettings' ) ) {
 	 * Registers and handles the plugin's settings
 	 */
 	class BGMPSettings {
-		public $mapWidth, $mapHeight, $mapAddress, $mapLatitude, $mapLongitude, $mapZoom, $mapType, $mapTypes, $mapTypeControl, $mapNavigationControl, $mapInfoWindowMaxWidth;
+		public $mapWidth, $mapHeight, $mapAddress, $mapLatitude, $mapLongitude, $mapZoom, $mapType, $mapTypes, $mapTypeControl, $mapNavigationControl, $mapInfoWindowMaxWidth, $markerClustering, $clusterMaxZoom, $clusterGridSize, $clusterStyle;
 
 		/**
 		 * Constructor
@@ -111,15 +111,17 @@ if ( ! class_exists( 'BGMPSettings' ) ) {
 		 * Creates the markup for the settings page
 		 */
 		public function markupSettingsPage() {
-			$rasrMetaBoxID   = BasicGoogleMapsPlacemarks::PREFIX . 'rasr-plug';
-			$rasrMetaBoxPage = BasicGoogleMapsPlacemarks::PREFIX . 'settings'; // @todo better var name
-			$hidden          = get_hidden_meta_boxes( $rasrMetaBoxPage );
-			$hidden_class    = in_array( $rasrMetaBoxPage, $hidden ) ? ' hide-if-js' : '';
+			$variables = array(
+				'rasrMetaBoxID'   => BasicGoogleMapsPlacemarks::PREFIX . 'rasr-plug',
+				'rasrMetaBoxPage' => BasicGoogleMapsPlacemarks::PREFIX . 'settings', // @todo better var name
+			);
+			$variables['hidden']       = get_hidden_meta_boxes( $variables['rasrMetaBoxPage'] );
+			$variables['hidden_class'] = in_array( $variables['rasrMetaBoxPage'], $variables['hidden'] ) ? ' hide-if-js' : '';
 
 			// @todo some of above may not be needed
 
 			if ( current_user_can( 'manage_options' ) )
-				require_once( dirname( dirname( __FILE__ ) ) . '/views/settings/settings.php' );
+				echo $GLOBALS['bgmp']->render_template( 'settings/settings.php', $variables );
 			else
 				wp_die( 'Access denied.' );
 		}
@@ -128,7 +130,7 @@ if ( ! class_exists( 'BGMPSettings' ) ) {
 		 * Creates the markup for the Re-Abolish Slavery Ribbon meta box
 		 */
 		public function markupRASRMetaBox() {
-			require_once( dirname( dirname( __FILE__ ) ) . '/views/settings/meta-re-abolish-slavery.php' );
+			echo $GLOBALS['bgmp']->render_template( 'settings/meta-re-abolish-slavery.php' );
 		}
 
 		/**
@@ -399,7 +401,15 @@ if ( ! class_exists( 'BGMPSettings' ) ) {
 		 * @param array $field
 		 */
 		public function markupMarkerClusterFields( $field ) {
-			require( dirname( dirname( __FILE__ ) ) . '/views/settings/fields-marker-clusterer.php' );
+			$variables = array(
+				'field'            => $field,
+				'markerClustering' => $this->markerClustering,
+				'clusterMaxZoom'   => $this->clusterMaxZoom,
+				'clusterGridSize'  => $this->clusterGridSize,
+				'clusterStyle'     => $this->clusterStyle,
+			);
+
+			echo $GLOBALS['bgmp']->render_template( 'settings/fields-marker-clusterer.php', $variables, 'always' );
 		}
 	} // end BGMPSettings
 }

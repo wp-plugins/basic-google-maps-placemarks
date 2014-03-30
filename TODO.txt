@@ -71,23 +71,31 @@
 
 ** Roadmap **
 
-1.11
-	call clenmapshortcodes so users will get erorrs immediately when entering bad data
+2.0
+	this is big enough to make it 2.0 b/c devs need to know there might be backcompat issues w/ their customizations
+
     render_template
        plus moving everything into views
-
+       add instructions to readme for how overriding views w/ theme templates or filter
+    do_action( BasicGoogleMapsPlacemarks::PREFIX . 'meta-address-before' ); should be map shortcode. don't worry about backcompat b/c is bug
+    remove PREFIX and use 'bgmp_' directly
 	remove networkActivate b/c mubuttons no longer needed?
 		would also affect addFeaturedImageSupport
 		if not, switch to use add_notice
 	rename functions to underscore
 		what about back-compat?
     modularitity / oop design not just oop functions
-    	core.php
+    	base module that has render_template
+    	core.php broken up
     	unit tests into suite too
     	break css/js into front/back end
+
 	$updatedOptions and shutdown() no longer needed in core.php ? should probably be handled in settings, but looks like needs a bit of work to get there
+	call clenmapshortcodes so users will get erorrs immediately when entering bad data
 
     check that readme instructions and customizations still work
+    do an RC, send notice to list, post notice on forums. stress the need to test any customizations
+    	maybe also post on some old threads that include customizations, to alert people that way too
 
 
 1.minor.x
