@@ -394,6 +394,7 @@ If you make customizations that could be beneficial to other users, please start
 * [UPDATE] Organized files into more subdirectories.
 * [UPDATE] Conformed files to WordPress coding standards.
 * [UPDATE] Removed some bloated and unnecessary code.
+* [UPDATE] Migrated to using Admin Notices Helper instead of homegrown version.
 
 = v1.10.2 (1/8/2014) =
 * [NEW] Added Spanish translation
@@ -540,6 +541,9 @@ If you make customizations that could be beneficial to other users, please start
 
 
 == Upgrade Notice ==
+
+= 1.11 =
+BGMP 1.11 contains some internal reorganization and cleaning up. Normal users shouldn't notice any difference, but developers who've made customizations should test them before upgrading.
 
 = 1.10.2 =
 BGMP 1.10.2 adds a Spanish translation.

@@ -2,7 +2,7 @@
 
 if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 	class BasicGoogleMapsPlacemarks {
-		protected $settings, $options, $updatedOptions, $userMessageCount, $mapShortcodeCalled, $mapShortcodeCategories;
+		protected $settings, $options, $updatedOptions, $mapShortcodeCalled, $mapShortcodeCategories;
 		const VERSION    = '1.10.2';
 		const PREFIX     = 'bgmp_';
 		const POST_TYPE  = 'bgmp';
@@ -24,7 +24,6 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 			add_action( 'wp',                       array( $this, 'loadResources' ), 11 );              // @todo - should be wp_enqueue_scripts instead?	// @todo add note explaining why higher priority
 			add_action( 'admin_enqueue_scripts',    array( $this, 'loadResources' ), 11 );
 			add_action( 'wp_head',                  array( $this, 'outputHead' ) );
-			add_action( 'admin_notices',            array( $this, 'printMessages' ) );
 			add_action( 'save_post',                array( $this, 'saveCustomFields' ) );
 			add_action( 'wpmu_new_blog',            array( $this, 'activateNewSite' ) );
 			add_action( 'shutdown',                 array( $this, 'shutdown' ) );
@@ -90,7 +89,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 					/*
 					@todo enqueueMessage() needs $this->options to be set, but as of v1.8 that doesn't happen until the init hook, which is after activation. It doesn't really matter anymore, though, because mu_media_buttons was removed in 3.3. http://core.trac.wordpress.org/ticket/17578 
-					$this->enqueueMessage( sprintf(
+					add_notice( sprintf(
 						__( '%s has enabled uploading images network-wide so that placemark icons can be set.', 'bgmp' ),		// @todo - give more specific message, test. enqueue for network admin but not regular admins
 						BGMP_NAME
 					) );
@@ -153,7 +152,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 				$mediaButtons = get_site_option( 'mu_media_buttons' );
 
 				if ( ! array_key_exists( 'image', $mediaButtons ) || ! $mediaButtons['image'] ) {
-					$this->enqueueMessage( sprintf(
+					add_notice( sprintf(
 						__( "%s requires the Images media button setting to be enabled in order to use custom icons on markers, but it's currently turned off. If you'd like to use custom icons you can enable it on the <a href=\"%s\">Network Settings</a> page, in the Upload Settings section.", 'bgmp' ),
 						BGMP_NAME,
 						network_admin_url() . 'settings.php'
@@ -196,7 +195,6 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		protected function cleanMapShortcodeArguments( $arguments ) {
 			// @todo - not doing this in settings yet, but should. want to make sure it's DRY when you do. 
 			// @todo - Any errors generated in there would stack up until admin loads page, then they'll all be displayed, include  ones from geocode() etc. that's not great solution, but is there better way?
-			// maybe add a check to enqueuemessage() to make sure that messages doesn't already exist. that way there'd only be 1 of them. if do that, make sure to fix the bug where they're getting adding twice before, b/c this would mask that
 			// maybe call getMapShortcodeArguments() when saving post so they get immediate feedback about any errors in shortcode
 			// do something similar for list shortcode arguments?
 
@@ -251,7 +249,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 				// Remove the option if it isn't a valid placemark
 				if ( ! $pass ) {
-					$this->enqueueMessage( $error, 'error' );
+					add_notice( $error, 'error' );
 					unset( $arguments['placemark'] );
 				}
 			}
@@ -269,7 +267,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 					foreach ( $arguments['categories'] as $index => $term ) {
 						if ( ! term_exists( $term, self::TAXONOMY ) ) {
 							unset( $arguments['categories'][$index] ); // Note - This will leave holes in the key sequence, but it doesn't look like that's a problem with the way we're using it.
-							$this->enqueueMessage( sprintf(
+							add_notice( sprintf(
 								__( '%s shortcode error: %s is not a valid category.', 'bgmp' ),
 								BGMP_NAME,
 								$term
@@ -284,7 +282,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 				if ( is_numeric( $arguments['width'] ) && $arguments['width'] > 0 ) {
 					$arguments['mapWidth'] = $arguments['width'];
 				} else {
-					$this->enqueueMessage( sprintf(
+					add_notice( sprintf(
 						__( '%s shortcode error: %s is not a valid width.', 'bgmp' ),
 						BGMP_NAME,
 						$arguments['width']
@@ -298,7 +296,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 				if ( is_numeric( $arguments['height'] ) ) {
 					$arguments['mapHeight'] = $arguments['height'];
 				} else {
-					$this->enqueueMessage( sprintf(
+					add_notice( sprintf(
 						__( '%s shortcode error: %s is not a valid height.', 'bgmp' ),
 						BGMP_NAME,
 						$arguments['height']
@@ -325,7 +323,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 			// Zoom
 			if ( isset( $arguments['zoom'] ) ) {
 				if ( ! is_numeric( $arguments['zoom'] ) || $arguments['zoom'] < self::ZOOM_MIN || $arguments['zoom'] > self::ZOOM_MAX ) {
-					$this->enqueueMessage( sprintf(
+					add_notice( sprintf(
 						__( '%s shortcode error: %s is not a valid zoom level.', 'bgmp' ),
 						BGMP_NAME,
 						$arguments['zoom']
@@ -341,7 +339,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 				$arguments['type'] = strtoupper( $arguments['type'] );
 
 				if ( ! array_key_exists( $arguments['type'], $this->settings->mapTypes ) ) {
-					$this->enqueueMessage( sprintf(
+					add_notice( sprintf(
 						__( '%s shortcode error: %s is not a valid map type.', 'bgmp' ),
 						BGMP_NAME,
 						$arguments['type']
@@ -632,7 +630,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 			if ( isset( $_POST[self::PREFIX . 'zIndex'] ) ) {
 				if ( filter_var( $_POST[self::PREFIX . 'zIndex'], FILTER_VALIDATE_INT ) === FALSE ) {
 					update_post_meta( $post->ID, self::PREFIX . 'zIndex', 0 );
-					$this->enqueueMessage( __( 'The stacking order has to be an integer.', 'bgmp' ), 'error' );
+					add_notice( __( 'The stacking order has to be an integer.', 'bgmp' ), 'error' );
 				} else {
 					update_post_meta( $post->ID, self::PREFIX . 'zIndex', $_POST[self::PREFIX . 'zIndex'] );
 				}
@@ -659,7 +657,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 			// @todo - esc_url() on address?
 
 			if ( is_wp_error( $geocodeResponse ) ) {
-				$this->enqueueMessage( sprintf(
+				add_notice( sprintf(
 					__( '%s geocode error: %s', 'bgmp' ),
 					BGMP_NAME,
 					implode( '<br />', $geocodeResponse->get_error_messages() )
@@ -670,7 +668,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 			// Check response code
 			if ( ! isset( $geocodeResponse['response']['code'] ) || ! isset( $geocodeResponse['response']['message'] ) ) {
-				$this->enqueueMessage( sprintf(
+				add_notice( sprintf(
 					__( '%s geocode error: Response code not present', 'bgmp' ),
 					BGMP_NAME
 				), 'error' );
@@ -686,7 +684,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 					$this->describe( $responseHTML->saveHTML() );
 				*/
 
-				$this->enqueueMessage( sprintf(
+				add_notice( sprintf(
 					__( '<p>%s geocode error: %d %s</p> <p>Response: %s</p>', 'bgmp' ),
 					BGMP_NAME,
 					$geocodeResponse['response']['code'],
@@ -703,18 +701,18 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 			if ( function_exists( 'json_last_error' ) && json_last_error() != JSON_ERROR_NONE ) {
 				// @todo - Once PHP 5.3+ is more widely adopted, remove the function_exists() check here and just bump the PHP requirement to 5.3
 
-				$this->enqueueMessage( sprintf( __( '%s geocode error: Response was not formatted in JSON.', 'bgmp' ), BGMP_NAME ), 'error' );
+				add_notice( sprintf( __( '%s geocode error: Response was not formatted in JSON.', 'bgmp' ), BGMP_NAME ), 'error' );
 				return false;
 			}
 
 			if ( isset( $coordinates->status ) && $coordinates->status == 'REQUEST_DENIED' ) {
-				$this->enqueueMessage( sprintf( __( '%s geocode error: Request Denied.', 'bgmp' ), BGMP_NAME ), 'error' );
+				add_notice( sprintf( __( '%s geocode error: Request Denied.', 'bgmp' ), BGMP_NAME ), 'error' );
 				return false;
 			}
 
 			if ( ! isset( $coordinates->results ) || empty( $coordinates->results ) ) {
-				$this->enqueueMessage( __( "That address couldn't be geocoded, please make sure that it's correct.", 'bgmp' ), "error" );
-				$this->enqueueMessage(
+				add_notice( __( "That address couldn't be geocoded, please make sure that it's correct.", 'bgmp' ), "error" );
+				add_notice(
 					__( "Geocode response:", 'bgmp' ) . ' <pre>' . print_r( $coordinates, true ) . '</pre>',
 					"error"
 				);
@@ -1062,64 +1060,6 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 			$placemarks = apply_filters( self::PREFIX . 'get-placemarks-return', $placemarks ); // @todo - filter name deprecated
 			return apply_filters( self::PREFIX . 'get-map-placemarks-return', $placemarks );
-		}
-
-		/**
-		 * Displays updates and errors
-		 *
-		 * NOTE: In order to allow HTML in the output, any unsafe variables passed to enqueueMessage() need to be escaped before they're passed in, instead of escaping here.
-		 */
-		public function printMessages() {
-			foreach ( array( 'updates', 'errors' ) as $type ) {
-				if ( $this->options[$type] && ( self::DEBUG_MODE || $this->userMessageCount[$type] ) ) {
-					$message = '';
-					$class   = $type == 'updates' ? 'updated' : 'error';
-
-					foreach ( $this->options[$type] as $messageData ) {
-						if ( $messageData['mode'] == 'user' || self::DEBUG_MODE )
-							$message .= '<p>' . $messageData['message'] . '</p>';
-					}
-
-					require( dirname( dirname( __FILE__ ) ) . '/views/core/message.php' );
-
-					$this->options[$type]          = array();
-					$this->updatedOptions          = true;
-					$this->userMessageCount[$type] = 0;
-				}
-			}
-		}
-
-		/**
-		 * Queues up a message to be displayed to the user
-		 *
-		 * NOTE: In order to allow HTML in the output, any unsafe variables in $message need to be escaped before they're passed in, instead of escaping here.
-		 *
-		 * @param string $message The text to show the user
-		 * @param string $type    'update' for a success or notification message, or 'error' for an error message
-		 * @param string $mode    'user' if it's intended for the user, or 'debug' if it's intended for the developer
-		 */
-		protected function enqueueMessage( $message, $type = 'update', $mode = 'user' ) {
-			if ( ! is_string( $message ) || empty( $message ) ) {
-				return false;
-			}
-
-			if ( ! isset( $this->options[$type . 's'] ) ) {
-				return false;
-			}
-
-			array_push( $this->options[$type . 's'], array(
-				'message' => $message,
-				'type'    => $type,
-				'mode'    => $mode
-			) );
-
-			if ( $mode == 'user' ) {
-				$this->userMessageCount[$type . 's'] ++;
-			}
-
-			$this->updatedOptions = true;
-
-			return true;
 		}
 
 		/**

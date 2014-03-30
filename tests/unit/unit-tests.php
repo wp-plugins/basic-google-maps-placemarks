@@ -392,11 +392,6 @@ class bgmpCoreUnitTests extends UnitTestCase {
 
 	// createPostType() returns post type object and not WP_Error object
 
-	// enquue  message
-	// returns false when $message isn't a string
-	// returns false when $type and $mode are invalid?
-	// if message is string, adds it to $bgmp->options, increases usermessagecount if appropriate, sets $updatedoptions to true, returns true
-
 	// describe
 	// if $output = 'output', returns the content
 	// if echo then doesn't reutrn anything

@@ -72,18 +72,23 @@
 ** Roadmap **
 
 1.11
+	call clenmapshortcodes so users will get erorrs immediately when entering bad data
     render_template
        plus moving everything into views
 
+	remove networkActivate b/c mubuttons no longer needed?
+		would also affect addFeaturedImageSupport
+		if not, switch to use add_notice
 	rename functions to underscore
 		what about back-compat?
     modularitity / oop design not just oop functions
     	core.php
     	unit tests into suite too
     	break css/js into front/back end
-    	modernize idadminnotices, then include it instead of having duplicate
+	$updatedOptions and shutdown() no longer needed in core.php ? should probably be handled in settings, but looks like needs a bit of work to get there
 
     check that readme instructions and customizations still work
+
 
 1.minor.x
 	http://make.wordpress.org/plugins/2013/04/11/google-maps-javascript-v2-api-to-be-removed/
@@ -137,8 +142,6 @@
 			begining php tutorials
 			beginginer wp plugin dev tutorials
 		http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-using-bgmp-map-in-a-template-file-with-do_shortcode?replies=3
-
-	use id-admin-notices class instead of having it internal
 
 	add filter to each placemarks in the foreach loop in getMapPlacemarks(), so that people can modify the individual fields as they're created, instead of having to loop through the entire thing after it's been generated
 		also add ID field to the placemarks
@@ -388,19 +391,11 @@
 		http://code.google.com/p/earth-api-samples/issues/detail?id=9&colspec=ID%20
 		http://maps.myosotissp.com/demos/popups.html
 
-	can't call enqueueMessage() in settings.php - http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-that-address-couldnt-be-geocoded-fatal-error?replies=5
-		fixed w/ temp workaround, but need better solution
-		just make enqueuemssage public?
-
-
 1.major.x
 	run tests on memory consumption, etc. see if you can find any areas of code that would significantly benefit from optimization
 		ask for advice on wordpress answers for tips on how to test
 
 	wahc doesn't work as demo anymore since not current version. setup wpms playground blog as new demo, populate w/ sample content. update link in readme. make sure to update w/ new releases (add to list above). don't use to test, only as pristine demo.
-
-	redo enqueuemessage,etc to use WP_Error objects instead of just strings?
-		but what about for normal messages?
 
 	look for all @todo comments in code, and move them here. clean them up before moving on to next 1.major version
 
@@ -459,31 +454,12 @@
 1.major.minor
 	loadresources isn't specifiying a version number for the maps api. if they switch to v4 i don't want to plugin to automatically do it
 		see if you can specify v3
-	enqueuemessage should let it can be converted to string
-		if it has a __toString() function
-			does that cover types like int, or have to list them manually?
-			http://www.php.net/manual/en/language.oop5.magic.php#language.oop5.magic.tostring
-		maybe hve it enqueue an error instead of returning false, since not really gonna check if it returns true
-	test to make sure wp action actually is working for essages. i don't think it runs on edit-page, so wouldn't get notice of geocode error
-		check out wp_enqueue_scripts
-		if works, update wpse question. also add it and admin_enqueue_scripts to codex list in the appropriate order
 
 1.major.minor
 	double check that everything is sanitized
 	give everything a once over, check comments, empty phpdoc lines, etc
 	stat bug is back - http://wordpress.stackexchange.com/questions/21132/repository-reporting-incorrect-plugin-active-version-stat
 		http://phpdoc.wordpress.org/trunk/WordPress/Administration/_wp-admin---includes---plugin.php.html#functionget_plugin_data
-	admin_notices
-		target
-			http://core.trac.wordpress.org/ticket/14696
-			have to go through each message and deterine who it should go to
-			this will bump required version up to 3.1
-				reember to update readme and environment check
-			might want to use is_user_admin() when setting or displaying
-		error in addFeaturedImageSupport being added multiple times
-			maybe b/c sitting on page and auto-save adds one?
-			could not call enqueue if auto-save inside addFeaturedImageSupport, but probably better to check if message already enqueues inside enqueueMessage()
-			might be fixed by 'target' task, but probably not
 	add option to disable the 'image media button disabled' warning. would have to be site-wide option?
 		update error message to let them know they can disable it
 	organize FAQ page into sections?

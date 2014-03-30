@@ -80,7 +80,7 @@ if ( ! class_exists( 'BGMPSettings' ) ) {
 					update_option( BasicGoogleMapsPlacemarks::PREFIX . 'map-latitude', $coordinates['latitude'] );
 					update_option( BasicGoogleMapsPlacemarks::PREFIX . 'map-longitude', $coordinates['longitude'] );
 				} else {
-					// @todo - can't call protected from this class - $this->bgmp->enqueueMessage('That address couldn\'t be geocoded, please make sure that it\'s correct.', 'error' );
+					add_notice( "That address couldn't be geocoded, please make sure that it's correct.", 'error' );
 
 					update_option( BasicGoogleMapsPlacemarks::PREFIX . 'map-latitude', '' ); // @todo - update these
 					update_option( BasicGoogleMapsPlacemarks::PREFIX . 'map-longitude', '' );
