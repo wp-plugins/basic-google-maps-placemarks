@@ -804,7 +804,8 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 			$attributes = $this->cleanMapShortcodeArguments( $attributes );
 
 			ob_start();
-			do_action( BasicGoogleMapsPlacemarks::PREFIX . 'meta-address-before' );
+			do_action( BasicGoogleMapsPlacemarks::PREFIX . 'meta-address-before' );	// @todo - deprecated b/c named incorrectly
+			do_action( BasicGoogleMapsPlacemarks::PREFIX . 'shortcode-bgmp-map-before' );
 			echo $this->render_template( 'core/shortcode-bgmp-map.php', array( 'attributes' => $attributes ) );
 			do_action( BasicGoogleMapsPlacemarks::PREFIX . 'shortcode-bgmp-map-after' );
 			$output = ob_get_clean();

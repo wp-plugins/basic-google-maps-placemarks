@@ -75,9 +75,8 @@
 	this is big enough to make it 2.0 b/c devs need to know there might be backcompat issues w/ their customizations
 
     render_template
-       plus moving everything into views
-       add instructions to readme for how overriding views w/ theme templates or filter
-    do_action( BasicGoogleMapsPlacemarks::PREFIX . 'meta-address-before' ); should be map shortcode. don't worry about backcompat b/c is bug
+       move hardcoded html into views
+       maybe deprecate the actions in existing views, or move them into generic ones in render_template
     remove PREFIX and use 'bgmp_' directly
 	remove networkActivate b/c mubuttons no longer needed?
 		would also affect addFeaturedImageSupport
