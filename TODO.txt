@@ -82,8 +82,6 @@
 			core.php broken up
 			unit tests into suite too
 			break css/js into front/back end
-		esc_attr_e etc appropriate use
-		search for == to fix yoda styles
 
 	low priority
 		remove networkActivate b/c mubuttons no longer needed?

@@ -161,7 +161,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 			$supportedTypes = get_theme_support( 'post-thumbnails' );
 
-			if ( $supportedTypes === false )
+			if ( false === $supportedTypes )
 				add_theme_support( 'post-thumbnails', array( self::POST_TYPE ) );
 			elseif ( is_array( $supportedTypes ) ) {
 				$supportedTypes[0][] = self::POST_TYPE;
@@ -235,7 +235,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 					$longitude   = get_post_meta( $arguments['placemark'], 'bgmp_longitude', true );
 					$coordinates = $this->validateCoordinates( $latitude . ',' . $longitude );
 
-					if ( $coordinates === false ) {
+					if ( false === $coordinates ) {
 						$pass  = false;
 						$error = sprintf(
 							__( '%s shortcode error: %s does not have a valid address.', 'bgmp' ),
@@ -375,8 +375,9 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 			$shortcodes = $this->getShortcodes( $post->post_content ); // note: don't use setup_postdata/get_the_content() in this instance -- http://lists.automattic.com/pipermail/wp-hackers/2013-January/045053.html
 
 			for ( $i = 0; $i < count( $shortcodes[2] ); $i ++ ) {
-				if ( $shortcodes[2][$i] == 'bgmp-map' )
+				if ( 'bgmp-map' == $shortcodes[2][$i] ) {
 					return true;
+				}
 			}
 
 			return false;
@@ -441,7 +442,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 
 			// Load meta box resources for settings page
-			if ( isset( $_GET['page'] ) && $_GET['page'] == 'bgmp_settings' ) { // @todo better way than $_GET ?
+			if ( isset( $_GET['page'] ) && 'bgmp_settings' == $_GET['page'] ) { // @todo better way than $_GET ?
 				wp_enqueue_style( 'bgmp_style' );
 				wp_enqueue_script( 'dashboard' );
 			}
@@ -525,7 +526,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		function sortAdminView( $query ) {
 			global $pagenow;
 
-			if ( is_admin() && $pagenow == 'edit.php' && array_key_exists( 'post_type', $_GET ) && $_GET['post_type'] == self::POST_TYPE ) {
+			if ( is_admin() && 'edit.php' == $pagenow && array_key_exists( 'post_type', $_GET ) && self::POST_TYPE == $_GET['post_type'] ) {
 				$query->query_vars['order']   = apply_filters( 'bgmp_admin-sort-order', 'ASC' );
 				$query->query_vars['orderby'] = apply_filters( 'bgmp_admin-sort-orderby', 'title' );
 
@@ -581,7 +582,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 			global $post;
 
 			$zIndex = get_post_meta( $post->ID, 'bgmp_zIndex', true );
-			if ( filter_var( $zIndex, FILTER_VALIDATE_INT ) === FALSE ) {
+			if ( false === filter_var( $zIndex, FILTER_VALIDATE_INT )) {
 				$zIndex = 0;
 			}
 
@@ -607,7 +608,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 				return;
 			}
 
-			if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || $post->post_status == 'auto-draft' ) {
+			if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || 'auto-draft' == $post->post_status ) {
 				return;
 			}
 
@@ -630,7 +631,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 			// Save z-index
 			if ( isset( $_POST['bgmp_zIndex'] ) ) {
-				if ( filter_var( $_POST['bgmp_zIndex'], FILTER_VALIDATE_INT ) === FALSE ) {
+				if ( false === filter_var( $_POST['bgmp_zIndex'], FILTER_VALIDATE_INT ) ) {
 					update_post_meta( $post->ID, 'bgmp_zIndex', 0 );
 					add_notice( __( 'The stacking order has to be an integer.', 'bgmp' ), 'error' );
 				} else {
@@ -707,7 +708,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 				return false;
 			}
 
-			if ( isset( $coordinates->status ) && $coordinates->status == 'REQUEST_DENIED' ) {
+			if ( isset( $coordinates->status ) && 'REQUEST_DENIED' == $coordinates->status ) {
 				add_notice( sprintf( __( '%s geocode error: Request Denied.', 'bgmp' ), BGMP_NAME ), 'error' );
 				return false;
 			}
@@ -843,7 +844,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 				);
 			}
 
-			$viewOnMap = isset( $attributes['viewonmap'] ) && $attributes['viewonmap'] == true;
+			$viewOnMap = isset( $attributes['viewonmap'] ) && true == $attributes['viewonmap'];
 
 			$posts = get_posts( apply_filters( 'bgmp_list-shortcode-params', $params ) );
 			$posts = apply_filters( 'bgmp_list-shortcode-posts', $posts );
@@ -992,7 +993,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 				$longitude   = get_post_meta( $attributes['placemark'], 'bgmp_longitude', true );
 				$coordinates = $this->validateCoordinates( $latitude . ',' . $longitude );
 
-				if ( $coordinates !== false ) {
+				if ( false !== $coordinates ) {
 					$options['latitude']  = $latitude;
 					$options['longitude'] = $longitude;
 					$options['zoom']      = apply_filters( 'bgmp_individual-map-default-zoom', 13 ); // deprecated b/c of bgmp_map-options filter?

@@ -63,7 +63,7 @@ function bgmp_wrapper( $ ) {
 		buildMap: function () {
 			var mapOptions;
 
-			if ( bgmpData.options.mapWidth == '' || bgmpData.options.mapHeight == '' || bgmpData.options.latitude == '' || bgmpData.options.longitude == '' || bgmpData.options.zoom == '' || bgmpData.options.infoWindowMaxWidth == '' ) {
+			if ( '' == bgmpData.options.mapWidth || '' == bgmpData.options.mapHeight || '' == bgmpData.options.latitude || '' == bgmpData.options.longitude || '' == bgmpData.options.zoom || '' == bgmpData.options.infoWindowMaxWidth ) {
 				// @todo update w/ cluster options?
 
 				$( $.bgmp.canvas ).html( $.bgmp.name + " error: map options not set." );
@@ -74,9 +74,9 @@ function bgmp_wrapper( $ ) {
 				'zoom'                     : bgmpData.options.zoom,
 				'center'                   : new google.maps.LatLng( bgmpData.options.latitude, bgmpData.options.longitude ),
 				'mapTypeId'                : google.maps.MapTypeId[ bgmpData.options.type ],
-				'mapTypeControl'           : bgmpData.options.typeControl == 'off' ? false : true,
+				'mapTypeControl'           : 'off' == bgmpData.options.typeControl ? false : true,
 				'mapTypeControlOptions'    : { style: google.maps.MapTypeControlStyle[ bgmpData.options.typeControl ] },
-				'navigationControl'        : bgmpData.options.navigationControl == 'off' ? false : true,
+				'navigationControl'        : 'off' == bgmpData.options.navigationControl ? false : true,
 				'navigationControlOptions' : { style: google.maps.NavigationControlStyle[ bgmpData.options.navigationControl ] },
 				'streetViewControl'        : bgmpData.options.streetViewControl
 			};
