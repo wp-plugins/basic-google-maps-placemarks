@@ -50,8 +50,6 @@ if ( ! class_exists( 'BGMPSettings' ) ) {
 			$this->clusterMaxZoom   = get_option( 'bgmp_cluster-max-zoom',   '7' );
 			$this->clusterGridSize  = get_option( 'bgmp_cluster-grid-size',  '40' );
 			$this->clusterStyle     = get_option( 'bgmp_cluster-style',      'default' );
-
-			// @todo - this isn't DRY, same values in BGMP::singleActivate() and upgrade()
 		}
 
 		/**
@@ -302,19 +300,7 @@ if ( ! class_exists( 'BGMPSettings' ) ) {
 		 * @param array $section
 		 */
 		public function markupSettingsSections( $section ) {
-			// @todo move this to an external view file
-
-			switch ( $section['id'] ) {
-				case 'bgmp_map-settings':
-					echo '<h3>' . __( 'Map Settings', 'bgmp' ) . '</h3>';
-					echo '<p>' . __( 'The map(s) will use these settings as defaults, but you can override them on individual maps using shortcode arguments. See <a href="http://wordpress.org/extend/plugins/basic-google-maps-placemarks/installation/">the Installation page</a> for details.', 'bgmp' ) . '</p>';
-					break;
-
-				case 'bgmp_marker-cluster-settings':
-					echo '<h3>' . __( 'Marker Clustering', 'bgmp' ) . '</h3>';
-					echo '<p>' . __( 'You can group large numbers of markers into a single cluster by enabling the Cluster Markers option.', 'bgmp' ) . '</p>';
-					break;
-			}
+			echo $GLOBALS['bgmp']->render_template( 'settings/section-headers.php', array( 'section' => $section ), 'always' );
 		}
 
 		/**
@@ -323,76 +309,22 @@ if ( ! class_exists( 'BGMPSettings' ) ) {
 		 * @param array $field
 		 */
 		public function markupMapSettingsFields( $field ) {
-			// @todo move this to an external view file
+			$variables = array(
+				'field'                 => $field,
+				'mapWidth'              => $this->mapWidth,
+				'mapHeight'             => $this->mapHeight,
+				'mapAddress'            => $this->mapAddress,
+				'mapLatitude'           => $this->mapLatitude,
+				'mapLongitude'          => $this->mapLongitude,
+				'mapZoom'               => $this->mapZoom,
+				'mapType'               => $this->mapType,
+				'mapTypes'              => $this->mapTypes,
+				'mapTypeControl'        => $this->mapTypeControl,
+				'mapNavigationControl'  => $this->mapNavigationControl,
+				'mapInfoWindowMaxWidth' => $this->mapInfoWindowMaxWidth,
+			);
 
-			switch ( $field['label_for'] ) {
-				case 'bgmp_map-width':
-					echo '<input id="' . 'bgmp_map-width" name="' . 'bgmp_map-width" type="text" value="' . $this->mapWidth . '" class="small-text" /> ';
-					_e( 'pixels', 'bgmp' );
-					break;
-
-				case 'bgmp_map-height':
-					echo '<input id="' . 'bgmp_map-height" name="' . 'bgmp_map-height" type="text" value="' . $this->mapHeight . '" class="small-text" /> ';
-					_e( 'pixels', 'bgmp' );
-					break;
-
-				case 'bgmp_map-address':
-					echo '<input id="' . 'bgmp_map-address" name="' . 'bgmp_map-address" type="text" value="' . $this->mapAddress . '" class="regular-text" />';
-
-					if ( $this->mapAddress && ! BasicGoogleMapsPlacemarks::validateCoordinates( $this->mapAddress ) && $this->mapLatitude && $this->mapLongitude )
-						echo ' <em>(' . __( 'Geocoded to:', 'bgmp' ) . ' ' . $this->mapLatitude . ', ' . $this->mapLongitude . ')</em>';
-
-					elseif ( $this->mapAddress && ( ! $this->mapLatitude || ! $this->mapLongitude ) )
-						echo " <em>" . __( "(Error geocoding address. Please make sure it's correct and try again.)", 'bgmp' ) . "</em>";
-
-					echo '<p class="description">' . __( 'You can type in anything that you would type into a Google Maps search field, from a full address to an intersection, landmark, city, zip code or latitude/longitude coordinates.', 'bgmp' ) . '</p>';
-					break;
-
-				case 'bgmp_map-zoom':
-					echo '<input id="' . 'bgmp_map-zoom" name="' . 'bgmp_map-zoom" type="text" value="' . $this->mapZoom . '" class="small-text" /> ';
-					printf( __( '%d (farthest) to %d (closest)', 'bgmp' ), BasicGoogleMapsPlacemarks::ZOOM_MIN, BasicGoogleMapsPlacemarks::ZOOM_MAX );
-					break;
-
-				case 'bgmp_map-type':
-					echo '<select id="' . 'bgmp_map-type" name="' . 'bgmp_map-type">';
-
-					foreach ( $this->mapTypes as $code => $label ) {
-						echo '<option value="' . $code . '" ' . ( $this->mapType == $code ? 'selected="selected"' : '' ) . '>' . $label . '</option>';
-					}
-
-					echo '</select>';
-					break;
-
-				case 'bgmp_map-type-control':
-					echo '<select id="' . 'bgmp_map-type-control" name="' . 'bgmp_map-type-control">
-						<option value="off" ' . ( $this->mapTypeControl == 'off' ? 'selected="selected"' : '' ) . '>' . __( 'Off', 'bgmp' ) . '</option>
-						<option value="DEFAULT" ' . ( $this->mapTypeControl == 'DEFAULT' ? 'selected="selected"' : '' ) . '>' . __( 'Automatic', 'bgmp' ) . '</option>
-						<option value="HORIZONTAL_BAR" ' . ( $this->mapTypeControl == 'HORIZONTAL_BAR' ? 'selected="selected"' : '' ) . '>' . __( 'Horizontal Bar', 'bgmp' ) . '</option>
-						<option value="DROPDOWN_MENU" ' . ( $this->mapTypeControl == 'DROPDOWN_MENU' ? 'selected="selected"' : '' ) . '>' . __( 'Dropdown Menu', 'bgmp' ) . '</option>
-					</select>';
-					// @todo use selected()
-
-					echo '<p class="description">' . esc_html__( ' "Automatic" will automatically switch to the appropriate control based on the window size and other factors.', 'bgmp' ) . '</p>';
-					break;
-
-				case 'bgmp_map-navigation-control':
-					echo '<select id="' . 'bgmp_map-navigation-control" name="' . 'bgmp_map-navigation-control">
-						<option value="off" ' . ( $this->mapNavigationControl == 'DEFAULT' ? 'selected="selected"' : '' ) . '>' . __( 'Off', 'bgmp' ) . '</option>
-						<option value="DEFAULT" ' . ( $this->mapNavigationControl == 'DEFAULT' ? 'selected="selected"' : '' ) . '>' . __( 'Automatic', 'bgmp' ) . '</option>
-						<option value="SMALL" ' . ( $this->mapNavigationControl == 'SMALL' ? 'selected="selected"' : '' ) . '>' . __( 'Small', 'bgmp' ) . '</option>
-						<option value="ANDROID" ' . ( $this->mapNavigationControl == 'ANDROID' ? 'selected="selected"' : '' ) . '>' . __( 'Android', 'bgmp' ) . '</option>
-						<option value="ZOOM_PAN" ' . ( $this->mapNavigationControl == 'ZOOM_PAN' ? 'selected="selected"' : '' ) . '>' . __( 'Zoom/Pan', 'bgmp' ) . '</option>
-					</select>';
-					// @todo use selected()
-
-					echo '<p class="description">' . esc_html__( ' "Automatic" will automatically switch to the appropriate control based on the window size and other factors.', 'bgmp' ) . '</p>';
-					break;
-
-				case 'bgmp_map-info-window-width':
-					echo '<input id="' . 'bgmp_map-info-window-width" name="' . 'bgmp_map-info-window-width" type="text" value="' . $this->mapInfoWindowMaxWidth . '" class="small-text" /> ';
-					_e( 'pixels', 'bgmp' );
-					break;
-			}
+			echo $GLOBALS['bgmp']->render_template( 'settings/fields-map.php', $variables, 'always' );
 		}
 
 		/**

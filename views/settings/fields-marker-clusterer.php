@@ -23,10 +23,10 @@
 <?php elseif ( $field['label_for'] == 'bgmp_cluster-style' ) : ?>
 
 	<select id="bgmp_cluster-style" name="bgmp_cluster-style">
-		<option value="default"      <?php echo selected( $clusterStyle, 'default',      false ); ?>><?php esc_html_e( 'Default',      'bgmp' ); ?></option>
-		<option value="people"       <?php echo selected( $clusterStyle, 'people',       false ); ?>><?php esc_html_e( 'People',       'bgmp' ); ?></option>
-		<option value="hearts"       <?php echo selected( $clusterStyle, 'hearts',       false ); ?>><?php esc_html_e( 'Hearts',       'bgmp' ); ?></option>
-		<option value="conversation" <?php echo selected( $clusterStyle, 'conversation', false ); ?>><?php esc_html_e( 'Conversation', 'bgmp' ); ?></option>
+		<option value="default"      <?php selected( $clusterStyle, 'default',      false ); ?>><?php esc_html_e( 'Default',      'bgmp' ); ?></option>
+		<option value="people"       <?php selected( $clusterStyle, 'people',       false ); ?>><?php esc_html_e( 'People',       'bgmp' ); ?></option>
+		<option value="hearts"       <?php selected( $clusterStyle, 'hearts',       false ); ?>><?php esc_html_e( 'Hearts',       'bgmp' ); ?></option>
+		<option value="conversation" <?php selected( $clusterStyle, 'conversation', false ); ?>><?php esc_html_e( 'Conversation', 'bgmp' ); ?></option>
 	</select>
 
 <?php endif; ?>

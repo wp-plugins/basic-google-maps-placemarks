@@ -75,24 +75,31 @@
 	this is big enough to make it 2.0 b/c devs need to know there might be backcompat issues w/ their customizations
 
     render_template
-       move hardcoded html into views
        maybe deprecate the actions in existing views, or move them into generic ones in render_template
+       rename settings.php
     rename functions to underscore
     		what about back-compat?
-        modularitity / oop design not just oop functions
-        	base module that has render_template
-        	core.php broken up
-        	unit tests into suite too
-        	break css/js into front/back end
+	modularitity / oop design not just oop functions
+		base module that has render_template
+		core.php broken up
+		unit tests into suite too
+		break css/js into front/back end
+	esc_attr_e etc appropriate use
+	search for == to fix yoda styles
 
     remove networkActivate b/c mubuttons no longer needed?
 		would also affect addFeaturedImageSupport
 		if not, switch to use add_notice
 	$updatedOptions and shutdown() no longer needed in core.php ? should probably be handled in settings, but looks like needs a bit of work to get there
 	call clenmapshortcodes so users will get erorrs immediately when entering bad data
+	move some things in core __construct to bootstrap
+	search for echo checked( and echo selected( b/c unnecessary
 
+	final scan through everything for missed coding style violations, anything else you want to fix
     check that readme instructions and customizations still work
+    test everything
     do an RC, send notice to list, post notice on forums. stress the need to test any customizations
+    	stick it to forum
     	maybe also post on some old threads that include customizations, to alert people that way too
 
 
