@@ -14,7 +14,7 @@
 			<?php do_settings_sections( 'bgmp_settings' ); ?>
 
 			<p class="submit">
-				<input type="submit" name="submit" id="submit" class="button-primary" value="<?php esc_attr_e( 'Save Changes' ); ?>" />
+				<input type="submit" name="submit" id="submit" class="button-primary" value="<?php echo esc_attr( 'Save Changes' ); ?>" />
 			</p>
 		</div>
 		<!-- /#bgmp_settings-fields -->

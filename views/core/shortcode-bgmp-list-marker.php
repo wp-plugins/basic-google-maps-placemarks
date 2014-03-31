@@ -1,10 +1,10 @@
-<li id="bgmp_list-item-<?php esc_attr_e( $p->ID ); ?>" class="bgmp_list-item">
+<li id="bgmp_list-item-<?php echo esc_attr( $p->ID ); ?>" class="bgmp_list-item">
 	<h3 class="bgmp_list-placemark-title">
 		<?php echo apply_filters( 'the_title', $p->post_title ); ?>
 
 		<?php if ( $viewOnMap ) : ?>
 			<span class="bgmp_view-on-map-container">
-				[<a href="javascript:;" data-marker-id="<?php esc_attr_e( $p->ID ); ?>" class="bgmp_view-on-map">View On Map</a>]
+				[<a href="javascript:;" data-marker-id="<?php echo esc_attr( $p->ID ); ?>" class="bgmp_view-on-map">View On Map</a>]
 			</span>
 		<?php endif; ?>
 	</h3>

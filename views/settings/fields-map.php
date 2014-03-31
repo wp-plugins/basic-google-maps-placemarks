@@ -63,7 +63,7 @@
 	</select>
 
 	<p class="description">
-		<?php esc_html_e( ' "Automatic" will automatically switch to the appropriate control based on the window size and other factors.', 'bgmp' ); ?>
+		<?php _e( ' "Automatic" will automatically switch to the appropriate control based on the window size and other factors.', 'bgmp' ); ?>
 	</p>
 
 <?php elseif ( 'bgmp_map-info-window-width' == $field['label_for'] ) : ?>
