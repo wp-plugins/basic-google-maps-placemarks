@@ -1,3 +1,3 @@
-<!-- <?php _e( 'Begin Basic Google Map Placemarks head', 'bgmp' ); ?> -->
+<!-- <?php printf( __( 'Begin %s head', 'bgmp' ), BGMP_NAME ); ?> -->
 <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-<!-- <?php _e( 'End Basic Google Map Placemarks head', 'bgmp' ); ?> -->
+<!-- <?php printf( __( 'End %s head', 'bgmp' ), BGMP_NAME ); ?> -->

@@ -43,11 +43,12 @@
 	If major changes, commit release candidate
 		Update version to x.x-rc1 in basic-google-maps-placemarks.php and core.php
 		Commit, tag
-		Add support forum message asking for testing/feedback
+		Add support forum message asking for testing/feedback, stick it to forum head
 		Email testers mailing list with link to forum post
 		Wait about a week so people have chance to test
 		Fix any reported bugs, release additional RCs if necessary
 		Release final version
+		Unstick forum post about RC
 	
 	Remove any notes from TODO for current release
 	Run readme.txt through validator
@@ -75,31 +76,49 @@
 	this is big enough to make it 2.0 b/c devs need to know there might be backcompat issues w/ their customizations
 
 	high priority
-		rename functions to underscore
-				what about back-compat?
+		include/register settings from bootstrap, not core
+			also handle get_settings() in a better way. dependency injection or something like that?
 		modularitity / oop design not just oop functions
 			base module that has render_template
+				what other functions should be moved there? anything from core module that settings calls?
 			core.php broken up
+				rename file to basic-google-maps-placemarks.php to match class name
+				shortcodes, post types/tax, etc, OR oop design. address, map, list, placemark
+				how to maintain back_compat w/ functions moving?
+					try a __call() thing like w/ renaming functions to underscore_case, or maybe just don't worry about it
 			unit tests into suite too
 			break css/js into front/back end
+			rename settings.php to match class name
+		modularize clean_map_shortcode_arguments()
+		remove BGMP_NAME
+		move cluserStyles into it's own function
+		map_shortcode_called() can call has_shortcode(), then can remove get_shortcode()?
+			this will bump required wp version to 3.7?
 
 	low priority
-		remove networkActivate b/c mubuttons no longer needed?
-			would also affect addFeaturedImageSupport
+		rename views/settings.php to something more descriptive?
+		rename text domain to match slug
+			http://ottopress.com/2013/language-packs-101-prepwork/
+			also remove po/mo files if 4.0 is out? (b/c they'll be downloaded from wp.org)? probably have to wait until most users have upgrade to 4.0
+		remove network_activate b/c mubuttons no longer needed?
+			would also affect add_featured_image_support
 			if not, switch to use add_notice
-		$updatedOptions and shutdown() no longer needed in core.php ? should probably be handled in settings, but looks like needs a bit of work to get there
+		$updated_options and shutdown() no longer needed in core.php ? should probably be handled in settings, but looks like needs a bit of work to get there
 		call clenmapshortcodes so users will get erorrs immediately when entering bad data
 		move some things in core __construct to bootstrap
 		search for echo checked( and echo selected( b/c unnecessary
 		render_template
-			   maybe deprecate the actions in existing views, or move them into generic ones in render_template
-			   rename settings.php
+			add actions from plugin skeleton
+				maybe deprecate the actions in existing views
+		move to using a single setting
+			possibly maintain backcompat with upgrade()
 
 	final scan through everything for missed coding style violations, anything else you want to fix
     check that readme instructions and customizations still work
     test everything
-    do an RC, send notice to list, post notice on forums. stress the need to test any customizations
-    	stick it to forum
+
+    do an RC, send notice to list, post sticky notice on forums. stress the need to test any customizations
+    	test on wahc
     	maybe also post on some old threads that include customizations, to alert people that way too
 
 

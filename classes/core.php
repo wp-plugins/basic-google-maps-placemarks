@@ -1,8 +1,8 @@
 <?php
 
-if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
-	class BasicGoogleMapsPlacemarks {
-		protected $settings, $options, $updatedOptions, $mapShortcodeCalled, $mapShortcodeCategories;
+if ( ! class_exists( 'Basic_Google_Maps_Placemarks' ) ) {
+	class Basic_Google_Maps_Placemarks extends BGMP_Module {
+		protected $settings, $options, $updated_options, $map_shortcode_called, $map_shortcode_categories;
 		const VERSION    = '1.10.2';
 		const POST_TYPE  = 'bgmp';
 		const TAXONOMY   = 'bgmp-category';
@@ -14,77 +14,68 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		 * Constructor
 		 */
 		public function __construct() {
-			add_action( 'init',                     array( $this, 'init' ), 8 );                        // lower priority so that variables defined here will be available to BGMPSettings class and other init callbacks
+			add_action( 'init',                     array( $this, 'init' ), 8 );                          // lower priority so that variables defined here will be available to BGMPSettings class and other init callbacks
 			add_action( 'init',                     array( $this, 'upgrade' ) );
-			add_action( 'init',                     array( $this, 'createPostType' ) );
-			add_action( 'init',                     array( $this, 'createCategoryTaxonomy' ) );
-			add_action( 'after_setup_theme',        array( $this, 'addFeaturedImageSupport' ), 11 );    // @todo add note explaining why higher priority
-			add_action( 'admin_init',               array( $this, 'addMetaBoxes' ) );
-			add_action( 'wp',                       array( $this, 'loadResources' ), 11 );              // @todo - should be wp_enqueue_scripts instead?	// @todo add note explaining why higher priority
-			add_action( 'admin_enqueue_scripts',    array( $this, 'loadResources' ), 11 );
-			add_action( 'wp_head',                  array( $this, 'outputHead' ) );
-			add_action( 'save_post',                array( $this, 'saveCustomFields' ) );
-			add_action( 'wpmu_new_blog',            array( $this, 'activateNewSite' ) );
+			add_action( 'init',                     array( $this, 'create_post_type' ) );
+			add_action( 'init',                     array( $this, 'create_category_taxonomy' ) );
+			add_action( 'after_setup_theme',        array( $this, 'add_featured_image_support' ), 11 );   // @todo add note explaining why higher priority
+			add_action( 'admin_init',               array( $this, 'add_meta_boxes' ) );
+			add_action( 'wp',                       array( $this, 'load_resources' ), 11 );               // @todo - should be wp_enqueue_scripts instead?	// @todo add note explaining why higher priority
+			add_action( 'admin_enqueue_scripts',    array( $this, 'load_resources' ), 11 );
+			add_action( 'wp_head',                  array( $this, 'output_head' ) );
+			add_action( 'save_post',                array( $this, 'save_custom_fields' ) );
+			add_action( 'wpmu_new_blog',            array( $this, 'activate_new_site' ) );
 			add_action( 'shutdown',                 array( $this, 'shutdown' ) );
 
-			add_filter( 'parse_query',              array( $this, 'sortAdminView' ) );
+			add_filter( 'parse_query',              array( $this, 'sort_admin_view' ) );
 
-			add_shortcode( 'bgmp-map',              array( $this, 'mapShortcode' ) );
-			add_shortcode( 'bgmp-list',             array( $this, 'listShortcode' ) );
+			add_shortcode( 'bgmp-map',              array( $this, 'map_shortcode' ) );
+			add_shortcode( 'bgmp-list',             array( $this, 'list_shortcode' ) );
 
-			register_activation_hook( dirname( dirname( __FILE__ ) ) . '/basic-google-maps-placemarks.php', array( $this, 'networkActivate' ) );
+			register_activation_hook( dirname( dirname( __FILE__ ) ) . '/basic-google-maps-placemarks.php', array( $this, 'network_activate' ) );
 
 			require_once( dirname( __FILE__ ) . '/settings.php' );
-			$this->settings = new BGMPSettings();
+			$this->settings = new BGMP_Settings();
 		}
 
 		/**
 		 * Performs various initialization functions
 		 */
 		public function init() {
-			$defaultOptions = array( 'updates' => array(), 'errors' => array(), 'dbVersion' => '0' );
-			$this->options  = array_merge( $defaultOptions, get_option( 'bgmp_options', array() ) );
+			$default_options = array( 'dbVersion' => '0' );   // can't rename to conform to standard b/c of backcompat
+			$this->options   = array_merge( $default_options, get_option( 'bgmp_options', array() ) );
 
 			if ( ! is_array( $this->options ) ) {
-				$this->options = $defaultOptions;
+				$this->options = $default_options;
 			}
 
-			if ( ! is_array( $this->options['updates'] ) ) {
-				$this->options['updates'] = array();
-			}
-
-			if ( ! is_array( $this->options['errors'] ) ) {
-				$this->options['errors'] = array();
-			}
-
-			$this->userMessageCount       = array( 'updates' => count( $this->options['updates'] ), 'errors' => count( $this->options['errors'] ) );
-			$this->updatedOptions         = false;
-			$this->mapShortcodeCalled     = false;
-			$this->mapShortcodeCategories = null;
+			$this->updated_options          = false;
+			$this->map_shortcode_called     = false;
+			$this->map_shortcode_categories = null;
 		}
 
 		/**
 		 * Getter method for instance of the BGMPSettings class, used for unit testing
 		 */
-		public function &getSettings() {
+		public function &get_settings() {
 			return $this->settings;
 		}
 
 		/**
 		 * Handles extra activation tasks for MultiSite installations
 		 *
-		 * @param bool $networkWide True if the activation was network-wide
+		 * @param bool $network_wide True if the activation was network-wide
 		 */
-		public function networkActivate( $networkWide ) {
+		public function network_activate( $network_wide ) {
 			global $wpdb, $wp_version;
 
 			if ( function_exists( 'is_multisite' ) && is_multisite() ) {
 				// Enable image uploads so the 'Set Featured Image' meta box will be available
-				$mediaButtons = get_site_option( 'mu_media_buttons' );
+				$media_buttons = get_site_option( 'mu_media_buttons' );
 
-				if ( version_compare( $wp_version, '3.3', "<=" ) && ( ! array_key_exists( 'image', $mediaButtons ) || ! $mediaButtons['image'] ) ) {
-					$mediaButtons['image'] = 1;
-					update_site_option( 'mu_media_buttons', $mediaButtons );
+				if ( version_compare( $wp_version, '3.3', "<=" ) && ( ! array_key_exists( 'image', $media_buttons ) || ! $media_buttons['image'] ) ) {
+					$media_buttons['image'] = 1;
+					update_site_option( 'mu_media_buttons', $media_buttons );
 
 					/*
 					@todo enqueueMessage() needs $this->options to be set, but as of v1.8 that doesn't happen until the init hook, which is after activation. It doesn't really matter anymore, though, because mu_media_buttons was removed in 3.3. http://core.trac.wordpress.org/ticket/17578 
@@ -115,16 +106,17 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 						$longitude = get_post_meta( $p->ID, 'bgmp_longitude', true );
 
 						if ( empty( $address ) && ! empty( $latitude ) && ! empty( $longitude ) ) {
-							$address = $this->reverseGeocode( $latitude, $longitude );
-							if ( $address )
+							$address = $this->reverse_geocode( $latitude, $longitude );
+							if ( $address ) {
 								update_post_meta( $p->ID, 'bgmp_address', $address );
+							}
 						}
 					}
 				}
 			}
 
 			$this->options['dbVersion'] = self::VERSION;
-			$this->updatedOptions       = true;
+			$this->updated_options      = true;
 
 			// Clear WP Super Cache and W3 Total Cache
 			if ( function_exists( 'wp_cache_clear_cache' ) )
@@ -141,16 +133,16 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		/**
 		 * Adds featured image support
 		 */
-		public function addFeaturedImageSupport() {
+		public function add_featured_image_support() {
 			global $wp_version;
 
 			// We enabled image media buttons for MultiSite on activation, but the admin may have turned it back off
 			if ( version_compare( $wp_version, '3.3', "<=" ) && is_admin() && function_exists( 'is_multisite' ) && is_multisite() ) {
-				// @todo this isn't DRY, similar code in networkActivate()
+				// @todo this isn't DRY, similar code in network_activate()
 
-				$mediaButtons = get_site_option( 'mu_media_buttons' );
+				$media_buttons = get_site_option( 'mu_media_buttons' );
 
-				if ( ! array_key_exists( 'image', $mediaButtons ) || ! $mediaButtons['image'] ) {
+				if ( ! array_key_exists( 'image', $media_buttons ) || ! $media_buttons['image'] ) {
 					add_notice( sprintf(
 						__( "%s requires the Images media button setting to be enabled in order to use custom icons on markers, but it's currently turned off. If you'd like to use custom icons you can enable it on the <a href=\"%s\">Network Settings</a> page, in the Upload Settings section.", 'bgmp' ),
 						BGMP_NAME,
@@ -159,13 +151,13 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 				}
 			}
 
-			$supportedTypes = get_theme_support( 'post-thumbnails' );
+			$supported_types = get_theme_support( 'post-thumbnails' );
 
-			if ( false === $supportedTypes )
+			if ( false === $supported_types )
 				add_theme_support( 'post-thumbnails', array( self::POST_TYPE ) );
-			elseif ( is_array( $supportedTypes ) ) {
-				$supportedTypes[0][] = self::POST_TYPE;
-				add_theme_support( 'post-thumbnails', $supportedTypes[0] );
+			elseif ( is_array( $supported_types ) ) {
+				$supported_types[0][] = self::POST_TYPE;
+				add_theme_support( 'post-thumbnails', $supported_types[0] );
 			}
 		}
 
@@ -175,7 +167,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		 * @param string $content
 		 * @return mixed false | array
 		 */
-		protected function getShortcodes( $content ) {
+		protected function get_shortcodes( $content ) {
 			$matches = array();
 
 			preg_match_all( '/' . get_shortcode_regex() . '/s', $content, $matches );
@@ -191,13 +183,14 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		 * @param array
 		 * @return array
 		 */
-		protected function cleanMapShortcodeArguments( $arguments ) {
+		protected function clean_map_shortcode_arguments( $arguments ) {
 			// @todo - not doing this in settings yet, but should. want to make sure it's DRY when you do. 
 			// @todo - Any errors generated in there would stack up until admin loads page, then they'll all be displayed, include  ones from geocode() etc. that's not great solution, but is there better way?
-			// maybe call getMapShortcodeArguments() when saving post so they get immediate feedback about any errors in shortcode
+			// maybe call getmap_shortcodeArguments() when saving post so they get immediate feedback about any errors in shortcode
 			// do something similar for list shortcode arguments?
 
 			global $post;
+			$error = '';
 
 			if ( ! is_array( $arguments ) )
 				return array();
@@ -206,7 +199,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 			// Placemark
 			if ( isset( $arguments['placemark'] ) ) {
 				$pass       = true;
-				$originalID = $arguments['placemark'];
+				$original_id = $arguments['placemark'];
 
 				// Check for valid placemark ID
 				if ( ! is_numeric( $arguments['placemark'] ) )
@@ -225,7 +218,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 					$error = sprintf(
 						__( '%s shortcode error: %s is not a valid placemark ID.', 'bgmp' ),
 						BGMP_NAME,
-						is_scalar( $originalID ) ? (string) $originalID : gettype( $originalID )
+						is_scalar( $original_id ) ? (string) $original_id : gettype( $original_id )
 					);
 				}
 
@@ -233,14 +226,14 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 				if ( $pass ) {
 					$latitude    = get_post_meta( $arguments['placemark'], 'bgmp_latitude', true );
 					$longitude   = get_post_meta( $arguments['placemark'], 'bgmp_longitude', true );
-					$coordinates = $this->validateCoordinates( $latitude . ',' . $longitude );
+					$coordinates = $this->validate_coordinates( $latitude . ',' . $longitude );
 
 					if ( false === $coordinates ) {
 						$pass  = false;
 						$error = sprintf(
 							__( '%s shortcode error: %s does not have a valid address.', 'bgmp' ),
 							BGMP_NAME,
-							(string) $originalID
+							(string) $original_id
 						);
 					}
 				}
@@ -279,7 +272,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 			// Rename width and height keys to match internal ones. Using different ones in shortcode to make it easier for user.
 			if ( isset( $arguments['width'] ) ) {
 				if ( is_numeric( $arguments['width'] ) && $arguments['width'] > 0 ) {
-					$arguments['mapWidth'] = $arguments['width'];
+					$arguments['map_width'] = $arguments['width'];
 				} else {
 					add_notice( sprintf(
 						__( '%s shortcode error: %s is not a valid width.', 'bgmp' ),
@@ -293,7 +286,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 			if ( isset( $arguments['height'] ) && $arguments['height'] > 0 ) {
 				if ( is_numeric( $arguments['height'] ) ) {
-					$arguments['mapHeight'] = $arguments['height'];
+					$arguments['map_height'] = $arguments['height'];
 				} else {
 					add_notice( sprintf(
 						__( '%s shortcode error: %s is not a valid height.', 'bgmp' ),
@@ -337,7 +330,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 			if ( isset( $arguments['type'] ) ) {
 				$arguments['type'] = strtoupper( $arguments['type'] );
 
-				if ( ! array_key_exists( $arguments['type'], $this->settings->mapTypes ) ) {
+				if ( ! array_key_exists( $arguments['type'], $this->settings->map_types ) ) {
 					add_notice( sprintf(
 						__( '%s shortcode error: %s is not a valid map type.', 'bgmp' ),
 						BGMP_NAME,
@@ -358,13 +351,13 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		 * @link   http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-can-i-use-the-shortcode-on-any-php-without-assign-it-in-functionphp
 		 * @return bool
 		 */
-		protected function mapShortcodeCalled() {
+		protected function map_shortcode_called() {
 			global $post;
 
-			$this->mapShortcodeCalled = apply_filters( 'bgmp_mapShortcodeCalled', $this->mapShortcodeCalled ); // @todo - deprecated b/c not consistent w/ shortcode naming scheme. need a way to notify people
-			$this->mapShortcodeCalled = apply_filters( 'bgmp_map-shortcode-called', $this->mapShortcodeCalled );
+			$this->map_shortcode_called = apply_filters( 'bgmp_map_shortcode_called', $this->map_shortcode_called ); // @todo - deprecated b/c not consistent w/ shortcode naming scheme. need a way to notify people
+			$this->map_shortcode_called = apply_filters( 'bgmp_map-shortcode-called', $this->map_shortcode_called );
 
-			if ( $this->mapShortcodeCalled ) {
+			if ( $this->map_shortcode_called ) {
 				return true;
 			}
 
@@ -372,7 +365,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 				return false;
 			}
 
-			$shortcodes = $this->getShortcodes( $post->post_content ); // note: don't use setup_postdata/get_the_content() in this instance -- http://lists.automattic.com/pipermail/wp-hackers/2013-January/045053.html
+			$shortcodes = $this->get_shortcodes( $post->post_content ); // note: don't use setup_postdata/get_the_content() in this instance -- http://lists.automattic.com/pipermail/wp-hackers/2013-January/045053.html
 
 			for ( $i = 0; $i < count( $shortcodes[2] ); $i ++ ) {
 				if ( 'bgmp-map' == $shortcodes[2][$i] ) {
@@ -386,22 +379,22 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		/**
 		 * Load CSS and JavaScript files
 		 */
-		public function loadResources() {
-			$googleMapsLanguage = apply_filters( 'bgmp_map-language', '' );
-			if ( $googleMapsLanguage ) {
-				$googleMapsLanguage = '&language=' . $googleMapsLanguage;
+		public function load_resources() {
+			$google_maps_language = apply_filters( 'bgmp_map-language', '' );
+			if ( $google_maps_language ) {
+				$google_maps_language = '&language=' . $google_maps_language;
 			}
 
 			wp_register_script(
-				'googleMapsAPI',
-				'http' . ( is_ssl() ? 's' : '' ) . '://maps.google.com/maps/api/js?sensor=false' . $googleMapsLanguage,
+				'google-maps',
+				'http' . ( is_ssl() ? 's' : '' ) . '://maps.google.com/maps/api/js?sensor=false' . $google_maps_language,
 				array(),
 				false,
 				true
 			);
 
 			wp_register_script(
-				'markerClusterer',
+				'marker-clusterer',
 				plugins_url( 'includes/marker-clusterer/markerclusterer_packed.js', dirname( __FILE__ ) ),
 				array(),
 				'1.0',
@@ -411,32 +404,32 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 			wp_register_script(
 				'bgmp',
 				plugins_url( 'javascript/functions.js', dirname( __FILE__ ) ),
-				array( 'googleMapsAPI', 'jquery' ),
+				array( 'google-maps', 'jquery' ),
 				self::VERSION,
 				true
 			);
 
 			wp_register_style(
-				'bgmp_style',
+				'bgmp_style',   // can't rename to conform to standard b/c of backcompat
 				plugins_url( 'css/style.css', dirname( __FILE__ ) ),
 				false,
 				self::VERSION
 			);
 
-			$this->mapShortcodeCalled = $this->mapShortcodeCalled();
+			$this->map_shortcode_called = $this->map_shortcode_called();
 
 			// Load front-end resources
-			if ( ! is_admin() && $this->mapShortcodeCalled ) {
-				wp_enqueue_script( 'googleMapsAPI' );
+			if ( ! is_admin() && $this->map_shortcode_called ) {
+				wp_enqueue_script( 'google-maps' );
 
-				if ( $this->settings->markerClustering ) {
-					wp_enqueue_script( 'markerClusterer' );
+				if ( $this->settings->marker_clustering ) {
+					wp_enqueue_script( 'marker-clusterer' );
 				}
 
 				wp_enqueue_script( 'bgmp' );
 			}
 
-			if ( $this->mapShortcodeCalled ) {
+			if ( $this->map_shortcode_called ) {
 				wp_enqueue_style( 'bgmp_style' );
 			}
 
@@ -451,8 +444,8 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		/**
 		 * Outputs elements in the <head> section of the front-end
 		 */
-		public function outputHead() {
-			if ( $this->mapShortcodeCalled ) {
+		public function output_head() {
+			if ( $this->map_shortcode_called ) {
 				do_action( 'bgmp_head-before' );
 				echo $this->render_template( 'core/front-end-head.php' );
 				do_action( 'bgmp_head-after' );
@@ -462,7 +455,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		/**
 		 * Registers the custom post type
 		 */
-		public function createPostType() {
+		public function create_post_type() {
 			if ( ! post_type_exists( self::POST_TYPE ) ) {
 				$labels = array(
 					'name'               => __( 'Placemarks', 'bgmp' ),
@@ -480,7 +473,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 					'parent'             => __( 'Parent Placemark', 'bgmp' )
 				);
 
-				$postTypeParams = array(
+				$post_type_params = array(
 					'labels'          => $labels,
 					'singular_label'  => __( 'Placemarks', 'bgmp' ),
 					'public'          => true,
@@ -494,7 +487,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 				register_post_type(
 					self::POST_TYPE,
-					apply_filters( 'bgmp_post-type-params', $postTypeParams )
+					apply_filters( 'bgmp_post-type-params', $post_type_params )
 				);
 			}
 		}
@@ -502,9 +495,9 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		/**
 		 * Registers the category taxonomy
 		 */
-		public function createCategoryTaxonomy() {
+		public function create_category_taxonomy() {
 			if ( ! taxonomy_exists( self::TAXONOMY ) ) {
-				$taxonomyParams = array(
+				$taxonomy_params = array(
 					'label'                 => __( 'Category', 'bgmp' ),
 					'labels'                => array( 'name' => __( 'Categories', 'bgmp' ), 'singular_name' => __( 'Category', 'bgmp' ) ),
 					'hierarchical'          => true,
@@ -515,7 +508,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 				register_taxonomy(
 					self::TAXONOMY,
 					self::POST_TYPE,
-					apply_filters( 'bgmp_category-taxonomy-params', $taxonomyParams )
+					apply_filters( 'bgmp_category-taxonomy-params', $taxonomy_params )
 				);
 			}
 		}
@@ -523,7 +516,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		/**
 		 * Sorts the posts by the title in the admin view posts screen
 		 */
-		function sortAdminView( $query ) {
+		function sort_admin_view( $query ) {
 			global $pagenow;
 
 			if ( is_admin() && 'edit.php' == $pagenow && array_key_exists( 'post_type', $_GET ) && self::POST_TYPE == $_GET['post_type'] ) {
@@ -537,20 +530,20 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		/**
 		 * Adds meta boxes for the custom post type
 		 */
-		public function addMetaBoxes() {
+		public function add_meta_boxes() {
 			add_meta_box(
 				'bgmp_placemark-address',
 				__( 'Placemark Address', 'bgmp' ),
-				array( $this, 'markupAddressFields' ),
+				array( $this, 'markup_address_fields' ),
 				self::POST_TYPE,
 				'normal',
 				'high'
 			);
 
 			add_meta_box(
-				'bgmp_placemark-zIndex',
+				'bgmp_placemark-z_index',
 				__( 'Stacking Order', 'bgmp' ),
-				array( $this, 'markupZIndexField' ),
+				array( $this, 'markup_z_index_field' ),
 				self::POST_TYPE,
 				'side',
 				'low'
@@ -560,7 +553,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		/**
 		 * Outputs the markup for the address fields
 		 */
-		public function markupAddressFields() {
+		public function markup_address_fields() {
 			global $post;
 
 			$variables = array(
@@ -569,8 +562,8 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 				'longitude'          => get_post_meta( $post->ID, 'bgmp_longitude', true ),
 			);
 
-			$variables['showGeocodeResults'] = $variables['address'] && ! self::validateCoordinates( $variables['address'] ) && $variables['latitude'] && $variables['longitude'] ? true : false;
-			$variables['showGeocodeError']   = $variables['address'] && ( ! $variables['latitude'] || ! $variables['longitude'] ) ? true : false;
+			$variables['show_geocode_results'] = $variables['address'] && ! self::validate_coordinates( $variables['address'] ) && $variables['latitude'] && $variables['longitude'] ? true : false;
+			$variables['show_geocode_error']   = $variables['address'] && ( ! $variables['latitude'] || ! $variables['longitude'] ) ? true : false;
 
 			echo $this->render_template( 'core/meta-address.php', $variables );
 		}
@@ -578,29 +571,29 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		/**
 		 * Outputs the markup for the stacking order field
 		 */
-		public function markupZIndexField() {
+		public function markup_z_index_field() {
 			global $post;
 
-			$zIndex = get_post_meta( $post->ID, 'bgmp_zIndex', true );
-			if ( false === filter_var( $zIndex, FILTER_VALIDATE_INT )) {
-				$zIndex = 0;
+			$z_index = get_post_meta( $post->ID, 'bgmp_z_index', true );
+			if ( false === filter_var( $z_index, FILTER_VALIDATE_INT )) {
+				$z_index = 0;
 			}
 
-			echo $this->render_template( 'core/meta-z-index.php', array( 'zIndex' => $zIndex ) );
+			echo $this->render_template( 'core/meta-z-index.php', array( 'z_index' => $z_index ) );
 		}
 
 		/**
 		 * Saves values of the the custom post type's extra fields
 		 *
-		 * @param int $postID
+		 * @param int $post_id
 		 */
-		public function saveCustomFields( $postID ) {
+		public function save_custom_fields( $post_id ) {
 			global $post;
 			$coordinates    = false;
-			$ignoredActions = array( 'trash', 'untrash', 'restore' );
+			$ignored_actions = array( 'trash', 'untrash', 'restore' );
 
 			// Check preconditions
-			if ( isset( $_GET['action'] ) && in_array( $_GET['action'], $ignoredActions ) ) {
+			if ( isset( $_GET['action'] ) && in_array( $_GET['action'], $ignored_actions ) ) {
 				return;
 			}
 
@@ -630,12 +623,12 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 			}
 
 			// Save z-index
-			if ( isset( $_POST['bgmp_zIndex'] ) ) {
-				if ( false === filter_var( $_POST['bgmp_zIndex'], FILTER_VALIDATE_INT ) ) {
-					update_post_meta( $post->ID, 'bgmp_zIndex', 0 );
+			if ( isset( $_POST['bgmp_z_index'] ) ) {
+				if ( false === filter_var( $_POST['bgmp_z_index'], FILTER_VALIDATE_INT ) ) {
+					update_post_meta( $post->ID, 'bgmp_z_index', 0 );
 					add_notice( __( 'The stacking order has to be an integer.', 'bgmp' ), 'error' );
 				} else {
-					update_post_meta( $post->ID, 'bgmp_zIndex', $_POST['bgmp_zIndex'] );
+					update_post_meta( $post->ID, 'bgmp_z_index', $_POST['bgmp_z_index'] );
 				}
 			}
 		}
@@ -650,39 +643,39 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 			// @todo - this should be static, or better yet, broken out into an Address class
 
 			// Bypass geocoding if already have valid coordinates
-			$coordinates = self::validateCoordinates( $address );
+			$coordinates = self::validate_coordinates( $address );
 			if ( is_array( $coordinates ) ) {
 				return $coordinates;
 			}
 
 			// Geocode address and handle errors
-			$geocodeResponse = wp_remote_get( 'http://maps.googleapis.com/maps/api/geocode/json?address=' . str_replace( ' ', '+', $address ) . '&sensor=false' );
+			$geocode_response = wp_remote_get( 'http://maps.googleapis.com/maps/api/geocode/json?address=' . str_replace( ' ', '+', $address ) . '&sensor=false' );
 			// @todo - esc_url() on address?
 
-			if ( is_wp_error( $geocodeResponse ) ) {
+			if ( is_wp_error( $geocode_response ) ) {
 				add_notice( sprintf(
 					__( '%s geocode error: %s', 'bgmp' ),
 					BGMP_NAME,
-					implode( '<br />', $geocodeResponse->get_error_messages() )
+					implode( '<br />', $geocode_response->get_error_messages() )
 				), 'error' );
 
 				return false;
 			}
 
 			// Check response code
-			if ( ! isset( $geocodeResponse['response']['code'] ) || ! isset( $geocodeResponse['response']['message'] ) ) {
+			if ( ! isset( $geocode_response['response']['code'] ) || ! isset( $geocode_response['response']['message'] ) ) {
 				add_notice( sprintf(
 					__( '%s geocode error: Response code not present', 'bgmp' ),
 					BGMP_NAME
 				), 'error' );
 
 				return false;
-			} elseif ( $geocodeResponse['response']['code'] != 200 ) {
+			} elseif ( $geocode_response['response']['code'] != 200 ) {
 				/*
 					@todo - strip content inside <style> tag. regex inappropriate, but DOMDocument doesn't exist on dev server, but does on most?. would have to wrap this in an if( class_exists() )...
 					
 					$responseHTML = new DOMDocument();
-					$responseHTML->loadHTML( $geocodeResponse[ 'body' ] );
+					$responseHTML->loadHTML( $geocode_response[ 'body' ] );
 					// nordmalize it b/c doesn't have <body> tag inside?
 					$this->describe( $responseHTML->saveHTML() );
 				*/
@@ -690,16 +683,16 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 				add_notice( sprintf(
 					__( '<p>%s geocode error: %d %s</p> <p>Response: %s</p>', 'bgmp' ),
 					BGMP_NAME,
-					$geocodeResponse['response']['code'],
-					$geocodeResponse['response']['message'],
-					strip_tags( $geocodeResponse['body'] )
+					$geocode_response['response']['code'],
+					$geocode_response['response']['message'],
+					strip_tags( $geocode_response['body'] )
 				), 'error' );
 
 				return false;
 			}
 
 			// Decode response and handle errors
-			$coordinates = json_decode( $geocodeResponse['body'] );
+			$coordinates = json_decode( $geocode_response['body'] );
 
 			if ( function_exists( 'json_last_error' ) && json_last_error() != JSON_ERROR_NONE ) {
 				// @todo - Once PHP 5.3+ is more widely adopted, remove the function_exists() check here and just bump the PHP requirement to 5.3
@@ -727,12 +720,13 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 		/**
 		 * Checks if a given string represents a valid set of geographic coordinates
+		 *
 		 * Expects latitude/longitude notation, not minutes/seconds
 		 *
 		 * @param string $coordinates
 		 * @return mixed false if any of the tests fails | an array with 'latitude' and 'longitude' keys/value pairs if all of the tests succeed
 		 */
-		public static function validateCoordinates( $coordinates ) {
+		public static function validate_coordinates( $coordinates ) {
 			// @todo - some languages swap the roles of the commas and decimal point. this assumes english.
 
 			$coordinates = str_replace( ' ', '', $coordinates );
@@ -741,7 +735,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 				return false;
 			}
 
-			if ( substr_count( $coordinates, ',' ) != 1 ) {
+			if ( 1 != substr_count( $coordinates, ',' ) ) {
 				return false;
 			}
 
@@ -749,11 +743,11 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 			$latitude    = $coordinates[0];
 			$longitude   = $coordinates[1];
 
-			if ( ! is_numeric( $latitude ) || $latitude < - 90 || $latitude > 90 ) {
+			if ( ! is_numeric( $latitude ) || $latitude < -90 || $latitude > 90 ) {
 				return false;
 			}
 
-			if ( ! is_numeric( $longitude ) || $longitude < - 180 || $longitude > 180 ) {
+			if ( ! is_numeric( $longitude ) || $longitude < -180 || $longitude > 180 ) {
 				return false;
 			}
 
@@ -762,16 +756,17 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 		/**
 		 * Reverse-geocodes a set of coordinates
+		 *
 		 * Google's API has a daily request limit, but this is only called during upgrades from 1.0, so that shouldn't ever be a problem.
 		 *
 		 * @param string $latitude
 		 * @param string $longitude
 		 */
-		protected function reverseGeocode( $latitude, $longitude ) {
-			$geocodeResponse = wp_remote_get( 'http://maps.googleapis.com/maps/api/geocode/json?latlng=' . $latitude . ',' . $longitude . '&sensor=false' );
-			$address         = json_decode( $geocodeResponse['body'] );
+		protected function reverse_geocode( $latitude, $longitude ) {
+			$geocode_response = wp_remote_get( 'http://maps.googleapis.com/maps/api/geocode/json?latlng=' . $latitude . ',' . $longitude . '&sensor=false' );
+			$address          = json_decode( $geocode_response['body'] );
 
-			if ( is_wp_error( $geocodeResponse ) || empty( $address->results ) ) {
+			if ( is_wp_error( $geocode_response ) || empty( $address->results ) ) {
 				return false;
 			} else {
 				return $address->results[0]->formatted_address;
@@ -784,24 +779,22 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		 * @param array $attributes Array of parameters automatically passed in by WordPress
 		 * @return string The output of the shortcode
 		 */
-		public function mapShortcode( $attributes ) {
-			if ( ! wp_script_is( 'googleMapsAPI', 'queue' ) || ! wp_script_is( 'bgmp', 'queue' ) || ! wp_style_is( 'bgmp_style', 'queue' ) ) {
+		public function map_shortcode( $attributes ) {
+			if ( ! wp_script_is( 'google-maps', 'queue' ) || ! wp_script_is( 'bgmp', 'queue' ) || ! wp_style_is( 'bgmp_style', 'queue' ) ) {
 				$error = sprintf(
 					__( '<p class="error">%s error: JavaScript and/or CSS files aren\'t loaded. If you\'re using do_shortcode() you need to add a filter to your theme first. See <a href="%s">the FAQ</a> for details.</p>', 'bgmp' ),
 					BGMP_NAME,
 					'http://wordpress.org/extend/plugins/basic-google-maps-placemarks/faq/'
 				);
 
-				// @todo maybe change this to use core/views/message.php
-
 				return $error;
 			}
 
 			if ( isset( $attributes['categories'] ) )
-				$attributes['categories'] = apply_filters( 'bgmp_mapShortcodeCategories', $attributes['categories'] ); // @todo - deprecated b/c 1.9 output bgmpdata in post; can now just set args in do_shortcode() . also  not consistent w/ shortcode naming scheme and have filter for all arguments now. need a way to notify people
+				$attributes['categories'] = apply_filters( 'bgmp_map_shortcode_categories', $attributes['categories'] ); // @todo - deprecated b/c 1.9 output bgmpdata in post; can now just set args in do_shortcode() . also  not consistent w/ shortcode naming scheme and have filter for all arguments now. need a way to notify people
 
 			$attributes = apply_filters( 'bgmp_map-shortcode-arguments', $attributes ); // @todo - deprecated b/c 1.9 output bgmpdata in post...
-			$attributes = $this->cleanMapShortcodeArguments( $attributes );
+			$attributes = $this->clean_map_shortcode_arguments( $attributes );
 
 			ob_start();
 			do_action( 'bgmp_meta-address-before' );	// @todo - deprecated b/c named incorrectly
@@ -819,7 +812,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		 * @param array $attributes Array of parameters automatically passed in by WordPress
 		 * @return string The output of the shortcode
 		 */
-		public function listShortcode( $attributes ) {
+		public function list_shortcode( $attributes ) {
 			$attributes = apply_filters( 'bgmp_list-shortcode-arguments', $attributes );
 			// @todo shortcode_atts()
 
@@ -844,7 +837,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 				);
 			}
 
-			$viewOnMap = isset( $attributes['viewonmap'] ) && true == $attributes['viewonmap'];
+			$view_on_map = isset( $attributes['viewonmap'] ) && true == $attributes['viewonmap'];
 
 			$posts = get_posts( apply_filters( 'bgmp_list-shortcode-params', $params ) );
 			$posts = apply_filters( 'bgmp_list-shortcode-posts', $posts );
@@ -855,12 +848,12 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 				foreach ( $posts as $p ) {
 					$variables = array(
 						'p'         => $p,
-						'viewOnMap' => $viewOnMap,
+						'viewOnMap' => $view_on_map,
 						'address'   => get_post_meta( $p->ID, 'bgmp_address', true ),
 					);
-					$markerHTML = $this->render_template( 'core/shortcode-bgmp-list-marker.php', $variables, 'always' );
+					$marker_html = $this->render_template( 'core/shortcode-bgmp-list-marker.php', $variables, 'always' );
 
-					$output .= apply_filters( 'bgmp_list-marker-output', $markerHTML, $p->ID );	// @todo deprecate b/c render_template has filter for this and everything else now
+					$output .= apply_filters( 'bgmp_list-marker-output', $marker_html, $p->ID );	// @todo deprecate b/c render_template has filter for this and everything else now
 				}
 
 				$output .= '</ul>';
@@ -875,13 +868,13 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		 * Gets map options
 		 *
 		 * @param array $attributes
-		 * @return string JSON-encoded array
+		 * @return array array
 		 */
-		public function getMapOptions( $attributes ) {
-			$clusterStyles = array(
+		public function get_map_options( $attributes ) {
+			$cluster_styles = array(
 				'people' => array(
 					array(
-						'url'         => plugins_url( 'includes/marker-clusterer/images/people35.png', __FILE__ ),
+						'url'         => plugins_url( 'includes/marker-clusterer/images/people35.png', dirname( __FILE__ ) ),
 						'height'      => 35,
 						'width'       => 35,
 						'anchor'      => array( 16, 0 ),
@@ -890,7 +883,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 					),
 
 					array(
-						'url'         => plugins_url( 'includes/marker-clusterer/images/people45.png', __FILE__ ),
+						'url'         => plugins_url( 'includes/marker-clusterer/images/people45.png', dirname( __FILE__ ) ),
 						'height'      => 45,
 						'width'       => 45,
 						'anchor'      => array( 24, 0 ),
@@ -899,7 +892,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 					),
 
 					array(
-						'url'         => plugins_url( 'includes/marker-clusterer/images/people55.png', __FILE__ ),
+						'url'         => plugins_url( 'includes/marker-clusterer/images/people55.png', dirname( __FILE__ ) ),
 						'height'      => 55,
 						'width'       => 55,
 						'anchor'      => array( 32, 0 ),
@@ -910,7 +903,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 				'conversation' => array(
 					array(
-						'url'         => plugins_url( 'includes/marker-clusterer/images/conv30.png', __FILE__ ),
+						'url'         => plugins_url( 'includes/marker-clusterer/images/conv30.png', dirname( __FILE__ ) ),
 						'height'      => 27,
 						'width'       => 30,
 						'anchor'      => array( 3, 0 ),
@@ -919,7 +912,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 					),
 
 					array(
-						'url'         => plugins_url( 'includes/marker-clusterer/images/conv40.png', __FILE__ ),
+						'url'         => plugins_url( 'includes/marker-clusterer/images/conv40.png', dirname( __FILE__ ) ),
 						'height'      => 36,
 						'width'       => 40,
 						'anchor'      => array( 6, 0 ),
@@ -928,7 +921,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 					),
 
 					array(
-						'url'         => plugins_url( 'includes/marker-clusterer/images/conv50.png', __FILE__ ),
+						'url'         => plugins_url( 'includes/marker-clusterer/images/conv50.png', dirname( __FILE__ ) ),
 						'height'      => 50,
 						'width'       => 45,
 						'anchor'      => array( 8, 0 ),
@@ -938,7 +931,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 
 				'hearts' => array(
 					array(
-						'url'         => plugins_url( 'includes/marker-clusterer/images/heart30.png', __FILE__ ),
+						'url'         => plugins_url( 'includes/marker-clusterer/images/heart30.png', dirname( __FILE__ ) ),
 						'height'      => 26,
 						'width'       => 30,
 						'anchor'      => array( 4, 0 ),
@@ -947,7 +940,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 					),
 
 					array(
-						'url'         => plugins_url( 'includes/marker-clusterer/images/heart40.png', __FILE__ ),
+						'url'         => plugins_url( 'includes/marker-clusterer/images/heart40.png', dirname( __FILE__ ) ),
 						'height'      => 35,
 						'width'       => 40,
 						'anchor'      => array( 8, 0 ),
@@ -956,7 +949,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 					),
 
 					array(
-						'url'         => plugins_url( 'includes/marker-clusterer/images/heart50.png', __FILE__ ),
+						'url'         => plugins_url( 'includes/marker-clusterer/images/heart50.png', dirname( __FILE__ ) ),
 						'height'      => 50,
 						'width'       => 44,
 						'anchor'      => array( 12, 0 ),
@@ -965,25 +958,25 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 				)
 			);
 
-			$options = array(
-				'mapWidth'           => $this->settings->mapWidth, // @todo move these into 'map' subarray? but then have to worry about backwards compat
-				'mapHeight'          => $this->settings->mapHeight,
-				'latitude'           => $this->settings->mapLatitude,
-				'longitude'          => $this->settings->mapLongitude,
-				'zoom'               => $this->settings->mapZoom,
-				'type'               => $this->settings->mapType,
-				'typeControl'        => $this->settings->mapTypeControl,
-				'navigationControl'  => $this->settings->mapNavigationControl,
-				'infoWindowMaxWidth' => $this->settings->mapInfoWindowMaxWidth,
+			$options = array(	// can't conform to style guidelines because of backcompat
+				'mapWidth'           => $this->settings->map_width, // @todo move these into 'map' subarray? but then have to worry about backwards compat
+				'mapHeight'          => $this->settings->map_height,
+				'latitude'           => $this->settings->map_latitude,
+				'longitude'          => $this->settings->map_longitude,
+				'zoom'               => $this->settings->map_zoom,
+				'type'               => $this->settings->map_type,
+				'typeControl'        => $this->settings->map_type_control,
+				'navigationControl'  => $this->settings->map_navigation_control,
+				'infoWindowMaxWidth' => $this->settings->map_info_window_max_width,
 				'streetViewControl'  => apply_filters( 'bgmp_street-view-control', true ), // deprecated b/c of bgmp_map-options filter?
 				'viewOnMapScroll'    => false,
 
 				'clustering'         => array(
-					'enabled'        => $this->settings->markerClustering,
-					'maxZoom'        => $this->settings->clusterMaxZoom,
-					'gridSize'       => $this->settings->clusterGridSize,
-					'style'          => $this->settings->clusterStyle,
-					'styles'         => $clusterStyles,
+					'enabled'        => $this->settings->marker_clustering,
+					'maxZoom'        => $this->settings->cluster_max_zoom,
+					'gridSize'       => $this->settings->cluster_grid_size,
+					'style'          => $this->settings->cluster_style,
+					'styles'         => $cluster_styles,
 				),
 			);
 
@@ -991,7 +984,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 			if ( isset( $attributes['placemark'] ) && apply_filters( 'bgmp_reset-individual-map-center-zoom', true ) ) {
 				$latitude    = get_post_meta( $attributes['placemark'], 'bgmp_latitude', true );
 				$longitude   = get_post_meta( $attributes['placemark'], 'bgmp_longitude', true );
-				$coordinates = $this->validateCoordinates( $latitude . ',' . $longitude );
+				$coordinates = $this->validate_coordinates( $latitude . ',' . $longitude );
 
 				if ( false !== $coordinates ) {
 					$options['latitude']  = $latitude;
@@ -1011,7 +1004,7 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		 * @param array $attributes
 		 * @return string JSON-encoded array
 		 */
-		public function getMapPlacemarks( $attributes ) {
+		public function get_map_placemarks( $attributes ) {
 			$placemarks = array();
 
 			$query = array(
@@ -1033,30 +1026,30 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 				);
 			}
 
-			$query               = apply_filters( 'bgmp_get-placemarks-query', $query ); // @todo - filter name deprecated
-			$publishedPlacemarks = get_posts( apply_filters( 'bgmp_get-map-placemarks-query', $query ) );
+			$query                = apply_filters( 'bgmp_get-placemarks-query', $query ); // @todo - filter name deprecated
+			$published_placemarks = get_posts( apply_filters( 'bgmp_get-map-placemarks-query', $query ) );
 
-			if ( $publishedPlacemarks ) {
-				foreach ( $publishedPlacemarks as $pp ) {
-					$postID = $pp->ID;
+			if ( $published_placemarks ) {
+				foreach ( $published_placemarks as $pp ) {
+					$post_id = $pp->ID;
 
-					$categories = get_the_terms( $postID, self::TAXONOMY );
+					$categories = get_the_terms( $post_id, self::TAXONOMY );
 					if ( ! is_array( $categories ) ) {
 						$categories = array();
 					}
 
-					$icon        = wp_get_attachment_image_src( get_post_thumbnail_id( $postID ), apply_filters( 'bgmp_featured-icon-size', 'thumbnail' ) );
-					$defaultIcon = apply_filters( 'bgmp_default-icon', plugins_url( 'images/default-marker.png', dirname( __FILE__ ) ), $postID );
+					$icon        = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), apply_filters( 'bgmp_featured-icon-size', 'thumbnail' ) );
+					$default_icon = apply_filters( 'bgmp_default-icon', plugins_url( 'images/default-marker.png', dirname( __FILE__ ) ), $post_id );
 
 					$placemark = array(
-						'id'         => $postID,
+						'id'         => $post_id,
 						'title'      => apply_filters( 'the_title', $pp->post_title ),
-						'latitude'   => get_post_meta( $postID, 'bgmp_latitude', true ),
-						'longitude'  => get_post_meta( $postID, 'bgmp_longitude', true ),
+						'latitude'   => get_post_meta( $post_id, 'bgmp_latitude', true ),
+						'longitude'  => get_post_meta( $post_id, 'bgmp_longitude', true ),
 						'details'    => apply_filters( 'the_content', $pp->post_content ), // note: don't use setup_postdata/get_the_content() in this instance -- http://lists.automattic.com/pipermail/wp-hackers/2013-January/045053.html
 						'categories' => $categories,
-						'icon'       => is_array( $icon ) ? $icon[0] : $defaultIcon,
-						'zIndex'     => get_post_meta( $postID, 'bgmp_zIndex', true )
+						'icon'       => is_array( $icon ) ? $icon[0] : $default_icon,
+						'z_index'     => get_post_meta( $post_id, 'bgmp_z_index', true )
 					);
 
 					$placemarks[] = apply_filters( 'bgmp_get-map-placemarks-individual-placemark', $placemark );
@@ -1111,8 +1104,9 @@ if ( ! class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
 		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function shutdown() {
-			if ( $this->updatedOptions )
+			if ( $this->updated_options ) {
 				update_option( 'bgmp_options', $this->options );
+			}
 		}
-	} // end BasicGoogleMapsPlacemarks
+	} // end Basic_Google_Maps_Placemarks
 }

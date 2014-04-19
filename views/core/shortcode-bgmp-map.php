@@ -1,7 +1,7 @@
 <script type="text/javascript">
 	var bgmpData = {
-		options: <?php echo json_encode( $this->getMapOptions( $attributes ) ); ?>,
-		markers: <?php echo json_encode( $this->getMapPlacemarks( $attributes ) ); ?>
+		options: <?php echo json_encode( $this->get_map_options( $attributes ) ); ?>,
+		markers: <?php echo json_encode( $this->get_map_placemarks( $attributes ) ); ?>
 	};
 </script>
 

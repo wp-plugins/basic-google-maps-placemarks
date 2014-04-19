@@ -1,5 +1,5 @@
 /**
- * @package BasicGoogleMapsPlacemarks
+ * @package Basic_GGoogle_Maps_Placemarks
  * @author Ian Dunn <ian@iandunn.name>
  * @link http://wordpress.org/extend/plugins/basic-google-maps-placemarks/
  */

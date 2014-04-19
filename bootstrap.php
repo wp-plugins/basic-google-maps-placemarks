@@ -77,10 +77,11 @@ function bgmp_requirements_not_met() {
 
 // Check requirements and instantiate
 if ( bgmp_requirements_met() ) {
+	require_once( dirname( __FILE__ ) . '/classes/bgmp-module.php' );
 	require_once( dirname( __FILE__ ) . '/classes/core.php' );
 
-	if ( class_exists( 'BasicGoogleMapsPlacemarks' ) ) {
-		$GLOBALS['bgmp'] = new BasicGoogleMapsPlacemarks();
+	if ( class_exists( 'Basic_Google_Maps_Placemarks' ) ) {
+		$GLOBALS['bgmp'] = new Basic_Google_Maps_Placemarks();
 	}
 } else {
 	add_action( 'admin_notices', 'bgmp_requirements_not_met' );

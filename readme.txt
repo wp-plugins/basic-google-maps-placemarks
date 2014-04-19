@@ -462,9 +462,9 @@ If you make customizations that could be beneficial to other users, please start
 * [NEW] Added localizations for Chinese and French.
 * [REMOVE] Removed height:auto CSS rule because it was [distorting the Google logo](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-google-logo-is-zoomed-and-ipad-safari-cant-zoom-the-page) and [prevented info. windows with images from sizing properly](http://wordpress.org/support/topic/plugin-basic-google-maps-placemarks-placemarks-content-to-display-fully).
 * [NEW] Added shameless plug for [Re-Abolish Slavery Ribbon](http://wordpress.org/extend/plugins/re-abolish-slavery-ribbon/) plugin on Settings page.
-* [UPDATE] Replaced inline markup in bgmp_requirementsNotMet() and BasicGoogleMapsPlacemarks::printMessages() with views/message.php.
-* [UPDATE] Changed all instances of self::PREFIX to BasicGoogleMapsPlacemarks::PREFIX in settings.php.
-* [UPDATE] Moved variables from __construct() to init() in BasicGoogleMapsPlacemarks and BGMPSettings classes.
+* [UPDATE] Replaced inline markup in bgmp_requirementsNotMet() and Basic_Google_Maps_Placemarks::printMessages() with views/message.php.
+* [UPDATE] Changed all instances of self::PREFIX to Basic_Google_Maps_Placemarks::PREFIX in settings.php.
+* [UPDATE] Moved variables from __construct() to init() in Basic_Google_Maps_Placemarks and BGMPSettings classes.
 * [UPDATE] Switched to using [$networkWide parameter for activation callback](http://core.trac.wordpress.org/ticket/20995).
 * [UPDATE] Moved addPlacemarks() call outside the try/catch block in buildMap to keep error messages more clear.
 

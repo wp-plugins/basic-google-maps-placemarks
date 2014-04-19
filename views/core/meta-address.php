@@ -9,10 +9,10 @@
 			<td>
 				<input id="bgmp_address" name="bgmp_address" type="text" class="regular-text" value="<?php echo $address; ?>" />
 
-				<?php if ( $showGeocodeResults ) : ?>
+				<?php if ( $show_geocode_results ) : ?>
 					<em><?php printf( __( '(Geocoded to: %f, %f)', 'bgmp' ), $latitude, $longitude ); ?></em>
 
-				<?php elseif ( $showGeocodeError ) : ?>
+				<?php elseif ( $show_geocode_error ) : ?>
 					<em><?php _e( "(Error geocoding address. Please make sure it's correct and try again.)", 'bgmp' ); ?></em>
 				<?php endif; ?>
 			</td>

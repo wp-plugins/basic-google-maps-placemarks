@@ -3,7 +3,7 @@
 /**
  * Unit tests. Uses SimpleTest for WordPress plugin.
  *
- * @package BasicGoogleMapsPlacemarks
+ * @package Basic_Google_Maps_Placemarks
  * @author  Ian Dunn <ian@iandunn.name>
  * @link    http://wordpress.org/extend/plugins/basic-google-maps-placemarks/
  * @link    http://wordpress.org/extend/plugins/simpletest-for-wordpress/
@@ -25,7 +25,7 @@ http://www.ibm.com/developerworks/opensource/library/os-refactoringphp/index.htm
 */
 
 
-class bgmpCoreUnitTests extends UnitTestCase {
+class BGMP_Core_Unit_Tests extends UnitTestCase {
 	/**
 	 * Sets a protected or private method to be accessible
 	 *
@@ -35,7 +35,7 @@ class bgmpCoreUnitTests extends UnitTestCase {
 	 * @return ?
 	 */
 	protected static function getHiddenMethod( $methodName ) {
-		$class  = new ReflectionClass( 'BasicGoogleMapsPlacemarks' );
+		$class  = new ReflectionClass( 'Basic_Google_Maps_Placemarks' );
 		$method = $class->getMethod( $methodName );
 		$method->setAccessible( true );
 
@@ -48,7 +48,7 @@ class bgmpCoreUnitTests extends UnitTestCase {
 
 
 	/*
-	 * getShortcodes()
+	 *
 	 */
 	public function testInit() {
 		// make sure it gracefully handles bad data in option field
@@ -57,11 +57,11 @@ class bgmpCoreUnitTests extends UnitTestCase {
 	/*
 	 * getShortcodes()
 	 */
-	public function testGetShortcodes() {
-		$bgmp = new BasicGoogleMapsPlacemarks();
+	public function test_get_shortcodes() {
+		$bgmp = new Basic_Google_Maps_Placemarks();
 		$bgmp->init();
 
-		$getShortcodes = self::getHiddenMethod( 'getShortcodes' );
+		$getShortcodes = self::getHiddenMethod( 'get_shortcodes' );
 
 		// detects presence of [bgmp-list]
 		// detects presecne of [bgmp-map]
@@ -74,69 +74,69 @@ class bgmpCoreUnitTests extends UnitTestCase {
 
 
 	/*
-	 * cleanMapShortcodeArguments()
+	 * clean_map_shortcode_arguments()
 	 */
-	public function testCleanMapShortcodeArguments() {
-		$bgmp = new BasicGoogleMapsPlacemarks();
+	public function test_clean_map_shortcode_arguments() {
+		$bgmp = new Basic_Google_Maps_Placemarks();
 		$bgmp->init();
-		$settings = & $bgmp->getSettings();
+		$settings = & $bgmp->get_settings();
 		$settings->init();
-		$cleanMapShortcodeArguments = self::getHiddenMethod( 'cleanMapShortcodeArguments' );
+		$clean_map_shortcode_arguments = self::getHiddenMethod( 'clean_map_shortcode_arguments' );
 
 		// Should always get an array back
 		$emptyArray = array();
-		$this->assertEqual( $emptyArray, $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( $emptyArray ) ) );
-		$this->assertEqual( $emptyArray, $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( null ) ) );
-		$this->assertEqual( $emptyArray, $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( '' ) ) );
-		$this->assertEqual( $emptyArray, $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( 'asdfasdfas' ) ) );
-		$this->assertEqual( $emptyArray, $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( 234 ) ) );
+		$this->assertEqual( $emptyArray, $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( $emptyArray ) ) );
+		$this->assertEqual( $emptyArray, $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( null ) ) );
+		$this->assertEqual( $emptyArray, $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( '' ) ) );
+		$this->assertEqual( $emptyArray, $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( 'asdfasdfas' ) ) );
+		$this->assertEqual( $emptyArray, $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( 234 ) ) );
 
 		// Placemark - invalid
 		// @todo setup and tear down the IDs you test with for testing if post id exists in db
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'placemark' => 0 ) ) );
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'placemark' => 0 ) ) );
 		$this->assertFalse( isset( $cleaned['placemark'] ) );
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'placemark' => '0' ) ) );
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'placemark' => '0' ) ) );
 		$this->assertFalse( isset( $cleaned['placemark'] ) );
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'placemark' => 'alpha' ) ) );
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'placemark' => 'alpha' ) ) );
 		$this->assertFalse( isset( $cleaned['placemark'] ) );
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'placemark' => '10alpha' ) ) );
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'placemark' => '10alpha' ) ) );
 		$this->assertFalse( isset( $cleaned['placemark'] ) );
-//		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'placemark' => 5.25 ) ) );
+//		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'placemark' => 5.25 ) ) );
 //		$this->assertFalse( isset( $cleaned[ 'id' ] ) );
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'placemark' => '-5' ) ) );
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'placemark' => '-5' ) ) );
 		$this->assertFalse( isset( $cleaned['placemark'] ) );
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'placemark' => '1,000' ) ) ); // has to exist to really test, otherwise will be triggered by statement that checks if ID exists
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'placemark' => '1,000' ) ) ); // has to exist to really test, otherwise will be triggered by statement that checks if ID exists
 		$this->assertFalse( isset( $cleaned['placemark'] ) );
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'placemark' => array( 10 ) ) ) );
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'placemark' => array( 10 ) ) ) );
 		$this->assertFalse( isset( $cleaned['placemark'] ) );
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'placemark' => 9999999 ) ) ); // one that doesn't exist
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'placemark' => 9999999 ) ) ); // one that doesn't exist
 		$this->assertFalse( isset( $cleaned['placemark'] ) );
 		// @todo add coordiantes tests
 
 		// Placemark - valid
 		// Note: The corresponding posts have to actually exist in order to test. @todo add setup/teardown w/ test data instead.
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'placemark' => 16 ) ) ); // one that exists
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'placemark' => 16 ) ) ); // one that exists
 		$this->assertTrue( isset( $cleaned['placemark'] ) && is_int( $cleaned['placemark'] ) );
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'placemark' => '16' ) ) );
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'placemark' => '16' ) ) );
 		$this->assertTrue( isset( $cleaned['placemark'] ) && is_int( $cleaned['placemark'] ) );
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'placemark' => '16.00' ) ) );
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'placemark' => '16.00' ) ) );
 		$this->assertTrue( isset( $cleaned['placemark'] ) && is_int( $cleaned['placemark'] ) );
 		// @todo add coordiantes tests
 
 
 		// Categories
 		// @todo insert categories before test, then delete after?
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'categories' => 'parks,restaurants,shopping-malls' ) ) );
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'categories' => 'parks,restaurants,shopping-malls' ) ) );
 		$this->assertTrue( in_array( 'parks', $cleaned['categories'] ) );
 		$this->assertTrue( in_array( 'restaurants', $cleaned['categories'] ) );
 		$this->assertFalse( in_array( 'shopping-malls', $cleaned['categories'] ) );
 
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'categories' => array( 'parks', 'restaurants', 'shopping-malls' ) ) ) );
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'categories' => array( 'parks', 'restaurants', 'shopping-malls' ) ) ) );
 		$this->assertTrue( in_array( 'parks', $cleaned['categories'] ) );
 		$this->assertTrue( in_array( 'restaurants', $cleaned['categories'] ) );
 		$this->assertFalse( in_array( 'shopping-malls', $cleaned['categories'] ) );
 
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'categories' => new stdClass() ) ) );
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'categories' => new stdClass() ) ) );
 		$this->assertFalse( isset( $cleaned['categories'] ) );
 
 		// @todo add new category unit tests if 1.9 problems not solved
@@ -148,62 +148,62 @@ class bgmpCoreUnitTests extends UnitTestCase {
 		// set to non empty array - unchanged
 
 		// Width
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'width' => 100 ) ) );
-		$this->assertTrue( isset( $cleaned['mapWidth'] ) && $cleaned['mapWidth'] == 100 );
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'width' => - 5 ) ) );
-		$this->assertFalse( isset( $cleaned['mapWidth'] ) );
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'width' => 'seven' ) ) );
-		$this->assertFalse( isset( $cleaned['mapWidth'] ) );
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'width' => 100 ) ) );
+		$this->assertTrue( isset( $cleaned['map_width'] ) && $cleaned['map_width'] == 100 );
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'width' => - 5 ) ) );
+		$this->assertFalse( isset( $cleaned['map_width'] ) );
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'width' => 'seven' ) ) );
+		$this->assertFalse( isset( $cleaned['map_width'] ) );
 
 		// Height
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'height' => '100' ) ) );
-		$this->assertTrue( isset( $cleaned['mapHeight'] ) && $cleaned['mapHeight'] == 100 );
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'height' => - 5 ) ) );
-		$this->assertFalse( isset( $cleaned['mapHeight'] ) );
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'height' => 'seven' ) ) );
-		$this->assertFalse( isset( $cleaned['mapHeight'] ) );
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'height' => '100' ) ) );
+		$this->assertTrue( isset( $cleaned['map_height'] ) && $cleaned['map_height'] == 100 );
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'height' => - 5 ) ) );
+		$this->assertFalse( isset( $cleaned['map_height'] ) );
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'height' => 'seven' ) ) );
+		$this->assertFalse( isset( $cleaned['map_height'] ) );
 
 		// Center
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'center' => 'Portland, Oregon' ) ) );
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'center' => 'Portland, Oregon' ) ) );
 		$this->assertTrue( isset( $cleaned['latitude'] ) && $cleaned['latitude'] == '45.5234515' );
 		$this->assertTrue( isset( $cleaned['longitude'] ) && $cleaned['longitude'] == '-122.6762071' );
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'center' => '-40, 105' ) ) );
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'center' => '-40, 105' ) ) );
 		$this->assertTrue( isset( $cleaned['latitude'] ) && $cleaned['latitude'] == '-40' );
 		$this->assertTrue( isset( $cleaned['longitude'] ) && $cleaned['longitude'] == '105' );
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'center' => '-95, 105' ) ) );
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'center' => '-95, 105' ) ) );
 		$this->assertFalse( isset( $cleaned['latitude'] ) && $cleaned['latitude'] == '-95' );
 		$this->assertFalse( isset( $cleaned['longitude'] ) && $cleaned['longitude'] == '105' );
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'center' => '85, 185' ) ) );
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'center' => '85, 185' ) ) );
 		$this->assertFalse( isset( $cleaned['latitude'] ) && $cleaned['latitude'] == '85' );
 		$this->assertFalse( isset( $cleaned['longitude'] ) && $cleaned['longitude'] == '185' );
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'center' => 'sdfjasldf' ) ) );
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'center' => 'sdfjasldf' ) ) );
 		$this->assertFalse( isset( $cleaned['latitude'] ) );
 		$this->assertFalse( isset( $cleaned['longitude'] ) );
 
 		// Zoom
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'zoom' => 0 ) ) );
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'zoom' => 0 ) ) );
 		$this->assertTrue( isset( $cleaned['zoom'] ) && $cleaned['zoom'] == 0 );
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'zoom' => 21 ) ) );
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'zoom' => 21 ) ) );
 		$this->assertTrue( isset( $cleaned['zoom'] ) && $cleaned['zoom'] == 21 );
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'zoom' => - 1 ) ) );
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'zoom' => - 1 ) ) );
 		$this->assertFalse( isset( $cleaned['zoom'] ) );
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'zoom' => 22 ) ) );
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'zoom' => 22 ) ) );
 		$this->assertFalse( isset( $cleaned['zoom'] ) );
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'zoom' => 'asdfa' ) ) );
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'zoom' => 'asdfa' ) ) );
 		$this->assertFalse( isset( $cleaned['zoom'] ) );
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'zoom' => false ) ) );
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'zoom' => false ) ) );
 		$this->assertFalse( isset( $cleaned['zoom'] ) );
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'zoom' => '' ) ) );
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'zoom' => '' ) ) );
 		$this->assertFalse( isset( $cleaned['zoom'] ) );
 
 		// Type		
 		if ( defined( WPLANG ) && WPLANG == '' ) {
-			$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'type' => 'ROADMAP' ) ) );
+			$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'type' => 'ROADMAP' ) ) );
 			$this->assertTrue( isset( $cleaned['type'] ) && $cleaned['type'] == 'ROADMAP' );
-			$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'type' => 'roadmap' ) ) );
+			$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'type' => 'roadmap' ) ) );
 			$this->assertTrue( isset( $cleaned['type'] ) && $cleaned['type'] == 'ROADMAP' );
 		}
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( array( 'type' => 'dafsda' ) ) );
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( array( 'type' => 'dafsda' ) ) );
 		$this->assertFalse( isset( $cleaned['type'] ) );
 
 		// Everything
@@ -215,11 +215,11 @@ class bgmpCoreUnitTests extends UnitTestCase {
 			'zoom'       => - 1,
 			'type'       => 'hybrid',
 		);
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( $params ) );
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( $params ) );
 		$this->assertTrue( in_array( 'record-stores', $cleaned['categories'] ) );
 		$this->assertFalse( in_array( 'asdfasdf', $cleaned['categories'] ) );
-		$this->assertTrue( isset( $cleaned['mapWidth'] ) && $cleaned['mapWidth'] == 350 );
-		$this->assertTrue( isset( $cleaned['mapHeight'] ) && $cleaned['mapHeight'] == 600 );
+		$this->assertTrue( isset( $cleaned['map_width'] ) && $cleaned['map_width'] == 350 );
+		$this->assertTrue( isset( $cleaned['map_height'] ) && $cleaned['map_height'] == 600 );
 		$this->assertTrue( isset( $cleaned['latitude'] ) && $cleaned['latitude'] == '39.7589478' );
 		$this->assertTrue( isset( $cleaned['longitude'] ) && $cleaned['longitude'] == '-84.1916069' );
 		$this->assertFalse( isset( $cleaned['zoom'] ) );
@@ -233,10 +233,10 @@ class bgmpCoreUnitTests extends UnitTestCase {
 			'zoom'       => 15,
 			'type'       => 'moose',
 		);
-		$cleaned = $cleanMapShortcodeArguments->invokeArgs( $bgmp, array( $params ) );
+		$cleaned = $clean_map_shortcode_arguments->invokeArgs( $bgmp, array( $params ) );
 		$this->assertFalse( in_array( 'asdfasdf', $cleaned['categories'] ) );
-		$this->assertFalse( isset( $cleaned['mapWidth'] ) );
-		$this->assertTrue( isset( $cleaned['mapHeight'] ) && $cleaned['mapHeight'] == 600 );
+		$this->assertFalse( isset( $cleaned['map_width'] ) );
+		$this->assertTrue( isset( $cleaned['map_height'] ) && $cleaned['map_height'] == 600 );
 		$this->assertTrue( isset( $cleaned['latitude'] ) && $cleaned['latitude'] == '50.2342' );
 		$this->assertTrue( isset( $cleaned['longitude'] ) && $cleaned['longitude'] == '-89.383453' );
 		$this->assertTrue( isset( $cleaned['zoom'] ) && $cleaned['zoom'] == 15 );
@@ -247,8 +247,8 @@ class bgmpCoreUnitTests extends UnitTestCase {
 	/*
 	 * geocode()
 	 */
-	public function testGeocode() {
-		$bgmp = new BasicGoogleMapsPlacemarks();
+	public function test_geocode() {
+		$bgmp = new Basic_Google_Maps_Placemarks();
 		$bgmp->init();
 
 		$this->assertFalse( $bgmp->geocode( 'fjal39802afjl;fsdjfalsdf329jfas;' ) );
@@ -262,86 +262,86 @@ class bgmpCoreUnitTests extends UnitTestCase {
 
 
 	/*
-	 * validateCoordinates()
+	 * validate_coordinates()
 	 */
-	public function testValidateCoordinatesSucceedsWithValidCoordinates() {
-		$bgmp = new BasicGoogleMapsPlacemarks();
+	public function test_validate_coordinates_succeeds_with_valid_coordinates() {
+		$bgmp = new Basic_Google_Maps_Placemarks();
 		$bgmp->init();
-		$validateCoordinates = self::getHiddenMethod( 'validateCoordinates' );
+		$validate_coordinates = self::getHiddenMethod( 'validate_coordinates' );
 
-		$this->assertTrue( is_array( $validateCoordinates->invokeArgs( $bgmp, array( '-4.915833,-157.5' ) ) ) );
-		$this->assertTrue( is_array( $validateCoordinates->invokeArgs( $bgmp, array( '39.7589478,-84.1916069' ) ) ) );
-		$this->assertTrue( is_array( $validateCoordinates->invokeArgs( $bgmp, array( ' 39.7589478 , -84.1916069 ' ) ) ) );
-		$this->assertTrue( is_array( $validateCoordinates->invokeArgs( $bgmp, array( '90,180' ) ) ) );
-		$this->assertTrue( is_array( $validateCoordinates->invokeArgs( $bgmp, array( '-90,-180' ) ) ) );
-		$this->assertTrue( is_array( $validateCoordinates->invokeArgs( $bgmp, array( '90,-180' ) ) ) );
-		$this->assertTrue( is_array( $validateCoordinates->invokeArgs( $bgmp, array( '-90,180' ) ) ) );
-		$this->assertTrue( is_array( $validateCoordinates->invokeArgs( $bgmp, array( '16.06403619205951,108.21956070873716' ) ) ) );
-		$this->assertTrue( is_array( $validateCoordinates->invokeArgs( $bgmp, array( '55.939246,-3.060258' ) ) ) );
+		$this->assertTrue( is_array( $validate_coordinates->invokeArgs( $bgmp, array( '-4.915833,-157.5' ) ) ) );
+		$this->assertTrue( is_array( $validate_coordinates->invokeArgs( $bgmp, array( '39.7589478,-84.1916069' ) ) ) );
+		$this->assertTrue( is_array( $validate_coordinates->invokeArgs( $bgmp, array( ' 39.7589478 , -84.1916069 ' ) ) ) );
+		$this->assertTrue( is_array( $validate_coordinates->invokeArgs( $bgmp, array( '90,180' ) ) ) );
+		$this->assertTrue( is_array( $validate_coordinates->invokeArgs( $bgmp, array( '-90,-180' ) ) ) );
+		$this->assertTrue( is_array( $validate_coordinates->invokeArgs( $bgmp, array( '90,-180' ) ) ) );
+		$this->assertTrue( is_array( $validate_coordinates->invokeArgs( $bgmp, array( '-90,180' ) ) ) );
+		$this->assertTrue( is_array( $validate_coordinates->invokeArgs( $bgmp, array( '16.06403619205951,108.21956070873716' ) ) ) );
+		$this->assertTrue( is_array( $validate_coordinates->invokeArgs( $bgmp, array( '55.939246,-3.060258' ) ) ) );
 	}
 
-	public function testValidateCoordinatesFailsWithEuropeanNotation() {
-		$bgmp = new BasicGoogleMapsPlacemarks();
+	public function test_validate_coordinates_fails_with_european_notation() {
+		$bgmp = new Basic_Google_Maps_Placemarks();
 		$bgmp->init();
-		$validateCoordinates = self::getHiddenMethod( 'validateCoordinates' );
+		$validate_coordinates = self::getHiddenMethod( 'validate_coordinates' );
 
-		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( '39,7589478.-84,1916069' ) ) );
-		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( '50,0252 19,4520' ) ) );
+		$this->assertFalse( $validate_coordinates->invokeArgs( $bgmp, array( '39,7589478.-84,1916069' ) ) );
+		$this->assertFalse( $validate_coordinates->invokeArgs( $bgmp, array( '50,0252 19,4520' ) ) );
 	}
 
-	public function testValidateCoordinatesFailsWithMinutesSecondsNotation() {
-		$bgmp = new BasicGoogleMapsPlacemarks();
+	public function test_validate_coordinates_fails_with_minutes_seconds_notation() {
+		$bgmp = new Basic_Google_Maps_Placemarks();
 		$bgmp->init();
-		$validateCoordinates = self::getHiddenMethod( 'validateCoordinates' );
+		$validate_coordinates = self::getHiddenMethod( 'validate_coordinates' );
 
-		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( '38°53\'23"N,77°00\'27"W' ) ) );
+		$this->assertFalse( $validate_coordinates->invokeArgs( $bgmp, array( '38°53\'23"N,77°00\'27"W' ) ) );
 	}
 
-	public function testValidateCoordinatesFailsWithEmptyCoordinates() {
-		$bgmp = new BasicGoogleMapsPlacemarks();
+	public function test_validate_coordinates_fails_with_empty_coordinates() {
+		$bgmp = new Basic_Google_Maps_Placemarks();
 		$bgmp->init();
-		$validateCoordinates = self::getHiddenMethod( 'validateCoordinates' );
+		$validate_coordinates = self::getHiddenMethod( 'validate_coordinates' );
 
-		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( null ) ) );
-		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( '' ) ) );
-		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( false ) ) );
+		$this->assertFalse( $validate_coordinates->invokeArgs( $bgmp, array( null ) ) );
+		$this->assertFalse( $validate_coordinates->invokeArgs( $bgmp, array( '' ) ) );
+		$this->assertFalse( $validate_coordinates->invokeArgs( $bgmp, array( false ) ) );
 	}
 
-	public function testValidateCoordinatesFailsWithAddressString() {
-		$bgmp = new BasicGoogleMapsPlacemarks();
+	public function test_validate_coordinates_fails_with_address_string() {
+		$bgmp = new Basic_Google_Maps_Placemarks();
 		$bgmp->init();
-		$validateCoordinates = self::getHiddenMethod( 'validateCoordinates' );
+		$validate_coordinates = self::getHiddenMethod( 'validate_coordinates' );
 
 		// want to vary the number of commas
-		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( '4 S Main St, Dayton, OH 45423, USA' ) ) );
-		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( 'Pike Place Market, Seattle' ) ) );
-		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( 'Unos Pizza Chicago' ) ) );
+		$this->assertFalse( $validate_coordinates->invokeArgs( $bgmp, array( '4 S Main St, Dayton, OH 45423, USA' ) ) );
+		$this->assertFalse( $validate_coordinates->invokeArgs( $bgmp, array( 'Pike Place Market, Seattle' ) ) );
+		$this->assertFalse( $validate_coordinates->invokeArgs( $bgmp, array( 'Unos Pizza Chicago' ) ) );
 	}
 
-	public function testValidateCoordinatesFailsWhenLatitudeLongitudeOutOfBounds() {
-		$bgmp = new BasicGoogleMapsPlacemarks();
+	public function test_validate_coordinates_fails_when_latitude_longitude_out_of_bounds() {
+		$bgmp = new Basic_Google_Maps_Placemarks();
 		$bgmp->init();
-		$validateCoordinates = self::getHiddenMethod( 'validateCoordinates' );
+		$validate_coordinates = self::getHiddenMethod( 'validate_coordinates' );
 
-		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( '90.1,-84.1916069' ) ) );
-		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( '-90.1,-84.1916069' ) ) );
-		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( '39.7589478,180.1' ) ) );
-		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( '39.7589478,-180.1' ) ) );
-		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( '-90.1,-180.1' ) ) );
-		$this->assertFalse( $validateCoordinates->invokeArgs( $bgmp, array( '90.1,180.1' ) ) );
+		$this->assertFalse( $validate_coordinates->invokeArgs( $bgmp, array( '90.1,-84.1916069' ) ) );
+		$this->assertFalse( $validate_coordinates->invokeArgs( $bgmp, array( '-90.1,-84.1916069' ) ) );
+		$this->assertFalse( $validate_coordinates->invokeArgs( $bgmp, array( '39.7589478,180.1' ) ) );
+		$this->assertFalse( $validate_coordinates->invokeArgs( $bgmp, array( '39.7589478,-180.1' ) ) );
+		$this->assertFalse( $validate_coordinates->invokeArgs( $bgmp, array( '-90.1,-180.1' ) ) );
+		$this->assertFalse( $validate_coordinates->invokeArgs( $bgmp, array( '90.1,180.1' ) ) );
 	}
 
 	/*
-	 * reverseGeocode()
+	 * reverse_geocode()
 	 */
-	public function testReverseGeocode() {
-		$bgmp = new BasicGoogleMapsPlacemarks();
+	public function test_reverse_geocode() {
+		$bgmp = new Basic_Google_Maps_Placemarks();
 		$bgmp->init();
-		$reverseGeocode = self::getHiddenMethod( 'reverseGeocode' );
+		$reverse_geocode = self::getHiddenMethod( 'reverse_geocode' );
 
-		$this->assertFalse( $reverseGeocode->invokeArgs( $bgmp, array( '23432.324', 'tomato' ) ) );
+		$this->assertFalse( $reverse_geocode->invokeArgs( $bgmp, array( '23432.324', 'tomato' ) ) );
 
-		$address = $reverseGeocode->invokeArgs( $bgmp, array( '39.7589478', '-84.1916069' ) );
+		$address = $reverse_geocode->invokeArgs( $bgmp, array( '39.7589478', '-84.1916069' ) );
 		$this->assertEqual( $address, 'Dayton Transportation Center Heliport, Dayton, OH 45402, USA' );
 	}
 
@@ -352,7 +352,7 @@ class bgmpCoreUnitTests extends UnitTestCase {
 	/*
 	public function testGetPlacemarksReturnsEmptyArrayWhenNoPostsExist()
 	{
-		$bgmp = new BasicGoogleMapsPlacemarks();
+		$bgmp = new Basic_Google_Maps_Placemarks();
 		$markers = $bgmp->getPlacemarks();
 		
 		// @todo - remove all posts, or set to draft or something
@@ -362,10 +362,10 @@ class bgmpCoreUnitTests extends UnitTestCase {
 	}
 	*/
 
-	public function testGetPlacemarksReturnsPopulatedArrayWhenPostsExist() {
-		$bgmp = new BasicGoogleMapsPlacemarks();
+	public function test_get_placemarks_returns_populated_array_when_posts_exist() {
+		$bgmp = new Basic_Google_Maps_Placemarks();
 		$bgmp->init();
-		$markers = $bgmp->getMapPlacemarks( array() );
+		$markers = $bgmp->get_map_placemarks( array() );
 
 		// @todo - insert a test post to ensure at least 1 exists
 		$this->assertTrue( is_array( $markers ) );
@@ -374,11 +374,11 @@ class bgmpCoreUnitTests extends UnitTestCase {
 		// @todo - remove the test post to clean up
 	}
 
-	public function testGetPlacemarksJsonEncode() {
-		$bgmp = new BasicGoogleMapsPlacemarks();
+	public function test_get_placemarks_json_encode() {
+		$bgmp = new Basic_Google_Maps_Placemarks();
 		$bgmp->init();
 
-		$markers = json_encode( $bgmp->getMapPlacemarks( array() ) );
+		$markers = json_encode( $bgmp->get_map_placemarks( array() ) );
 		$this->assertTrue( is_string( $markers ) );
 		$markers = json_decode( $markers );
 		$this->assertFalse( is_null( $markers ) );
@@ -399,8 +399,6 @@ class bgmpCoreUnitTests extends UnitTestCase {
 
 	// shutdown?	
 
-} // end bgmpCoreUnitTests
+} // end BGMP_Core_Unit_Tests
 
 // setup another class to test settings.php - maybe should setup separate file and testsuite functions?
-
-?>
