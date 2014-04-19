@@ -34,7 +34,6 @@ if ( ! class_exists( 'Basic_Google_Maps_Placemarks' ) ) {
 
 			register_activation_hook( dirname( dirname( __FILE__ ) ) . '/basic-google-maps-placemarks.php', array( $this, 'network_activate' ) );
 
-			require_once( dirname( __FILE__ ) . '/settings.php' );
 			$this->settings = new BGMP_Settings();
 		}
 
