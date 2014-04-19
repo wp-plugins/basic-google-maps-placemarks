@@ -364,12 +364,8 @@ if ( ! class_exists( 'Basic_Google_Maps_Placemarks' ) ) {
 				return false;
 			}
 
-			$shortcodes = $this->get_shortcodes( $post->post_content ); // note: don't use setup_postdata/get_the_content() in this instance -- http://lists.automattic.com/pipermail/wp-hackers/2013-January/045053.html
-
-			for ( $i = 0; $i < count( $shortcodes[2] ); $i ++ ) {
-				if ( 'bgmp-map' == $shortcodes[2][$i] ) {
-					return true;
-				}
+			if ( has_shortcode( $post->post_content, 'bgmp-map' ) ) {
+				return true;
 			}
 
 			return false;

@@ -36,7 +36,7 @@ load_plugin_textdomain( 'bgmp', false, basename( dirname( __FILE__ ) ) . '/langu
 
 define( 'BGMP_NAME',                 __( 'Basic Google Maps Placemarks', 'bgmp' ) );
 define( 'BGMP_REQUIRED_PHP_VERSION', '5.2' );    // because of filter_var()
-define( 'BGMP_REQUIRED_WP_VERSION',  '3.1' );    // because of WP_Query[ 'tax_query' ] support
+define( 'BGMP_REQUIRED_WP_VERSION',  '3.6' );    // because of has_shortcode()
 
 
 /**

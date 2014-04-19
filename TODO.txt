@@ -76,8 +76,9 @@
 	this is big enough to make it 2.0 b/c devs need to know there might be backcompat issues w/ their customizations
 
 	high priority
-		include/register settings from bootstrap, not core
-			also handle get_settings() in a better way. dependency injection or something like that?
+		modularize clean_map_shortcode_arguments()
+		move cluserStyles into it's own function
+		
 		modularitity / oop design not just oop functions
 			base module that has render_template
 				what other functions should be moved there? anything from core module that settings calls?
@@ -89,11 +90,8 @@
 			unit tests into suite too
 			break css/js into front/back end
 			rename settings.php to match class name
-		modularize clean_map_shortcode_arguments()
-		remove BGMP_NAME
-		move cluserStyles into it's own function
-		map_shortcode_called() can call has_shortcode(), then can remove get_shortcode()?
-			this will bump required wp version to 3.7?
+			handle get_settings() in a better way. dependency injection or something like that?
+
 
 	low priority
 		rename views/settings.php to something more descriptive?

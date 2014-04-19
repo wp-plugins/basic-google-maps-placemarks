@@ -2,7 +2,7 @@
 Contributors:      iandunn
 Donate link:       http://www.doctorswithoutborders.org
 Tags:              map, google maps, marker, placemark, geocode, shortcode, marker clustering
-Requires at least: 3.1
+Requires at least: 3.6
 Tested up to:      3.9
 Stable tag:        1.10.2
 License:           GPL2
@@ -418,6 +418,7 @@ If you make customizations that could be beneficial to other users, please start
 * [UPDATE] Extracted all views into individual files and passed through render_view() so they can be easily overridden by other plugins and themes.
 * [UPDATE] Organized files into more subdirectories.
 * [UPDATE] Conformed files to WordPress coding standards.
+* [UPDATE] Replaced custom code with has_shortcode(). This bumped the required WP version to 3.6.
 * [UPDATE] Removed some bloated and unnecessary code.
 * [UPDATE] Migrated to using Admin Notices Helper instead of homegrown version.
 
