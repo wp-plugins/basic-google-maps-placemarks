@@ -77,8 +77,7 @@
 
 	high priority
 		modularize clean_map_shortcode_arguments()
-		move cluserStyles into it's own function
-		
+
 		modularitity / oop design not just oop functions
 			base module that has render_template
 				what other functions should be moved there? anything from core module that settings calls?

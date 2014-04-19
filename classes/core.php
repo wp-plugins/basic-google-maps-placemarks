@@ -866,6 +866,47 @@ if ( ! class_exists( 'Basic_Google_Maps_Placemarks' ) ) {
 		 * @return array array
 		 */
 		public function get_map_options( $attributes ) {
+			$options = array(	// can't conform to style guidelines because of backcompat
+				'mapWidth'           => $this->settings->map_width, // @todo move these into 'map' subarray? but then have to worry about backwards compat
+				'mapHeight'          => $this->settings->map_height,
+				'latitude'           => $this->settings->map_latitude,
+				'longitude'          => $this->settings->map_longitude,
+				'zoom'               => $this->settings->map_zoom,
+				'type'               => $this->settings->map_type,
+				'typeControl'        => $this->settings->map_type_control,
+				'navigationControl'  => $this->settings->map_navigation_control,
+				'infoWindowMaxWidth' => $this->settings->map_info_window_max_width,
+				'streetViewControl'  => apply_filters( 'bgmp_street-view-control', true ), // deprecated b/c of bgmp_map-options filter?
+				'viewOnMapScroll'    => false,
+
+				'clustering'         => array(
+					'enabled'        => $this->settings->marker_clustering,
+					'maxZoom'        => $this->settings->cluster_max_zoom,
+					'gridSize'       => $this->settings->cluster_grid_size,
+					'style'          => $this->settings->cluster_style,
+					'styles'         => $this->get_cluster_styles(),
+				),
+			);
+
+			// Reset center/zoom when only displaying single placemark
+			if ( isset( $attributes['placemark'] ) && apply_filters( 'bgmp_reset-individual-map-center-zoom', true ) ) {
+				$latitude    = get_post_meta( $attributes['placemark'], 'bgmp_latitude', true );
+				$longitude   = get_post_meta( $attributes['placemark'], 'bgmp_longitude', true );
+				$coordinates = $this->validate_coordinates( $latitude . ',' . $longitude );
+
+				if ( false !== $coordinates ) {
+					$options['latitude']  = $latitude;
+					$options['longitude'] = $longitude;
+					$options['zoom']      = apply_filters( 'bgmp_individual-map-default-zoom', 13 ); // deprecated b/c of bgmp_map-options filter?
+				}
+			}
+
+			$options = shortcode_atts( $options, $attributes );
+
+			return apply_filters( 'bgmp_map-options', $options );
+		}
+
+		protected function get_cluster_styles() {
 			$cluster_styles = array(
 				'people' => array(
 					array(
@@ -953,44 +994,7 @@ if ( ! class_exists( 'Basic_Google_Maps_Placemarks' ) ) {
 				)
 			);
 
-			$options = array(	// can't conform to style guidelines because of backcompat
-				'mapWidth'           => $this->settings->map_width, // @todo move these into 'map' subarray? but then have to worry about backwards compat
-				'mapHeight'          => $this->settings->map_height,
-				'latitude'           => $this->settings->map_latitude,
-				'longitude'          => $this->settings->map_longitude,
-				'zoom'               => $this->settings->map_zoom,
-				'type'               => $this->settings->map_type,
-				'typeControl'        => $this->settings->map_type_control,
-				'navigationControl'  => $this->settings->map_navigation_control,
-				'infoWindowMaxWidth' => $this->settings->map_info_window_max_width,
-				'streetViewControl'  => apply_filters( 'bgmp_street-view-control', true ), // deprecated b/c of bgmp_map-options filter?
-				'viewOnMapScroll'    => false,
-
-				'clustering'         => array(
-					'enabled'        => $this->settings->marker_clustering,
-					'maxZoom'        => $this->settings->cluster_max_zoom,
-					'gridSize'       => $this->settings->cluster_grid_size,
-					'style'          => $this->settings->cluster_style,
-					'styles'         => $cluster_styles,
-				),
-			);
-
-			// Reset center/zoom when only displaying single placemark
-			if ( isset( $attributes['placemark'] ) && apply_filters( 'bgmp_reset-individual-map-center-zoom', true ) ) {
-				$latitude    = get_post_meta( $attributes['placemark'], 'bgmp_latitude', true );
-				$longitude   = get_post_meta( $attributes['placemark'], 'bgmp_longitude', true );
-				$coordinates = $this->validate_coordinates( $latitude . ',' . $longitude );
-
-				if ( false !== $coordinates ) {
-					$options['latitude']  = $latitude;
-					$options['longitude'] = $longitude;
-					$options['zoom']      = apply_filters( 'bgmp_individual-map-default-zoom', 13 ); // deprecated b/c of bgmp_map-options filter?
-				}
-			}
-
-			$options = shortcode_atts( $options, $attributes );
-
-			return apply_filters( 'bgmp_map-options', $options );
+			return $cluster_styles;
 		}
 
 		/**
