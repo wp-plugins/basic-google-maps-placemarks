@@ -4,7 +4,7 @@ Donate link:       http://www.doctorswithoutborders.org
 Tags:              map, google maps, marker, placemark, geocode, shortcode, marker clustering
 Requires at least: 3.6
 Tested up to:      3.9
-Stable tag:        1.10.2
+Stable tag:        1.10.3
 License:           GPL2
 
 Embeds a Google Map into your site and lets you add map markers with custom icons and information windows.
