@@ -73,6 +73,11 @@
 ** Roadmap **
 
 2.0
+	merge in everything from https://plugins.trac.wordpress.org/changeset/901237
+		then retest
+	make sure input passed through sanitize_text_field() or more appropriate func.
+	 	switch on key name, whitelist some for absint() or wpkses, default to sanitize_text_field
+
 	did renaming bootstrap.php make the plugin disabled?
 		i think it did. need to fix that
 		
