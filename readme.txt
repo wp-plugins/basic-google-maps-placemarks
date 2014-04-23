@@ -352,6 +352,10 @@ If you're still having problems, create a detailed report on [the support forum]
 Also, keep in mind that professionals don't just install plugin updates on their live website and then get angry when they inevitably run into a situation where an update crashes the site. The right way to do it is to have [a staging server](http://webdesign.about.com/od/servers/qt/web-servers-and-workflow.htm) where you test all updates and code changes, and then push them to the production server once you're satisfied that everything is working properly. If your website is mission-critical, then this is what you need to be doing. If you're not capable or willing to do it yourself, then you need to hire a developer to manage the process for you. If you don't do those things, then you don't have anyone to blame but yourself when things go wrong. You can subscribe to [the BGMP Testers e-mail list](http://iandunn.us6.list-manage.com/subscribe?u=38510a08f1d822cc1c358e644&id=b183d686c6) to be notified when new release candidates are available for testing. 
 
 
+= Is this plugin secure? =
+I've done my best to ensure that it is, but just in case I missed anything [I also offer a security bounty](https://hackerone.com/iandunn-projects/) for any vulnerabilities that can be found and privately disclosed in any of my plugins.
+
+
 = Are there any hooks I can use to modify or extend the plugin? =
 Yes, I've tried to add filters for everything you might reasonably want, just browse the source code to look for them. If you need a filter or action that isn't there, make a request on [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks) and I'll add it to the next version.
 
