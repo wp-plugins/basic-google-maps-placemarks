@@ -73,6 +73,9 @@
 ** Roadmap **
 
 2.0
+	did renaming bootstrap.php make the plugin disabled?
+		i think it did. need to fix that
+		
 	this is big enough to make it 2.0 b/c devs need to know there might be backcompat issues w/ their customizations
 
 	high priority
