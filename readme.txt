@@ -4,7 +4,7 @@ Donate link: http://www.doctorswithoutborders.org
 Tags: map, google maps, marker, placemark, geocode, shortcode, marker clustering
 Requires at least: 3.1
 Tested up to: 3.9
-Stable tag: 1.10.2
+Stable tag: 1.10.3
 License: GPL2
 
 Embeds a Google Map into your site and lets you add map markers with custom icons and information windows.
@@ -328,6 +328,10 @@ If you're still having problems, create a detailed report on [the support forum]
 Also, keep in mind that professionals don't just install plugin updates on their live website and then get angry when they inevitably run into a situation where an update crashes the site. The right way to do it is to have [a staging server](http://webdesign.about.com/od/servers/qt/web-servers-and-workflow.htm) where you test all updates and code changes, and then push them to the production server once you're satisfied that everything is working properly. If your website is mission-critical, then this is what you need to be doing. If you're not capable or willing to do it yourself, then you need to hire a developer to manage the process for you. If you don't do those things, then you don't have anyone to blame but yourself when things go wrong. You can subscribe to [the BGMP Testers e-mail list](http://iandunn.us6.list-manage.com/subscribe?u=38510a08f1d822cc1c358e644&id=b183d686c6) to be notified when new release candidates are available for testing. 
 
 
+= Is this plugin secure? =
+I've done my best to ensure that it is, but just in case I missed anything [I also offer a security bounty](https://hackerone.com/iandunn-projects/) for any vulnerabilities that can be found and privately disclosed in any of my plugins.
+
+
 = Are there any hooks I can use to modify or extend the plugin? =
 Yes, I've tried to add filters for everything you might reasonably want, just browse the source code to look for them. If you need a filter or action that isn't there, make a request on [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks) and I'll add it to the next version.
 
@@ -387,6 +391,9 @@ If you make customizations that could be beneficial to other users, please start
 
 
 == Changelog ==
+
+= v1.10.3 (4/23/2014) =
+* [FIX] Closed [a minor XSS vulnerability in several Settings form fields](https://hackerone.com/reports/9375) in the Administration Panels. props [trizaeron](https://hackerone.com/trizaeron).
 
 = v1.10.2 (1/8/2014) =
 * [NEW] Added Spanish translation
@@ -533,6 +540,9 @@ If you make customizations that could be beneficial to other users, please start
 
 
 == Upgrade Notice ==
+
+= 1.10.3 =
+BGMP 1.10.3 includes a fix for a minor security vulnerability that would allow Administrators to inject malicious scripts into form fields. Since the vulnerability requires an Administrator account in order to exploit it, it is unlikely to be a realistic attack vector, but just to be safe I still strongly recommend that all users upgrade to this version.
 
 = 1.10.2 =
 BGMP 1.10.2 adds a Spanish translation.

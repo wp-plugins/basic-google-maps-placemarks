@@ -240,20 +240,20 @@ if( !class_exists( 'BGMPSettings' ) )
 			switch( $field[ 'label_for' ] )
 			{
 				case BasicGoogleMapsPlacemarks::PREFIX . 'map-width':
-					echo '<input id="'. BasicGoogleMapsPlacemarks::PREFIX .'map-width" name="'. BasicGoogleMapsPlacemarks::PREFIX .'map-width" type="text" value="'. $this->mapWidth .'" class="small-text" /> ';
+					echo '<input id="'. BasicGoogleMapsPlacemarks::PREFIX .'map-width" name="'. BasicGoogleMapsPlacemarks::PREFIX .'map-width" type="text" value="'. esc_attr( $this->mapWidth ).'" class="small-text" /> ';
 					_e( 'pixels', 'bgmp' );
 				break;
 				
 				case BasicGoogleMapsPlacemarks::PREFIX . 'map-height':
-					echo '<input id="'. BasicGoogleMapsPlacemarks::PREFIX .'map-height" name="'. BasicGoogleMapsPlacemarks::PREFIX .'map-height" type="text" value="'. $this->mapHeight .'" class="small-text" /> ';
+					echo '<input id="'. BasicGoogleMapsPlacemarks::PREFIX .'map-height" name="'. BasicGoogleMapsPlacemarks::PREFIX .'map-height" type="text" value="'. esc_attr( $this->mapHeight ).'" class="small-text" /> ';
 					_e( 'pixels', 'bgmp' );
 				break;
 				
 				case BasicGoogleMapsPlacemarks::PREFIX . 'map-address':
-					echo '<input id="'. BasicGoogleMapsPlacemarks::PREFIX .'map-address" name="'. BasicGoogleMapsPlacemarks::PREFIX .'map-address" type="text" value="'. $this->mapAddress .'" class="regular-text" />';
+					echo '<input id="'. BasicGoogleMapsPlacemarks::PREFIX .'map-address" name="'. BasicGoogleMapsPlacemarks::PREFIX .'map-address" type="text" value="'. esc_attr( $this->mapAddress ) .'" class="regular-text" />';
 			
 					if( $this->mapAddress && !BasicGoogleMapsPlacemarks::validateCoordinates( $this->mapAddress ) && $this->mapLatitude && $this->mapLongitude )
-						echo ' <em>('. __( 'Geocoded to:', 'bgmp' ) .' '. $this->mapLatitude .', '. $this->mapLongitude .')</em>';
+						echo ' <em>('. __( 'Geocoded to:', 'bgmp' ) .' '. esc_html( $this->mapLatitude ) .', '. esc_html( $this->mapLongitude ).')</em>';
 						
 					elseif( $this->mapAddress && ( !$this->mapLatitude || !$this->mapLongitude ) )
 						echo " <em>". __( "(Error geocoding address. Please make sure it's correct and try again.)", 'bgmp' ) ."</em>";
@@ -262,7 +262,7 @@ if( !class_exists( 'BGMPSettings' ) )
 				break;
 					
 				case BasicGoogleMapsPlacemarks::PREFIX . 'map-zoom':
-					echo '<input id="'. BasicGoogleMapsPlacemarks::PREFIX .'map-zoom" name="'. BasicGoogleMapsPlacemarks::PREFIX .'map-zoom" type="text" value="'. $this->mapZoom .'" class="small-text" /> ';
+					echo '<input id="'. BasicGoogleMapsPlacemarks::PREFIX .'map-zoom" name="'. BasicGoogleMapsPlacemarks::PREFIX .'map-zoom" type="text" value="'. esc_attr( $this->mapZoom ).'" class="small-text" /> ';
 					printf( __( '%d (farthest) to %d (closest)', 'bgmp' ), BasicGoogleMapsPlacemarks::ZOOM_MIN, BasicGoogleMapsPlacemarks::ZOOM_MAX );
 				break;
 					
@@ -270,7 +270,7 @@ if( !class_exists( 'BGMPSettings' ) )
 					echo '<select id="'. BasicGoogleMapsPlacemarks::PREFIX .'map-type" name="'. BasicGoogleMapsPlacemarks::PREFIX .'map-type">';
 			
 					foreach( $this->mapTypes as $code => $label )
-						echo '<option value="'. $code .'" '. ( $this->mapType == $code ? 'selected="selected"' : '' ) .'>'. $label .'</option>';
+						echo '<option value="'. esc_attr( $code ).'" '. ( $this->mapType == $code ? 'selected="selected"' : '' ) .'>'. esc_html( $label ).'</option>';
 					
 					echo '</select>';
 				break;
@@ -301,7 +301,7 @@ if( !class_exists( 'BGMPSettings' ) )
 				break;
 					
 				case BasicGoogleMapsPlacemarks::PREFIX . 'map-info-window-width':
-					echo '<input id="'. BasicGoogleMapsPlacemarks::PREFIX .'map-info-window-width" name="'. BasicGoogleMapsPlacemarks::PREFIX .'map-info-window-width" type="text" value="'. $this->mapInfoWindowMaxWidth .'" class="small-text" /> ';
+					echo '<input id="'. BasicGoogleMapsPlacemarks::PREFIX .'map-info-window-width" name="'. BasicGoogleMapsPlacemarks::PREFIX .'map-info-window-width" type="text" value="'. esc_attr( $this->mapInfoWindowMaxWidth ).'" class="small-text" /> ';
 					_e( 'pixels', 'bgmp' );
 				break;
 			}

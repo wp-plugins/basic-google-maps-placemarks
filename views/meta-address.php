@@ -7,10 +7,10 @@
 		<tr>
 			<th><label for="<?php echo self::PREFIX; ?>address"><?php _e( 'Address:', 'bgmp' ); ?></label></th>
 			<td>
-				<input id="<?php echo self::PREFIX; ?>address" name="<?php echo self::PREFIX; ?>address" type="text" class="regular-text" value="<?php echo $address; ?>" />
+				<input id="<?php echo self::PREFIX; ?>address" name="<?php echo self::PREFIX; ?>address" type="text" class="regular-text" value="<?php echo esc_attr( $address ); ?>" />
 				
 				<?php if( $showGeocodeResults ) : ?>
-					<em><?php printf( __( '(Geocoded to: %f, %f)', 'bgmp' ), $latitude, $longitude ); ?></em>
+					<em><?php printf( __( '(Geocoded to: %f, %f)', 'bgmp' ), esc_html( $latitude ), esc_html( $longitude ) ); ?></em>
 			
 				<?php elseif( $showGeocodeError ) : ?>
 					<em><?php _e( "(Error geocoding address. Please make sure it's correct and try again.)", 'bgmp' ); ?></em>
