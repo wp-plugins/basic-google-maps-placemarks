@@ -365,7 +365,8 @@ Yes, I've tried to add filters for everything you might reasonably want, just br
 **Localizations**
 
 * Spanish (thanks to Andrew Kurtis from [WebHostingHub](http://www.webhostinghub.com/))
-* Chinese (thanks to [yzqiang](http://wordpress.org/support/profile/yzqiang))
+* Chinese (thanks to [yzqiang](http://profiles.wordpress.org/yzqiang))
+* Russian (thanks to [alexgr](http://profiles.wordpress.org/alexgr))
 * French (thanks to Romain Fevre)
 * German (thanks to Jens)
 * Italian (thanks to [Andrea Colombo](http://www.acolombodesign.com/))
@@ -425,6 +426,7 @@ If you make customizations that could be beneficial to other users, please start
 * [UPDATE] Replaced custom code with has_shortcode(). This bumped the required WP version to 3.6.
 * [UPDATE] Removed some bloated and unnecessary code.
 * [UPDATE] Migrated to using Admin Notices Helper instead of homegrown version.
+* [NEW] Added Russian translation. props alexgr.
 
 = v1.10.2 (1/8/2014) =
 * [NEW] Added Spanish translation
