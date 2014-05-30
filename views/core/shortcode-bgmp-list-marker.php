@@ -4,7 +4,7 @@
 
 		<?php if ( $viewOnMap ) : ?>
 			<span class="bgmp_view-on-map-container">
-				[<a href="javascript:;" data-marker-id="<?php echo esc_attr( $p->ID ); ?>" class="bgmp_view-on-map">View On Map</a>]
+				[<a href="javascript:;" data-marker-id="<?php echo esc_attr( $p->ID ); ?>" class="bgmp_view-on-map"><?php _e( 'View On Map', 'bgmp' ); ?></a>]
 			</span>
 		<?php endif; ?>
 	</h3>

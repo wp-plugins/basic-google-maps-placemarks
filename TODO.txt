@@ -128,6 +128,9 @@
 
 
 1.minor.x
+	add more shortcode optoins to readme
+		https://wordpress.org/support/topic/where-can-i-find-all-the-shortcodes?replies=4#post-5515853
+
 	http://make.wordpress.org/plugins/2013/04/11/google-maps-javascript-v2-api-to-be-removed/
 		pretty sure it's already using v3, but double check
 		probably specify api version # in the url, to make it obvious and future-proof
