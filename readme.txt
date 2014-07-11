@@ -370,10 +370,11 @@ Yes, I've tried to add filters for everything you might reasonably want, just br
 * French (thanks to Romain Fevre)
 * German (thanks to Jens)
 * Italian (thanks to [Andrea Colombo](http://www.acolombodesign.com/))
+* Serbo-Croatian (thanks to Borisa Djuraskovic from [WebHostingHub](http://www.webhostinghub.com/))
 
 If there isn't a translation for your language (or it is incomplete/inaccurate) please consider making one and contributing it to the plugin. You can do that from within your WordPress installation by using the [Codestyling Localization plugin](http://wordpress.org/plugins/codestyling-localization/), or using a desktop application like Poedit. To learn more, please read [A Guide for WordPress Plugins Translators](http://www.gabsoftware.com/tips/a-guide-for-wordpress-plugins-translators-gettext-poedit-locale/). The .pot file you'll need is inside the *languages* directory in the plugin's folder. 
 
-Once you're done, just start a thread on [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks) with links to the .po and .mo files, and I'll add them to the next release. You can also subscribe to [the BGMP Translators e-mail list](http://iandunn.us6.list-manage1.com/subscribe?u=38510a08f1d822cc1c358e644&id=b7ff5f7393) to be notified when updated versions have new strings to translate.
+Once you're done, just start a thread on [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks) with a link to the .po file, and I'll add them to the next release. You can also subscribe to [the BGMP Translators e-mail list](http://iandunn.us6.list-manage1.com/subscribe?u=38510a08f1d822cc1c358e644&id=b7ff5f7393) to be notified when updated versions have new strings to translate.
 
 
 **Known conflicts**
@@ -427,6 +428,7 @@ If you make customizations that could be beneficial to other users, please start
 * [UPDATE] Removed some bloated and unnecessary code.
 * [UPDATE] Migrated to using Admin Notices Helper instead of homegrown version.
 * [NEW] Added Russian translation. props alexgr.
+* [NEW] Added Russian translation. props Borisa Djuraskovic.
 
 = v1.10.2 (1/8/2014) =
 * [NEW] Added Spanish translation
@@ -575,7 +577,7 @@ If you make customizations that could be beneficial to other users, please start
 == Upgrade Notice ==
 
 = 2.0 =
-BGMP 2.0 contains some major internal reorganization and cleaning up. Regular users shouldn't notice any difference, but it could break backwards compatibility with any customizations that developers have made. It is strongly recommended that customizations be tested before upgrading production servers.
+BGMP 2.0 contains some major internal reorganization, modernization and cleaning up of the code. Regular users shouldn't notice any difference, but it could break backwards compatibility with any customizations that developers have made. It is strongly recommended that customizations be tested before upgrading production servers.
 
 = 1.10.2 =
 BGMP 1.10.2 adds a Spanish translation.
