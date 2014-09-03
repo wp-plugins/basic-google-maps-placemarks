@@ -98,6 +98,8 @@
 			break css/js into front/back end
 			rename settings.php to match class name
 			handle get_settings() in a better way. dependency injection or something like that?
+			urlencode in geocode()
+			test geocode() for wp_remote_get() returning false?!?
 
 
 	low priority
