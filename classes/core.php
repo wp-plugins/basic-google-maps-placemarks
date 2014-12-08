@@ -841,10 +841,16 @@ if ( ! class_exists( 'Basic_Google_Maps_Placemarks' ) ) {
 				$output = '<ul id="' . 'bgmp_list" class="' . 'bgmp_list">'; // Note: id should be removed and everything switched to class, because there could be more than one list on a page. That would be backwards-compatability, though.
 
 				foreach ( $posts as $p ) {
+					$categories = wp_list_pluck( wp_get_post_terms( $p->ID, self::TAXONOMY ), 'slug' );
+					foreach( $categories as & $category ) {
+						$category = 'bgmp_category-' . $category;
+					}
+
 					$variables = array(
 						'p'         => $p,
 						'viewOnMap' => $view_on_map,
 						'address'   => get_post_meta( $p->ID, 'bgmp_address', true ),
+						'categoryClasses' => implode( ' ', $categories ),
 					);
 					$marker_html = $this->render_template( 'core/shortcode-bgmp-list-marker.php', $variables, 'always' );
 

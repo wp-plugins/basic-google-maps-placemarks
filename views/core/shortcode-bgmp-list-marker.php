@@ -1,4 +1,4 @@
-<li id="bgmp_list-item-<?php echo esc_attr( $p->ID ); ?>" class="bgmp_list-item">
+<li id="bgmp_list-item-<?php echo esc_attr( $p->ID ); ?>" class="bgmp_list-item <?php echo esc_attr( $categoryClasses ); ?>">
 	<h3 class="bgmp_list-placemark-title">
 		<?php echo apply_filters( 'the_title', $p->post_title ); ?>
 
