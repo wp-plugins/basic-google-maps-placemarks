@@ -338,6 +338,16 @@ Add the following styles to your theme's style.css file or a [child theme](http:
 `
 
 
+= How can I make the page scroll back to the map when a user clicks on the 'View on Map' link? =
+There's a filter to enable that, but it's off by default. You can enable it by adding this code to <a href="http://wpcandy.com/teaches/how-to-create-a-functionality-plugin/">a functionality plugin</a>:
+
+`function bgmp_map_options( $options ) {
+	$options['viewOnMapScroll'] = true;
+
+	return $options;
+}
+add_filter( 'bgmp_map-options', 'bgmp_map_options' );`
+
 = Can registered users create their own placemarks? =
 Yes. The plugin creates a [custom post type](http://codex.wordpress.org/Post_Types), so it has the same [permission structure](http://codex.wordpress.org/Roles_and_Capabilities) as regular posts/pages.
 
