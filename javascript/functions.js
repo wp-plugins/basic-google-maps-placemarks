@@ -35,7 +35,8 @@ function bgmp_wrapper( $ ) {
 			// Initialize single info window to reuse for each placemark
 			$.bgmp.infoWindow = new google.maps.InfoWindow( {
 				content : '',
-				maxWidth: bgmpData.options.infoWindowMaxWidth
+				maxWidth: bgmpData.options.infoWindowMaxWidth,
+				pixelOffset: new google.maps.Size( bgmpData.options.infoWindowPixelOffset.width, bgmpData.options.infoWindowPixelOffset.height )
 			} );
 
 			// Format numbers

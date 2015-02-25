@@ -882,6 +882,7 @@ if ( ! class_exists( 'Basic_Google_Maps_Placemarks' ) ) {
 				'typeControl'        => $this->settings->map_type_control,
 				'navigationControl'  => $this->settings->map_navigation_control,
 				'infoWindowMaxWidth' => $this->settings->map_info_window_max_width,
+				'infoWindowPixelOffset' => array( 'width' => 0, 'height' => 0 ),
 				'streetViewControl'  => apply_filters( 'bgmp_street-view-control', true ), // deprecated b/c of bgmp_map-options filter?
 				'viewOnMapScroll'    => false,
 
