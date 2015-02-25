@@ -873,25 +873,25 @@ if ( ! class_exists( 'Basic_Google_Maps_Placemarks' ) ) {
 		 */
 		public function get_map_options( $attributes ) {
 			$options = array(	// can't conform to style guidelines because of backcompat
-				'mapWidth'           => $this->settings->map_width, // @todo move these into 'map' subarray? but then have to worry about backwards compat
-				'mapHeight'          => $this->settings->map_height,
-				'latitude'           => $this->settings->map_latitude,
-				'longitude'          => $this->settings->map_longitude,
-				'zoom'               => $this->settings->map_zoom,
-				'type'               => $this->settings->map_type,
-				'typeControl'        => $this->settings->map_type_control,
-				'navigationControl'  => $this->settings->map_navigation_control,
-				'infoWindowMaxWidth' => $this->settings->map_info_window_max_width,
+				'mapWidth'              => $this->settings->map_width, // @todo move these into 'map' subarray? but then have to worry about backwards compat
+				'mapHeight'             => $this->settings->map_height,
+				'latitude'              => $this->settings->map_latitude,
+				'longitude'             => $this->settings->map_longitude,
+				'zoom'                  => $this->settings->map_zoom,
+				'type'                  => $this->settings->map_type,
+				'typeControl'           => $this->settings->map_type_control,
+				'navigationControl'     => $this->settings->map_navigation_control,
+				'infoWindowMaxWidth'    => $this->settings->map_info_window_max_width,
 				'infoWindowPixelOffset' => array( 'width' => 0, 'height' => 0 ),
-				'streetViewControl'  => apply_filters( 'bgmp_street-view-control', true ), // deprecated b/c of bgmp_map-options filter?
-				'viewOnMapScroll'    => false,
+				'streetViewControl'     => apply_filters( 'bgmp_street-view-control', true ), // deprecated b/c of bgmp_map-options filter?
+				'viewOnMapScroll'       => false,
 
-				'clustering'         => array(
-					'enabled'        => $this->settings->marker_clustering,
-					'maxZoom'        => $this->settings->cluster_max_zoom,
-					'gridSize'       => $this->settings->cluster_grid_size,
-					'style'          => $this->settings->cluster_style,
-					'styles'         => $this->get_cluster_styles(),
+				'clustering'            => array(
+					'enabled'           => $this->settings->marker_clustering,
+					'maxZoom'           => $this->settings->cluster_max_zoom,
+					'gridSize'          => $this->settings->cluster_grid_size,
+					'style'             => $this->settings->cluster_style,
+					'styles'            => $this->get_cluster_styles(),
 				),
 			);
 
