@@ -438,7 +438,7 @@ If you make customizations that could be beneficial to other users, please start
 * [UPDATE] Removed some bloated and unnecessary code.
 * [UPDATE] Migrated to using Admin Notices Helper instead of homegrown version.
 * [NEW] Added Russian translation. props alexgr.
-* [NEW] Added Russian translation. props Borisa Djuraskovic.
+* [NEW] Added Serbo-Croatian translation. props Borisa Djuraskovic.
 
 = v1.10.2 (1/8/2014) =
 * [NEW] Added Spanish translation
