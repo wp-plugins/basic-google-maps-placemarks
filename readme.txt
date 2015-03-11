@@ -61,6 +61,10 @@ For help installing this (or any other) WordPress plugin, please read the [Manag
 
 > [bgmp-map placemark="105" center="chicago" zoom="10" type="terrain"]
 
+You can view the BGMP Settings page in wp-admin to learn what the possible values for each parameter are.
+
+Note that Google Maps only allows one map per page. If you'd like to have multiple maps, you'll need to put them on separate pages.
+
 *Multiple maps with different placemarks:*
 
 1. Go to the Placemarks menu in the Administration Panels and click on Categories, and add a category for each set of placemarks.
@@ -124,7 +128,7 @@ do_shortcode( '[bgmp-map center="Boston" zoom="5"]' );
 `
 
 
-Check [the FAQ](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/faq/) and [support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks) if you have any questions.
+If you have any questions, please read [the FAQ](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/faq/) and search [the support forums](http://wordpress.org/support/plugin/basic-google-maps-placemarks).
 
 
 == Frequently Asked Questions ==
