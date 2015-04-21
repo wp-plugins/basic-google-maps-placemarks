@@ -428,7 +428,6 @@ if ( ! class_exists( 'Basic_Google_Maps_Placemarks' ) ) {
 				wp_enqueue_style( 'bgmp_style' );
 			}
 
-
 			// Load meta box resources for settings page
 			if ( isset( $_GET['page'] ) && 'bgmp_settings' == $_GET['page'] ) { // @todo better way than $_GET ?
 				wp_enqueue_style( 'bgmp_style' );
@@ -644,8 +643,14 @@ if ( ! class_exists( 'Basic_Google_Maps_Placemarks' ) ) {
 			}
 
 			// Geocode address and handle errors
-			$geocode_response = wp_remote_get( 'http://maps.googleapis.com/maps/api/geocode/json?address=' . str_replace( ' ', '+', $address ) . '&sensor=false' );
-			// @todo - esc_url() on address?
+			$request_url = add_query_arg(
+				array(
+					'address' => rawurlencode( $address ),
+					'sensor'  => false,
+				),
+				'http://maps.googleapis.com/maps/api/geocode/json'
+			);
+			$geocode_response = wp_remote_get( esc_url_raw( $request_url ) );
 
 			if ( is_wp_error( $geocode_response ) ) {
 				add_notice( sprintf(
