@@ -102,6 +102,8 @@
 			test geocode() for wp_remote_get() returning false?!?
 
 
+	use underscore templates for marker content html
+
 	low priority
 		rename views/settings.php to something more descriptive?
 		rename text domain to match slug
@@ -130,8 +132,13 @@
 
 
 1.minor.x
-	add more shortcode optoins to readme
+	add more shortcode options to readme
+		make this a list, rather than having them spread out in the examples
+		do the same for bgmp-list shortcode
 		https://wordpress.org/support/topic/where-can-i-find-all-the-shortcodes?replies=4#post-5515853
+
+	add shortcode params for Type Control, Navigation Control, Info Window Max Width, and the clustering options.
+		https://wordpress.org/support/topic/after-several-long-minutes?replies=7#post-6679129
 
 	http://make.wordpress.org/plugins/2013/04/11/google-maps-javascript-v2-api-to-be-removed/
 		pretty sure it's already using v3, but double check
