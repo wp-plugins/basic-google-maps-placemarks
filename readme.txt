@@ -3,7 +3,7 @@ Contributors: iandunn
 Donate link: http://www.doctorswithoutborders.org
 Tags: map, google maps, marker, placemark, geocode, shortcode, marker clustering
 Requires at least: 3.1
-Tested up to: 4.0
+Tested up to: 4.2
 Stable tag: 1.10.3
 License: GPL2
 
