@@ -92,7 +92,7 @@ function bgmp_wrapper( $ ) {
 			try {
 				$.bgmp.map = new google.maps.Map( $.bgmp.canvas, mapOptions );
 			} catch ( e ) {
-				$( $.bgmp.canvas ).html( $.bgmp.name + " error: couln't build map." );
+				$( $.bgmp.canvas ).html( $.bgmp.name + " error: couldn't build map." );
 				if ( window.console )
 					console.log( 'bgmp_buildMap: ' + e );
 
@@ -218,7 +218,7 @@ function bgmp_wrapper( $ ) {
 					'zIndex'   : zIndex
 				} );
 
-				$.bgmp.markers[ id ]           = marker;
+				$.bgmp.markers[ id ]           = marker;	// todo just have a single object to store all this, like wordcamp central theme does it. probably other lessons to learn from there too
 				$.bgmp.infoWindowContent[ id ] = infoWindowContent;
 
 				google.maps.event.addListener( marker, 'click', function () {
