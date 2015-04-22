@@ -115,8 +115,9 @@ function bgmpShortcodeCalled()
 {
 	global $post;
 
-	if( ( function_exists( 'is_front_page' ) && is_front_page() ) || ( function_exists( 'is_home_page' ) && is_home_page() ) )
+	if ( ( function_exists( 'is_front_page' ) && is_front_page() ) || ( function_exists( 'is_home_page' ) && is_home_page() ) ) {
 		add_filter( 'bgmp_map-shortcode-called', '__return_true' );
+	}
 }
 add_action( 'wp', 'bgmpShortcodeCalled' );
 `
