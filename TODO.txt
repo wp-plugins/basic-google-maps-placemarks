@@ -73,10 +73,13 @@
 ** Roadmap **
 
 2.0
-	merge in everything from https://plugins.trac.wordpress.org/changeset/901237
+	merge in everything from https://plugins.trac.wordpress.org/changeset/901237 (1.10.3)
 		then retest
 	make sure input passed through sanitize_text_field() or more appropriate func.
 	 	switch on key name, whitelist some for absint() or wpkses, default to sanitize_text_field
+
+	merge in changes from 1.10.4
+		fix changelog to move from 2.0 to 1.10.4
 
 	did renaming bootstrap.php make the plugin disabled?
 		i think it did. need to revert that
@@ -101,8 +104,12 @@
 			urlencode in geocode()
 			test geocode() for wp_remote_get() returning false?!?
 
+		remove urls from strings, replace with %s
 
 	use underscore templates for marker content html
+
+	make responsive? maybe save that for 2.1 if it's a lot of work or backcompat issues
+		several forum posts about it
 
 	low priority
 		rename views/settings.php to something more descriptive?
