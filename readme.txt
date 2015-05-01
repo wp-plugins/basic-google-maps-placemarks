@@ -4,7 +4,7 @@ Donate link: http://www.doctorswithoutborders.org
 Tags: map, google maps, marker, placemark, geocode, shortcode, marker clustering
 Requires at least: 3.1
 Tested up to: 4.2
-Stable tag: 1.10.3
+Stable tag: 1.10.4
 License: GPL2
 
 Embeds a Google Map into your site and lets you add map markers with custom icons and information windows.
@@ -342,9 +342,12 @@ Yes, I've tried to add filters for everything you might reasonably want, just br
 
 * Spanish (thanks to Andrew Kurtis from [WebHostingHub](http://www.webhostinghub.com/))
 * Chinese (thanks to [yzqiang](http://wordpress.org/support/profile/yzqiang))
+* Russian (thanks to [alexgr](http://profiles.wordpress.org/alexgr))
 * French (thanks to Romain Fevre)
 * German (thanks to Jens)
 * Italian (thanks to [Andrea Colombo](http://www.acolombodesign.com/))
+* Serbo-Croatian (thanks to Borisa Djuraskovic from [WebHostingHub](http://www.webhostinghub.com/))
+* Dutch (thanks to [mardonios](https://profiles.wordpress.org/mardonios/))
 
 If there isn't a translation for your language (or it is incomplete/inaccurate) please consider making one and contributing it to the plugin. You can learn how by reading [Translating WordPress](http://codex.wordpress.org/Translating_WordPress) and [How to Create a .po Language Translation](http://www.wdmac.com/how-to-create-a-po-language-translation). The .pot file you'll need is inside the *languages* directory in the plugin's folder. Once you're done, just start a thread on [the support forum](http://wordpress.org/support/plugin/basic-google-maps-placemarks) with links to the .po and .mo files, and I'll add them to the next release. You can also subscribe to [the BGMP Translators e-mail list](http://iandunn.us6.list-manage1.com/subscribe?u=38510a08f1d822cc1c358e644&id=b7ff5f7393) to be notified when updated versions have new strings to translate.
 
@@ -391,6 +394,11 @@ If you make customizations that could be beneficial to other users, please start
 
 
 == Changelog ==
+
+= v1.10.4 (5/1/2015) =
+* [NEW] Added Russian translation. props alexgr.
+* [NEW] Added Serbo-Croatian translation. props Borisa Djuraskovic.
+* [NEW] Added Dutch translation. props mardonios.
 
 = v1.10.3 (4/23/2014) =
 * [FIX] Closed [a minor XSS vulnerability in several Settings form fields](https://hackerone.com/reports/9375) in the Administration Panels. props [trizaeron](https://hackerone.com/trizaeron).
@@ -540,6 +548,9 @@ If you make customizations that could be beneficial to other users, please start
 
 
 == Upgrade Notice ==
+
+= 1.10.4 =
+BGMP 1.10.4 adds new translations for Russian, Dutch and Serbo-Croatian.
 
 = 1.10.3 =
 BGMP 1.10.3 includes a fix for a minor security vulnerability that would allow Administrators to inject malicious scripts into form fields. Since the vulnerability requires an Administrator account in order to exploit it, it is unlikely to be a realistic attack vector, but just to be safe I still strongly recommend that all users upgrade to this version.
