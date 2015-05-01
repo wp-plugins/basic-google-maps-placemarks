@@ -386,6 +386,7 @@ Yes, I've tried to add filters for everything you might reasonably want, just br
 * German (thanks to Jens)
 * Italian (thanks to [Andrea Colombo](http://www.acolombodesign.com/))
 * Serbo-Croatian (thanks to Borisa Djuraskovic from [WebHostingHub](http://www.webhostinghub.com/))
+* Dutch (thanks to [mardonios](https://profiles.wordpress.org/mardonios/))
 
 If there isn't a translation for your language (or it is incomplete/inaccurate) please consider making one and contributing it to the plugin. You can do that from within your WordPress installation by using the [Codestyling Localization plugin](http://wordpress.org/plugins/codestyling-localization/), or using a desktop application like Poedit. To learn more, please read [A Guide for WordPress Plugins Translators](http://www.gabsoftware.com/tips/a-guide-for-wordpress-plugins-translators-gettext-poedit-locale/). The .pot file you'll need is inside the *languages* directory in the plugin's folder. 
 
@@ -444,6 +445,7 @@ If you make customizations that could be beneficial to other users, please start
 * [UPDATE] Migrated to using Admin Notices Helper instead of homegrown version.
 * [NEW] Added Russian translation. props alexgr.
 * [NEW] Added Serbo-Croatian translation. props Borisa Djuraskovic.
+* [NEW] Added Dutch translation. props mardonios.
 
 = v1.10.2 (1/8/2014) =
 * [NEW] Added Spanish translation
