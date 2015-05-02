@@ -75,16 +75,16 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 			'zoom'                     : bgmpData.options.zoom,
 			'center'                   : new google.maps.LatLng( bgmpData.options.latitude, bgmpData.options.longitude ),
 			'mapTypeId'                : google.maps.MapTypeId[ bgmpData.options.type ],
-			'mapTypeControl'           : 'off' == bgmpData.options.typeControl ? false : true,
+			'mapTypeControl'           : 'off' != bgmpData.options.typeControl,
 			'mapTypeControlOptions'    : { style: google.maps.MapTypeControlStyle[ bgmpData.options.typeControl ] },
-			'navigationControl'        : 'off' == bgmpData.options.navigationControl ? false : true,
+			'navigationControl'        : 'off' != bgmpData.options.navigationControl,
 			'navigationControlOptions' : { style: google.maps.NavigationControlStyle[ bgmpData.options.navigationControl ] },
 			'streetViewControl'        : bgmpData.options.streetViewControl
 		};
 
 		// Override default width/heights from settings
-		$( '#' + 'bgmp_map-canvas' ).css( 'width',  bgmpData.options.mapWidth );    // @todo use canvas intead of hardcoding it?
-		$( '#' + 'bgmp_map-canvas' ).css( 'height', bgmpData.options.mapHeight );
+		$( canvas ).css( 'width',  bgmpData.options.mapWidth );
+		$( canvas ).css( 'height', bgmpData.options.mapHeight );
 		// @todo this prevents users from using their own stylesheet?
 
 
@@ -120,32 +120,29 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 	}
 
 	/**
-	 * Checks if the value is an integer. Slightly modified version of original.
-	 * @author Invent Partners
-	 * @link http://www.inventpartners.com/content/javascript_is_int
+	 * Checks if the value is an integer
 	 *
-	 * @param mixed value
+	 * @param {*} value
 	 *
-	 * @return bool
+	 * @return {bool}
 	 */
 	function isInt( value ) {
-		if ( !isNaN( value ) && parseFloat( value ) == parseInt( value ) ) {
-			return true;
-		} else {
-			return false;
-		}
+		return ! isNaN( value ) && parseFloat( value ) == parseInt( value );
+
+		// todo extend Number prototype instead of adding as part of this class
 	}
 
 	/**
 	 * Pull the placemark posts from WordPress' database and add them to the map
 	 *
-	 * @param object map Google Maps map
+	 * @param {object} map Google Maps map
 	 */
 	function addPlacemarks( map ) {
 		// @todo - should probably refactor this since you pulled out the ajax. update phpdoc too
 
 		if ( bgmpData.markers.length > 0 ) {
 			for ( var m in bgmpData.markers ) {
+				if ( bgmpData.markers.hasOwnProperty( m ) ) {
 				createMarker(
 					map,
 					bgmpData.markers[ m ][ 'id' ],
@@ -156,6 +153,8 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 					bgmpData.markers[ m ][ 'icon' ],
 					parseInt( bgmpData.markers[ m ][ 'zIndex' ] )
 				);
+				//todo indent
+				}
 			}
 		}
 	}
@@ -163,16 +162,16 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 	/**
 	 * Create a marker with an information window
 	 *
-	 * @param object map Google Maps map
-	 * @param int    id ID of the marker post
-	 * @param string title Placemark title
-	 * @param float  latituded
-	 * @param float  longitude
-	 * @param string details Content of the infowinder
-	 * @param string icon URL of the icon
-	 * @param int    zIndex The desired position in the placemark stacking order
+	 * @param {object} map Google Maps map
+	 * @param {int}    id ID of the marker post
+	 * @param {string} title Placemark title
+	 * @param {float}  latitude
+	 * @param {float}  longitude
+	 * @param {string} details Content of the info window
+	 * @param {string} icon URL of the icon
+	 * @param {int}    zIndex The desired position in the placemark stacking order
 	 *
-	 * @return bool True on success, false on failure
+	 * @return {bool} True on success, false on failure
 	 */
 	function createMarker( map, id, title, latitude, longitude, details, icon, zIndex ) {
 		var infoWindowContent, marker,
@@ -238,9 +237,9 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 	/**
 	 * Opens an info window on the map
 	 *
-	 * @param object map
-	 * @param object marker
-	 * @param string infoWindowContent
+	 * @param {object} map
+	 * @param {object} marker
+	 * @param {string} infoWindowContent
 	 */
 	function openInfoWindow( map, marker, infoWindowContent ) {
 		infoWindow.setContent( infoWindowContent );
@@ -257,7 +256,7 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 	/**
 	 * Focuses the [bgmp-map] on the marker that corresponds to the [bgmp-list] link that was clicked
 	 *
-	 * @param object event
+	 * @param {object} event
 	 */
 	function viewOnMap( event ) {
 		var id = $( this ).data( 'marker-id' );
@@ -267,7 +266,7 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 	/**
 	 * Show a fatal error to the user
 	 *
-	 * @param message
+	 * @param {string} message
 	 */
 	function fatalUserError( message ) {
 		// todo add class for making error message red, so that it stands out?

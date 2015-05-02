@@ -105,8 +105,11 @@
 
 		js
 			have bgmpData passed in as param, rather than using it as a global
+			pass options around instead of referencing class members?
 			lessons from wordcamp central theme?
 				especially how markers and their contents are stored
+
+	did 'navigation control' option break? or do you need a bigger test map to see it working?
 
 	make responsive? maybe save that for 2.1 if it's a lot of work or backcompat issues
 		several forum posts about it
