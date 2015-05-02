@@ -25,7 +25,7 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 			};
 
 			if ( 'undefined' === typeof bgmpData ) {
-				$( canvas ).html( name + " error: bgmpData undefined." );
+				fatalUserError( 'bgmpData undefined.' );
 				return;
 			}
 
@@ -35,6 +35,7 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 				maxWidth: bgmpData.options.infoWindowMaxWidth,
 				pixelOffset: new google.maps.Size( bgmpData.options.infoWindowPixelOffset.width, bgmpData.options.infoWindowPixelOffset.height )
 			} );
+			// todo align
 
 			// Format numbers
 			bgmpData.options.zoom                = parseInt( bgmpData.options.zoom );
@@ -50,7 +51,7 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 			if ( canvas ) {
 				buildMap();
 			} else {
-				$( canvas ).html( name + " error: couldn't retrieve DOM elements." );
+				fatalUserError( "couldn't retrieve DOM elements." );
 			}
 		} catch ( exception ) {
 			log( exception );
@@ -66,7 +67,7 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 		if ( '' == bgmpData.options.mapWidth || '' == bgmpData.options.mapHeight || '' == bgmpData.options.latitude || '' == bgmpData.options.longitude || '' == bgmpData.options.zoom || '' == bgmpData.options.infoWindowMaxWidth ) {
 			// @todo update w/ cluster options?
 
-			$( canvas ).html( name + " error: map options not set." );
+			fatalUserError( 'map options not set.' );
 			return;
 		}
 
@@ -91,7 +92,7 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 		try {
 			map = new google.maps.Map( canvas, mapOptions );
 		} catch( exception ) {
-			$( canvas ).html( name + " error: couldn't build map." );
+			fatalUserError( "couldn't build map." );
 			log( exception );
 		}
 		addPlacemarks( map );    // @todo not supposed to add them when clustering is enabled? http://www.youtube.com/watch?v=Z2VF9uKbQjI
@@ -233,7 +234,7 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 
 			return true;
 		} catch ( e ) {
-			//$( canvas ).append( '<p>' + name + " error: couldn't add map placemarks.</p>");		// add class for making red? other places need this too?	// @todo - need to figure out a good way to alert user that placemarks couldn't be added
+			//fatalUserError( '<p>' + name + " error: couldn't add map placemarks.</p>");		// add class for making red? other places need this too?	// @todo - need to figure out a good way to alert user that placemarks couldn't be added
 
 			if ( window.console ) {
 				console.log( 'bgmp_createMarker: ' + e );
@@ -268,6 +269,15 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 	function viewOnMap( event ) {
 		var id = $( this ).data( 'marker-id' );
 		openInfoWindow( map, markers[ id ], infoWindowContent[ id ] );
+	}
+
+	/**
+	 * Show a fatal error to the user
+	 *
+	 * @param message
+	 */
+	function fatalUserError( message ) {
+		$( canvas ).html( name + ' error: ' + message );
 	}
 
 	/**

@@ -110,6 +110,7 @@
 
 	make responsive? maybe save that for 2.1 if it's a lot of work or backcompat issues
 		several forum posts about it
+		responsive icons like central
 
 	add faq entry about overriding templates with render_view()
 	maybe have upgrade notice mention ability to copmletely customize all views through render_template
