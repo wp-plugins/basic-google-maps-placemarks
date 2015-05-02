@@ -126,7 +126,8 @@
 				maybe deprecate the actions in existing views
 		move to using a single setting
 			possibly maintain backcompat with upgrade()
-		remove @author tags from phpdoc
+
+		update phpdoc and jsdoc to align whitespace, space between groups, etc
 
 	final scan through everything for missed coding style violations, anything else you want to fix
     check that readme instructions and customizations still work

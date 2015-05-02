@@ -1,13 +1,11 @@
 /**
  * @package Basic_GGoogle_Maps_Placemarks
- * @author Ian Dunn <ian@iandunn.name>
- * @link http://wordpress.org/extend/plugins/basic-google-maps-placemarks/
+ * @link    http://wordpress.org/extend/plugins/basic-google-maps-placemarks/
  */
 
 
 /**
  * Wrapper function to safely use $
- * @author Ian Dunn <ian@iandunn.name>
  */
 function bgmp_wrapper( $ ) {
 	// @todo - figure out if wrapper bad for memory consumption (https://developer.mozilla.org/en/JavaScript/Reference/Functions_and_function_scope#Efficiency_considerations)
@@ -16,7 +14,6 @@ function bgmp_wrapper( $ ) {
 	$.bgmp = {
 		/**
 		 * Main entry point
-		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		init: function () {
 			// Initialize variables
@@ -59,7 +56,6 @@ function bgmp_wrapper( $ ) {
 
 		/**
 		 * Pull in the map options from WordPress' database and create the map
-		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		buildMap: function () {
 			var mapOptions;
@@ -126,7 +122,9 @@ function bgmp_wrapper( $ ) {
 		 * Checks if the value is an integer. Slightly modified version of original.
 		 * @author Invent Partners
 		 * @link http://www.inventpartners.com/content/javascript_is_int
+		 *
 		 * @param mixed value
+		 *
 		 * @return bool
 		 */
 		isInt: function ( value ) {
@@ -139,7 +137,7 @@ function bgmp_wrapper( $ ) {
 
 		/**
 		 * Pull the placemark posts from WordPress' database and add them to the map
-		 * @author Ian Dunn <ian@iandunn.name>
+		 *
 		 * @param object map Google Maps map
 		 */
 		addPlacemarks: function ( map ) {
@@ -163,7 +161,6 @@ function bgmp_wrapper( $ ) {
 
 		/**
 		 * Create a marker with an information window
-		 * @author Ian Dunn <ian@iandunn.name>
 		 *
 		 * @param object map Google Maps map
 		 * @param int    id ID of the marker post
@@ -173,6 +170,7 @@ function bgmp_wrapper( $ ) {
 		 * @param string details Content of the infowinder
 		 * @param string icon URL of the icon
 		 * @param int    zIndex The desired position in the placemark stacking order
+		 *
 		 * @return bool True on success, false on failure
 		 */
 		createMarker: function ( map, id, title, latitude, longitude, details, icon, zIndex ) {
@@ -238,7 +236,6 @@ function bgmp_wrapper( $ ) {
 		/**
 		 * Opens an info window on the map
 		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 * @param object map
 		 * @param object marker
 		 * @param string infoWindowContent
@@ -258,7 +255,6 @@ function bgmp_wrapper( $ ) {
 		/**
 		 * Focuses the [bgmp-map] on the marker that corresponds to the [bgmp-list] link that was clicked
 		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 * @param object event
 		 */
 		viewOnMap: function ( event ) {

@@ -1115,8 +1115,6 @@ if ( ! class_exists( 'Basic_Google_Maps_Placemarks' ) ) {
 
 		/**
 		 * Writes options to the database
-		 *
-		 * @author Ian Dunn <ian@iandunn.name>
 		 */
 		public function shutdown() {
 			if ( $this->updated_options ) {

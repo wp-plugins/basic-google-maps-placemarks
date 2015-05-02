@@ -4,7 +4,7 @@
  * Unit tests. Uses SimpleTest for WordPress plugin.
  *
  * @package Basic_Google_Maps_Placemarks
- * @author  Ian Dunn <ian@iandunn.name>
+ *
  * @link    http://wordpress.org/extend/plugins/basic-google-maps-placemarks/
  * @link    http://wordpress.org/extend/plugins/simpletest-for-wordpress/
  */
