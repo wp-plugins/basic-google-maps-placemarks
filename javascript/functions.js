@@ -31,11 +31,10 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 
 			// Initialize single info window to reuse for each placemark
 			infoWindow = new google.maps.InfoWindow( {
-				content : '',
-				maxWidth: bgmpData.options.infoWindowMaxWidth,
+				content:     '',
+				maxWidth:    bgmpData.options.infoWindowMaxWidth,
 				pixelOffset: new google.maps.Size( bgmpData.options.infoWindowPixelOffset.width, bgmpData.options.infoWindowPixelOffset.height )
 			} );
-			// todo align
 
 			// Format numbers
 			bgmpData.options.zoom                = parseInt( bgmpData.options.zoom );
