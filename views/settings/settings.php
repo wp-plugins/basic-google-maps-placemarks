@@ -15,6 +15,7 @@
 
 			<p class="submit">
 				<input type="submit" name="submit" id="submit" class="button-primary" value="<?php echo esc_attr( 'Save Changes' ); ?>" />
+				<!-- todo i18n -->
 			</p>
 		</div>
 		<!-- /#bgmp_settings-fields -->

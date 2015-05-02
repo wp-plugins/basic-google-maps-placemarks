@@ -4,7 +4,7 @@
 
 	<p>
 		<label for="bgmp_z_index"><?php _e( 'Stacking Order:', 'bgmp' ); ?></label>
-		<input id="bgmp_z_index" name="bgmp_z_index" type="text" size="4" value="<?php echo $z_index; ?>" />
+		<input id="bgmp_z_index" name="bgmp_z_index" type="text" size="4" value="<?php echo esc_attr( $z_index ); ?>" />
 	</p>
 
 <?php do_action( 'bgmp_meta-z-index-after' ); ?>

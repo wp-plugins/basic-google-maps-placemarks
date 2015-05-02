@@ -5,6 +5,7 @@
 		<?php if ( $viewOnMap ) : ?>
 			<span class="bgmp_view-on-map-container">
 				[<a href="javascript:;" data-marker-id="<?php echo esc_attr( $p->ID ); ?>" class="bgmp_view-on-map"><?php _e( 'View On Map', 'bgmp' ); ?></a>]
+				<!-- @todo break into multiple lines -->
 			</span>
 		<?php endif; ?>
 	</h3>
@@ -15,6 +16,7 @@
 	</div>
 
 	<p class="bgmp_list-link">
+		<!-- @todo use add_query_arg and rawurlencode -->
 		<a href="<?php echo esc_url( 'http://google.com/maps?q=' . str_replace( ' ', '+', $address ) ); ?>">
 			<?php echo wp_kses( $address, wp_kses_allowed_html( 'post' ) ); ?>
 		</a>

@@ -104,6 +104,8 @@
 			urlencode in geocode()
 			test geocode() for wp_remote_get() returning false?!?
 
+			views/settings.php nonce todo
+
 		remove urls from strings, replace with %s
 
 	use underscore templates for marker content html

@@ -447,6 +447,9 @@ If you make customizations that could be beneficial to other users, please start
 * [NEW] Added Serbo-Croatian translation. props Borisa Djuraskovic.
 * [NEW] Added Dutch translation. props mardonios.
 
+= v1.10.3 (4/23/2014) =
+* [FIX] Closed [a minor XSS vulnerability in several Settings form fields](https://hackerone.com/reports/9375) in the Administration Panels. props [trizaeron](https://hackerone.com/trizaeron).
+
 = v1.10.2 (1/8/2014) =
 * [NEW] Added Spanish translation
 * [NEW] Added [bgmp_featured-icon-size filter](http://wordpress.org/support/topic/icon-sizes).
@@ -595,6 +598,9 @@ If you make customizations that could be beneficial to other users, please start
 
 = 2.0 =
 BGMP 2.0 contains some major internal reorganization, modernization and cleaning up of the code. Regular users shouldn't notice any difference, but it could break backwards compatibility with any customizations that developers have made. It is strongly recommended that customizations be tested before upgrading production servers.
+
+= 1.10.3 =
+BGMP 1.10.3 includes a fix for a minor security vulnerability that would allow Administrators to inject malicious scripts into form fields. Since the vulnerability requires an Administrator account in order to exploit it, it is unlikely to be a realistic attack vector, but just to be safe I still strongly recommend that all users upgrade to this version.
 
 = 1.10.2 =
 BGMP 1.10.2 adds a Spanish translation.
