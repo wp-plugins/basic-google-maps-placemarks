@@ -104,7 +104,6 @@
 			update skeleton too
 
 		js
-			have bgmpData passed in as param, rather than using it as a global
 			pass options around instead of referencing class members?
 			lessons from wordcamp central theme?
 				especially how markers and their contents are stored

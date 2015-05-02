@@ -177,7 +177,7 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 	 * @return {bool} True on success, false on failure
 	 */
 	function createMarker( map, id, title, latitude, longitude, details, icon, zIndex ) {
-		var infoWindowContent, marker,
+		var marker,
 			infoWindowTemplate = _.template( $( '#tmpl-bgmp-info-window-content' ).html(), null, templateOptions );
 
 		if ( isNaN( latitude ) || isNaN( longitude ) ) {
@@ -200,15 +200,6 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 			zIndex = 0;
 		}
 
-		infoWindowContent = infoWindowTemplate( {
-			id:		   id,
-			title:     title,
-			details:   details,
-			latitude:  latitude,
-			longitude: longitude,
-			icon:      icon
-		} );
-
 		try {
 			// Replace commas with periods. Some (human) languages use commas to delimit the fraction from the whole number, but Google Maps doesn't accept that.
 			latitude  = parseFloat( latitude.replace(  ',', '.' ) );
@@ -224,10 +215,17 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 			} );
 
 			markers[ id ]           = marker;	// todo just have a single object to store all this, like wordcamp central theme does it. probably other lessons to learn from there too
-			infoWindowContent[ id ] = infoWindowContent;
+			infoWindowContent[ id ] = infoWindowTemplate( {
+				id:		   id,
+				title:     title,
+				details:   details,
+				latitude:  latitude,
+				longitude: longitude,
+				icon:      icon
+			} );
 
 			google.maps.event.addListener( marker, 'click', function () {
-				openInfoWindow( map, marker, infoWindowContent );
+				openInfoWindow( map, marker, infoWindowContent[ id ] );
 			} );
 
 			return true;
@@ -242,10 +240,10 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 	 *
 	 * @param {object} map
 	 * @param {object} marker
-	 * @param {string} infoWindowContent
+	 * @param {string} content
 	 */
-	function openInfoWindow( map, marker, infoWindowContent ) {
-		infoWindow.setContent( infoWindowContent );
+	function openInfoWindow( map, marker, content ) {
+		infoWindow.setContent( content );
 		infoWindow.open( map, marker );
 
 		if ( options.viewOnMapScroll ) {
@@ -263,8 +261,6 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 	 */
 	function viewOnMap( event ) {
 		var id = $( this ).data( 'marker-id' );
-		console.log( id, markers[ id ], infoWindowContent[ id ] );
-
 		openInfoWindow( map, markers[ id ], infoWindowContent[ id ] );
 	}
 
