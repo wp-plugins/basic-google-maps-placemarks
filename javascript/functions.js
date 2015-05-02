@@ -10,46 +10,50 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 	 * Constructor
 	 */
 	function init() {
-		// Initialize variables
-		name              = 'Basic Google Maps Placemarks';
-		canvas            = document.getElementById( 'bgmp_map-canvas' );    // We have to use getElementById instead of a jQuery selector here in order to pass it to the Maps API.
-		map               = undefined;
-		markerClusterer   = undefined;
-		markers           = {};
-		infoWindowContent = {};
-		templateOptions   = {
-			evaluate:    /<#([\s\S]+?)#>/g,
-			interpolate: /\{\{\{([\s\S]+?)\}\}\}/g,
-			escape:      /\{\{([^\}]+?)\}\}(?!\})/g
-		};
+		try {
+			// Initialize variables
+			name              = 'Basic Google Maps Placemarks';
+			canvas            = document.getElementById( 'bgmp_map-canvas' );    // We have to use getElementById instead of a jQuery selector here in order to pass it to the Maps API.
+			map               = undefined;
+			markerClusterer   = undefined;
+			markers           = {};
+			infoWindowContent = {};
+			templateOptions   = {
+				evaluate:    /<#([\s\S]+?)#>/g,
+				interpolate: /\{\{\{([\s\S]+?)\}\}\}/g,
+				escape:      /\{\{([^\}]+?)\}\}(?!\})/g
+			};
 
-		if ( 'undefined' === typeof bgmpData ) {
-			$( canvas ).html( name + " error: bgmpData undefined." );
-			return;
-		}
+			if ( 'undefined' === typeof bgmpData ) {
+				$( canvas ).html( name + " error: bgmpData undefined." );
+				return;
+			}
 
-		// Initialize single info window to reuse for each placemark
-		infoWindow = new google.maps.InfoWindow( {
-			content : '',
-			maxWidth: bgmpData.options.infoWindowMaxWidth,
-			pixelOffset: new google.maps.Size( bgmpData.options.infoWindowPixelOffset.width, bgmpData.options.infoWindowPixelOffset.height )
-		} );
+			// Initialize single info window to reuse for each placemark
+			infoWindow = new google.maps.InfoWindow( {
+				content : '',
+				maxWidth: bgmpData.options.infoWindowMaxWidth,
+				pixelOffset: new google.maps.Size( bgmpData.options.infoWindowPixelOffset.width, bgmpData.options.infoWindowPixelOffset.height )
+			} );
 
-		// Format numbers
-		bgmpData.options.zoom                = parseInt( bgmpData.options.zoom );
-		bgmpData.options.latitude            = parseFloat( bgmpData.options.latitude );
-		bgmpData.options.longitude           = parseFloat( bgmpData.options.longitude );
-		bgmpData.options.clustering.maxZoom  = parseInt( bgmpData.options.clustering.maxZoom );
-		bgmpData.options.clustering.gridSize = parseInt( bgmpData.options.clustering.gridSize );
+			// Format numbers
+			bgmpData.options.zoom                = parseInt( bgmpData.options.zoom );
+			bgmpData.options.latitude            = parseFloat( bgmpData.options.latitude );
+			bgmpData.options.longitude           = parseFloat( bgmpData.options.longitude );
+			bgmpData.options.clustering.maxZoom  = parseInt( bgmpData.options.clustering.maxZoom );
+			bgmpData.options.clustering.gridSize = parseInt( bgmpData.options.clustering.gridSize );
 
-		// Register event handlers
-		$( '.' + 'bgmp_list' ).find( 'a' ).filter( '.' + 'bgmp_view-on-map' ).click( viewOnMap );
+			// Register event handlers
+			$( '.' + 'bgmp_list' ).find( 'a' ).filter( '.' + 'bgmp_view-on-map' ).click( viewOnMap );
 
-		// Build map
-		if ( canvas ) {
-			buildMap();
-		} else {
-			$( canvas ).html( name + " error: couldn't retrieve DOM elements." );
+			// Build map
+			if ( canvas ) {
+				buildMap();
+			} else {
+				$( canvas ).html( name + " error: couldn't retrieve DOM elements." );
+			}
+		} catch ( exception ) {
+			log( exception );
 		}
 	}
 
@@ -86,18 +90,15 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 		// Create the map
 		try {
 			map = new google.maps.Map( canvas, mapOptions );
-		} catch ( e ) {
+		} catch( exception ) {
 			$( canvas ).html( name + " error: couldn't build map." );
-			if ( window.console )
-				console.log( 'bgmp_buildMap: ' + e );
-
-			return;
+			log( exception );
 		}
-
 		addPlacemarks( map );    // @todo not supposed to add them when clustering is enabled? http://www.youtube.com/watch?v=Z2VF9uKbQjI
 
 
 		// Activate marker clustering
+		// todo modularize this
 		if ( bgmpData.options.clustering.enabled ) {
 			// BGMP stores markers in an object for direct access (e.g., markers[ 15 ] for ID 15), but MarkerCluster requires an array instead, so we convert them 
 			var markersArray = [];
@@ -267,6 +268,17 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 	function viewOnMap( event ) {
 		var id = $( this ).data( 'marker-id' );
 		openInfoWindow( map, markers[ id ], infoWindowContent[ id ] );
+	}
+
+	/**
+	 * Log a message to the console
+	 *
+	 * @param {string} message
+	 */
+	function log( message ) {
+		if ( window.console ) {
+			console.log( 'Basic Google Maps Placemarks: ' + message );
+		}
 	}
 
 	/*

@@ -104,7 +104,6 @@
 			update skeleton too
 
 		js
-			wrap init in try/catch
 			have bgmpData passed in as param, rather than using it as a global
 			lessons from wordcamp central theme?
 				especially how markers and their contents are stored
@@ -137,6 +136,7 @@
 		move to using a single setting
 			possibly maintain backcompat with upgrade()
 		remame js and css files to be meaningful?
+		use jsdoc
 
 		update phpdoc and jsdoc to align whitespace, space between groups, etc
 
