@@ -100,14 +100,14 @@
 
 		remove urls from strings, replace with %s
 
-	prefix render-template w/ bgmp to avoid false positives and other conflicts
-		update skeleton too
+		prefix render-template w/ bgmp to avoid false positives and other conflicts
+			update skeleton too
 
-	js
-		convert to revealing module pattern
-		have bgmpData passed in as param, rather than using it as a global
-		lessons from wordcamp central theme?
-			especially how markers and their contents are stored
+		js
+			wrap init in try/catch
+			have bgmpData passed in as param, rather than using it as a global
+			lessons from wordcamp central theme?
+				especially how markers and their contents are stored
 
 	make responsive? maybe save that for 2.1 if it's a lot of work or backcompat issues
 		several forum posts about it
