@@ -50,7 +50,7 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 			if ( canvas ) {
 				buildMap();
 			} else {
-				fatalUserError( "couldn't retrieve DOM elements." );
+				fatalUserError( "map canvas element doesn't exist." );
 			}
 		} catch ( exception ) {
 			log( exception );
@@ -65,6 +65,7 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 
 		if ( '' == bgmpData.options.mapWidth || '' == bgmpData.options.mapHeight || '' == bgmpData.options.latitude || '' == bgmpData.options.longitude || '' == bgmpData.options.zoom || '' == bgmpData.options.infoWindowMaxWidth ) {
 			// @todo update w/ cluster options?
+			// todo loop through array instead, b/c cleaner and can then notify which specific option wasn't set
 
 			fatalUserError( 'map options not set.' );
 			return;
@@ -178,8 +179,7 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 			infoWindowTemplate = _.template( $( '#tmpl-bgmp-info-window-content' ).html(), null, templateOptions );
 
 		if ( isNaN( latitude ) || isNaN( longitude ) ) {
-			if ( window.console )
-				console.log( prefix + "createMarker(): " + title + " latitude and longitude weren't valid." );
+			log( title + " has invalid latitude and longitude." );
 
 			return false;
 		}
@@ -187,16 +187,13 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 		if ( null == icon ) {
 			// @todo - this check may not be needed anymore
 
-			if ( window.console ) {
-				console.log( prefix + "createMarker(): " + title + "  icon wasn't passed in." );
-			}
+			log( title + " icon wasn't passed in." );
 
 			return false;
 		}
 
 		if ( ! isInt( zIndex ) ) {
-			//if( window.console )
-			//console.log( prefix + "createMarker():  "+ title +" z-index wasn't valid." );	// this would fire any time it's empty
+			//log( prefix + "createMarker():  "+ title +" z-index wasn't valid." );	// this would fire any time it's empty
 
 			zIndex = 0;
 		}
@@ -232,12 +229,9 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 			} );
 
 			return true;
-		} catch ( e ) {
-			//fatalUserError( '<p>' + name + " error: couldn't add map placemarks.</p>");		// add class for making red? other places need this too?	// @todo - need to figure out a good way to alert user that placemarks couldn't be added
-
-			if ( window.console ) {
-				console.log( 'bgmp_createMarker: ' + e );
-			}
+		} catch ( exception ) {
+			fatalUserError( "Couldn't add map placemarks." );
+			log( exception );
 		}
 	}
 
@@ -276,6 +270,8 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 	 * @param message
 	 */
 	function fatalUserError( message ) {
+		// todo add class for making error message red, so that it stands out?
+
 		$( canvas ).html( name + ' error: ' + message );
 	}
 
