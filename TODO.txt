@@ -73,9 +73,6 @@
 ** Roadmap **
 
 2.0
-	merge in changes from 1.10.4
-		fix changelog to move from 2.0 to 1.10.4
-
 	did renaming bootstrap.php make the plugin disabled?
 		i think it did. need to revert that
 		

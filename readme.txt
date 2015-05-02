@@ -443,6 +443,8 @@ If you make customizations that could be beneficial to other users, please start
 * [UPDATE] Replaced custom code with has_shortcode(). This bumped the required WP version to 3.6.
 * [UPDATE] Removed some bloated and unnecessary code.
 * [UPDATE] Migrated to using Admin Notices Helper instead of homegrown version.
+
+= v1.10.4 (5/1/2015) =
 * [NEW] Added Russian translation. props alexgr.
 * [NEW] Added Serbo-Croatian translation. props Borisa Djuraskovic.
 * [NEW] Added Dutch translation. props mardonios.
@@ -598,6 +600,9 @@ If you make customizations that could be beneficial to other users, please start
 
 = 2.0 =
 BGMP 2.0 contains some major internal reorganization, modernization and cleaning up of the code. Regular users shouldn't notice any difference, but it could break backwards compatibility with any customizations that developers have made. It is strongly recommended that customizations be tested before upgrading production servers.
+
+= 1.10.4 =
+BGMP 1.10.4 adds new translations for Russian, Dutch and Serbo-Croatian.
 
 = 1.10.3 =
 BGMP 1.10.3 includes a fix for a minor security vulnerability that would allow Administrators to inject malicious scripts into form fields. Since the vulnerability requires an Administrator account in order to exploit it, it is unlikely to be a realistic attack vector, but just to be safe I still strongly recommend that all users upgrade to this version.
