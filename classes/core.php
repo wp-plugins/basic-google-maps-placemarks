@@ -806,7 +806,22 @@ if ( ! class_exists( 'Basic_Google_Maps_Placemarks' ) ) {
 			do_action( 'bgmp_shortcode-bgmp-map-after' );
 			$output = ob_get_clean();
 
+			$this->pass_map_data_to_javascript( $attributes );
+
 			return $output;
+		}
+
+		/**
+		 * Output all the data required for the [bgmp-map] JavaScript to run
+		 *
+		 * @param array $shortcode_attributes
+		 */
+		protected function pass_map_data_to_javascript( $shortcode_attributes ) {
+			$javascript_params = new stdClass();
+			$javascript_params->options = $this->get_map_options(    $shortcode_attributes );
+			$javascript_params->markers = $this->get_map_placemarks( $shortcode_attributes );
+
+			wp_localize_script( 'bgmp', 'bgmpData', $javascript_params );
 		}
 
 		/**
