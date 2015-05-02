@@ -4,7 +4,7 @@
  */
 
 var BasicGoogleMapsPlacemarks = ( function( $ ) {
-	var name, canvas, map, markerClusterer, markers, infoWindowContent, templateOptions;
+	var name, canvas, map, markerClusterer, options, markerData, markers, infoWindowContent, templateOptions;
 	
 	/**
 	 * Constructor
@@ -29,19 +29,23 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 				return;
 			}
 
+			options    = bgmpData.options;
+			markerData = bgmpData.markers;
+			bgmpData = {};	// It can't be deleted because Core declares it with `var`, so this is the next best thing.
+
 			// Initialize single info window to reuse for each placemark
 			infoWindow = new google.maps.InfoWindow( {
 				content:     '',
-				maxWidth:    bgmpData.options.infoWindowMaxWidth,
-				pixelOffset: new google.maps.Size( bgmpData.options.infoWindowPixelOffset.width, bgmpData.options.infoWindowPixelOffset.height )
+				maxWidth:    options.infoWindowMaxWidth,
+				pixelOffset: new google.maps.Size( options.infoWindowPixelOffset.width, options.infoWindowPixelOffset.height )
 			} );
 
 			// Format numbers
-			bgmpData.options.zoom                = parseInt( bgmpData.options.zoom );
-			bgmpData.options.latitude            = parseFloat( bgmpData.options.latitude );
-			bgmpData.options.longitude           = parseFloat( bgmpData.options.longitude );
-			bgmpData.options.clustering.maxZoom  = parseInt( bgmpData.options.clustering.maxZoom );
-			bgmpData.options.clustering.gridSize = parseInt( bgmpData.options.clustering.gridSize );
+			options.zoom                = parseInt( options.zoom );
+			options.latitude            = parseFloat( options.latitude );
+			options.longitude           = parseFloat( options.longitude );
+			options.clustering.maxZoom  = parseInt( options.clustering.maxZoom );
+			options.clustering.gridSize = parseInt( options.clustering.gridSize );
 
 			// Register event handlers
 			$( '.' + 'bgmp_list' ).find( 'a' ).filter( '.' + 'bgmp_view-on-map' ).click( viewOnMap );
@@ -63,7 +67,7 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 	function buildMap() {
 		var mapOptions;
 
-		if ( '' == bgmpData.options.mapWidth || '' == bgmpData.options.mapHeight || '' == bgmpData.options.latitude || '' == bgmpData.options.longitude || '' == bgmpData.options.zoom || '' == bgmpData.options.infoWindowMaxWidth ) {
+		if ( '' == options.mapWidth || '' == options.mapHeight || '' == options.latitude || '' == options.longitude || '' == options.zoom || '' == options.infoWindowMaxWidth ) {
 			// @todo update w/ cluster options?
 			// todo loop through array instead, b/c cleaner and can then notify which specific option wasn't set
 
@@ -72,19 +76,19 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 		}
 
 		mapOptions = {
-			'zoom'                     : bgmpData.options.zoom,
-			'center'                   : new google.maps.LatLng( bgmpData.options.latitude, bgmpData.options.longitude ),
-			'mapTypeId'                : google.maps.MapTypeId[ bgmpData.options.type ],
-			'mapTypeControl'           : 'off' != bgmpData.options.typeControl,
-			'mapTypeControlOptions'    : { style: google.maps.MapTypeControlStyle[ bgmpData.options.typeControl ] },
-			'navigationControl'        : 'off' != bgmpData.options.navigationControl,
-			'navigationControlOptions' : { style: google.maps.NavigationControlStyle[ bgmpData.options.navigationControl ] },
-			'streetViewControl'        : bgmpData.options.streetViewControl
+			'zoom'                     : options.zoom,
+			'center'                   : new google.maps.LatLng( options.latitude, options.longitude ),
+			'mapTypeId'                : google.maps.MapTypeId[ options.type ],
+			'mapTypeControl'           : 'off' != options.typeControl,
+			'mapTypeControlOptions'    : { style: google.maps.MapTypeControlStyle[ options.typeControl ] },
+			'navigationControl'        : 'off' != options.navigationControl,
+			'navigationControlOptions' : { style: google.maps.NavigationControlStyle[ options.navigationControl ] },
+			'streetViewControl'        : options.streetViewControl
 		};
 
 		// Override default width/heights from settings
-		$( canvas ).css( 'width',  bgmpData.options.mapWidth );
-		$( canvas ).css( 'height', bgmpData.options.mapHeight );
+		$( canvas ).css( 'width',  options.mapWidth );
+		$( canvas ).css( 'height', options.mapHeight );
 		// @todo this prevents users from using their own stylesheet?
 
 
@@ -100,7 +104,7 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 
 		// Activate marker clustering
 		// todo modularize this
-		if ( bgmpData.options.clustering.enabled ) {
+		if ( options.clustering.enabled ) {
 			// BGMP stores markers in an object for direct access (e.g., markers[ 15 ] for ID 15), but MarkerCluster requires an array instead, so we convert them 
 			var markersArray = [];
 			for ( var m in markers ) {
@@ -111,9 +115,9 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 				map,
 				markersArray,
 				{
-					maxZoom  : bgmpData.options.clustering.maxZoom,
-					gridSize : bgmpData.options.clustering.gridSize,
-					styles   : bgmpData.options.clustering.styles[ bgmpData.options.clustering.style ]
+					maxZoom  : options.clustering.maxZoom,
+					gridSize : options.clustering.gridSize,
+					styles   : options.clustering.styles[ options.clustering.style ]
 				}
 			);
 		}
@@ -140,18 +144,18 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 	function addPlacemarks( map ) {
 		// @todo - should probably refactor this since you pulled out the ajax. update phpdoc too
 
-		if ( bgmpData.markers.length > 0 ) {
-			for ( var m in bgmpData.markers ) {
-				if ( bgmpData.markers.hasOwnProperty( m ) ) {
+		if ( markerData.length > 0 ) {
+			for ( var m in markerData ) {
+				if ( markerData.hasOwnProperty( m ) ) {
 					createMarker(
 						map,
-						bgmpData.markers[ m ][ 'id' ],
-						bgmpData.markers[ m ][ 'title' ],
-						bgmpData.markers[ m ][ 'latitude' ],
-						bgmpData.markers[ m ][ 'longitude' ],
-						bgmpData.markers[ m ][ 'details' ],
-						bgmpData.markers[ m ][ 'icon' ],
-						parseInt( bgmpData.markers[ m ][ 'zIndex' ] )
+						markerData[ m ][ 'id' ],
+						markerData[ m ][ 'title' ],
+						markerData[ m ][ 'latitude' ],
+						markerData[ m ][ 'longitude' ],
+						markerData[ m ][ 'details' ],
+						markerData[ m ][ 'icon' ],
+						parseInt( markerData[ m ][ 'zIndex' ] )
 					);
 				}
 			}
@@ -244,7 +248,7 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 		infoWindow.setContent( infoWindowContent );
 		infoWindow.open( map, marker );
 
-		if ( bgmpData.options.viewOnMapScroll ) {
+		if ( options.viewOnMapScroll ) {
 			$( 'html, body' ).animate(
 				{ scrollTop: $( '#' + 'bgmp_map-canvas' ).offset().top },
 				900
@@ -259,6 +263,8 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 	 */
 	function viewOnMap( event ) {
 		var id = $( this ).data( 'marker-id' );
+		console.log( id, markers[ id ], infoWindowContent[ id ] );
+
 		openInfoWindow( map, markers[ id ], infoWindowContent[ id ] );
 	}
 
@@ -276,11 +282,17 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 	/**
 	 * Log a message to the console
 	 *
-	 * @param {string} message
+	 * @param {*} error
 	 */
-	function log( message ) {
-		if ( window.console ) {
-			console.log( 'Basic Google Maps Placemarks: ' + message );
+	function log( error ) {
+		if ( ! window.console ) {
+			return;
+		}
+
+		if ( 'string' == typeof error ) {
+			console.log( 'Basic Google Maps Placemarks: ' + error );
+		} else {
+			console.log( 'Basic Google Maps Placemarks: ', error );
 		}
 	}
 
