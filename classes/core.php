@@ -853,13 +853,12 @@ if ( ! class_exists( 'Basic_Google_Maps_Placemarks' ) ) {
 						$category = 'bgmp_category-' . $category;
 					}
 
-					$address = get_post_meta( $p->ID, 'bgmp_address', true );
-// todo indent
+					$address   = get_post_meta( $p->ID, 'bgmp_address', true );
 					$variables = array(
-						'p'         => $p,
-						'view_on_map' => $view_on_map,
-						'google_maps_url' => add_query_arg( 'q', rawurlencode( $address ), 'https://www.google.com/maps' ),
-						'address'   => $address,
+						'p'                => $p,
+						'view_on_map'      => $view_on_map,
+						'google_maps_url'  => add_query_arg( 'q', rawurlencode( $address ), 'https://www.google.com/maps' ),
+						'address'          => $address,
 						'category_classes' => implode( ' ', $categories ),
 					);
 					$marker_html = $this->render_template( 'core/shortcode-bgmp-list-marker.php', $variables, 'always' );
