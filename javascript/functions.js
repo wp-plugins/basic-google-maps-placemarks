@@ -143,17 +143,16 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 		if ( bgmpData.markers.length > 0 ) {
 			for ( var m in bgmpData.markers ) {
 				if ( bgmpData.markers.hasOwnProperty( m ) ) {
-				createMarker(
-					map,
-					bgmpData.markers[ m ][ 'id' ],
-					bgmpData.markers[ m ][ 'title' ],
-					bgmpData.markers[ m ][ 'latitude' ],
-					bgmpData.markers[ m ][ 'longitude' ],
-					bgmpData.markers[ m ][ 'details' ],
-					bgmpData.markers[ m ][ 'icon' ],
-					parseInt( bgmpData.markers[ m ][ 'zIndex' ] )
-				);
-				//todo indent
+					createMarker(
+						map,
+						bgmpData.markers[ m ][ 'id' ],
+						bgmpData.markers[ m ][ 'title' ],
+						bgmpData.markers[ m ][ 'latitude' ],
+						bgmpData.markers[ m ][ 'longitude' ],
+						bgmpData.markers[ m ][ 'details' ],
+						bgmpData.markers[ m ][ 'icon' ],
+						parseInt( bgmpData.markers[ m ][ 'zIndex' ] )
+					);
 				}
 			}
 		}
