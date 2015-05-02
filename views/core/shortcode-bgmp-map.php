@@ -3,6 +3,7 @@
 		options: <?php echo json_encode( $this->get_map_options(    $attributes ) ); ?>,
 		markers: <?php echo json_encode( $this->get_map_placemarks( $attributes ) ); ?>
 	};
+	// todo this should use wp_localize_script
 </script>
 
 <div id="bgmp_map-canvas">

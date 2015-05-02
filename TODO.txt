@@ -100,7 +100,10 @@
 
 		remove urls from strings, replace with %s
 
-	use underscore templates for marker content html
+	prefix render-template w/ bgmp to avoid false positives and other conflicts
+		update skeleton too
+
+	localize script vs direct inline
 
 	make responsive? maybe save that for 2.1 if it's a lot of work or backcompat issues
 		several forum posts about it
@@ -109,7 +112,12 @@
 	maybe have upgrade notice mention ability to copmletely customize all views through render_template
 	if make responsive, have mention those two features, then mention the internal changes
 
+	javascript lessons from wordcamp central theme?
+		especially how markers and their contents are stored
+
 	low priority
+		can move these to later if want to, but first make sure none are breaking changes. should do anything that'll affect customizations all at once.
+
 		rename views/settings.php to something more descriptive?
 		rename text domain to match slug
 			http://ottopress.com/2013/language-packs-101-prepwork/
@@ -126,15 +134,19 @@
 				maybe deprecate the actions in existing views
 		move to using a single setting
 			possibly maintain backcompat with upgrade()
+		remame js and css files to be meaningful?
 
 		update phpdoc and jsdoc to align whitespace, space between groups, etc
+
+
 
 	final scan through everything for missed coding style violations, anything else you want to fix
     check that readme instructions and customizations still work
     test everything
 
-    do an RC, send notice to list, post sticky notice on forums. stress the need to test any customizations
-    	test on wahc
+    release an RC,
+     	test on wahc before notifying anyone
+     	send notice to list, post sticky notice on forums. stress the need to test any customizations
     	maybe also post on some old threads that include customizations, to alert people that way too
 
 

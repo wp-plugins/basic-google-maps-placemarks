@@ -23,6 +23,11 @@ function bgmp_wrapper( $ ) {
 			$.bgmp.markerClusterer   = undefined;
 			$.bgmp.markers           = {};
 			$.bgmp.infoWindowContent = {};
+			$.bgmp.templateOptions   = {
+				evaluate:    /<#([\s\S]+?)#>/g,
+				interpolate: /\{\{\{([\s\S]+?)\}\}\}/g,
+				escape:      /\{\{([^\}]+?)\}\}(?!\})/g
+			};
 
 			if ( 'undefined' === typeof bgmpData ) {
 				$( $.bgmp.canvas ).html( $.bgmp.name + " error: bgmpData undefined." );
@@ -174,7 +179,8 @@ function bgmp_wrapper( $ ) {
 		 * @return bool True on success, false on failure
 		 */
 		createMarker: function ( map, id, title, latitude, longitude, details, icon, zIndex ) {
-			var infoWindowContent, marker;
+			var infoWindowContent, marker,
+				infoWindowTemplate = _.template( $( '#tmpl-bgmp-info-window-content' ).html(), null, $.bgmp.templateOptions );
 
 			if ( isNaN( latitude ) || isNaN( longitude ) ) {
 				if ( window.console )
@@ -200,11 +206,18 @@ function bgmp_wrapper( $ ) {
 				zIndex = 0;
 			}
 
-			infoWindowContent = '<div class="' + 'bgmp_placemark"> <h3>' + title + '</h3> <div>' + details + '</div> </div>';
+			infoWindowContent = infoWindowTemplate( {
+				id:		   id,
+				title:     title,
+				details:   details,
+				latitude:  latitude,
+				longitude: longitude,
+				icon:      icon
+			} );
 
 			try {
 				// Replace commas with periods. Some (human) languages use commas to delimit the fraction from the whole number, but Google Maps doesn't accept that.
-				latitude  = parseFloat( latitude.replace( ',', '.' ) );
+				latitude  = parseFloat( latitude.replace(  ',', '.' ) );
 				longitude = parseFloat( longitude.replace( ',', '.' ) );
 
 				marker = new google.maps.Marker( {

@@ -399,7 +399,7 @@ if ( ! class_exists( 'Basic_Google_Maps_Placemarks' ) ) {
 			wp_register_script(
 				'bgmp',
 				plugins_url( 'javascript/functions.js', dirname( __FILE__ ) ),
-				array( 'google-maps', 'jquery' ),
+				array( 'google-maps', 'jquery', 'underscore' ),
 				self::VERSION,
 				true
 			);
@@ -802,6 +802,7 @@ if ( ! class_exists( 'Basic_Google_Maps_Placemarks' ) ) {
 			do_action( 'bgmp_meta-address-before' );	// @todo - deprecated b/c named incorrectly
 			do_action( 'bgmp_shortcode-bgmp-map-before' );  // @todo - deprecated b/c render_template() provides ability to completely override view?
 			echo $this->render_template( 'core/shortcode-bgmp-map.php', array( 'attributes' => $attributes, 'base_url' => $base_url ) );
+			echo $this->render_template( 'javascript/map-info-window-content.php' );
 			do_action( 'bgmp_shortcode-bgmp-map-after' );
 			$output = ob_get_clean();
 
@@ -1090,6 +1091,8 @@ if ( ! class_exists( 'Basic_Google_Maps_Placemarks' ) ) {
 		 */
 		public function render_template( $default_template_path = false, $variables = array(), $require = 'once' ) {
 			$template_path = locate_template( basename( $default_template_path ) );
+			// todo need to prefix template name w/ 'bgmp' to avoid conflicts? probably
+
 			if ( ! $template_path ) {
 				$template_path = dirname( dirname( __FILE__ ) ) . '/views/' . $default_template_path;
 			}
