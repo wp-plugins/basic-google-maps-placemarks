@@ -1,11 +1,12 @@
-<li id="bgmp_list-item-<?php echo esc_attr( $p->ID ); ?>" class="bgmp_list-item <?php echo esc_attr( $categoryClasses ); ?>">
+<li id="bgmp_list-item-<?php echo esc_attr( $p->ID ); ?>" class="bgmp_list-item <?php echo esc_attr( $category_classes ); ?>">
 	<h3 class="bgmp_list-placemark-title">
 		<?php echo apply_filters( 'the_title', $p->post_title ); ?>
 
-		<?php if ( $viewOnMap ) : ?>
+		<?php if ( $view_on_map ) : ?>
 			<span class="bgmp_view-on-map-container">
-				[<a href="javascript:;" data-marker-id="<?php echo esc_attr( $p->ID ); ?>" class="bgmp_view-on-map"><?php _e( 'View On Map', 'bgmp' ); ?></a>]
-				<!-- @todo break into multiple lines -->
+				[<a href="javascript:;" data-marker-id="<?php echo esc_attr( $p->ID ); ?>" class="bgmp_view-on-map"><?php
+					_e( 'View On Map', 'bgmp' );
+				?></a>]
 			</span>
 		<?php endif; ?>
 	</h3>
@@ -16,8 +17,7 @@
 	</div>
 
 	<p class="bgmp_list-link">
-		<!-- @todo use add_query_arg and rawurlencode -->
-		<a href="<?php echo esc_url( 'http://google.com/maps?q=' . str_replace( ' ', '+', $address ) ); ?>">
+		<a href="<?php echo esc_url( $google_maps_url ); ?>">
 			<?php echo wp_kses( $address, wp_kses_allowed_html( 'post' ) ); ?>
 		</a>
 	</p>

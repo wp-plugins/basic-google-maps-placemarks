@@ -790,6 +790,8 @@ if ( ! class_exists( 'Basic_Google_Maps_Placemarks' ) ) {
 				return $error;
 			}
 
+			$base_url = plugins_url( '', dirname( __FILE__ ) );
+
 			if ( isset( $attributes['categories'] ) )
 				$attributes['categories'] = apply_filters( 'bgmp_map_shortcode_categories', $attributes['categories'] ); // @todo - deprecated b/c 1.9 output bgmpdata in post; can now just set args in do_shortcode() . also  not consistent w/ shortcode naming scheme and have filter for all arguments now. need a way to notify people
 
@@ -798,8 +800,8 @@ if ( ! class_exists( 'Basic_Google_Maps_Placemarks' ) ) {
 
 			ob_start();
 			do_action( 'bgmp_meta-address-before' );	// @todo - deprecated b/c named incorrectly
-			do_action( 'bgmp_shortcode-bgmp-map-before' );
-			echo $this->render_template( 'core/shortcode-bgmp-map.php', array( 'attributes' => $attributes ) );
+			do_action( 'bgmp_shortcode-bgmp-map-before' );  // @todo - deprecated b/c render_template() provides ability to completely override view?
+			echo $this->render_template( 'core/shortcode-bgmp-map.php', array( 'attributes' => $attributes, 'base_url' => $base_url ) );
 			do_action( 'bgmp_shortcode-bgmp-map-after' );
 			$output = ob_get_clean();
 
@@ -851,11 +853,14 @@ if ( ! class_exists( 'Basic_Google_Maps_Placemarks' ) ) {
 						$category = 'bgmp_category-' . $category;
 					}
 
+					$address = get_post_meta( $p->ID, 'bgmp_address', true );
+// todo indent
 					$variables = array(
 						'p'         => $p,
-						'viewOnMap' => $view_on_map,
-						'address'   => get_post_meta( $p->ID, 'bgmp_address', true ),
-						'categoryClasses' => implode( ' ', $categories ),
+						'view_on_map' => $view_on_map,
+						'google_maps_url' => add_query_arg( 'q', rawurlencode( $address ), 'https://www.google.com/maps' ),
+						'address'   => $address,
+						'category_classes' => implode( ' ', $categories ),
 					);
 					$marker_html = $this->render_template( 'core/shortcode-bgmp-list-marker.php', $variables, 'always' );
 

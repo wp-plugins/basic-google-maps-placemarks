@@ -1,5 +1,5 @@
 <div class="wrap">
-	<?php // maybe rename this so it doesn't match settings.php in the root dir ?>
+	<?php // todo maybe rename this so it doesn't match settings.php in the root dir ?>
 
 	<div id="icon-options-general" class="icon32"><br /></div>
 	<h2><?php printf( __( '%s Settings', 'bgmp' ), BGMP_NAME ); ?></h2>
@@ -14,11 +14,9 @@
 			<?php do_settings_sections( 'bgmp_settings' ); ?>
 
 			<p class="submit">
-				<input type="submit" name="submit" id="submit" class="button-primary" value="<?php echo esc_attr( 'Save Changes' ); ?>" />
-				<!-- todo i18n -->
+				<input type="submit" name="submit" id="submit" class="button-primary" value="<?php echo esc_attr( __( 'Save Changes', 'bgmp' ) ); ?>" />
 			</p>
-		</div>
-		<!-- /#bgmp_settings-fields -->
+		</div> <!-- /#bgmp_settings-fields -->
 
 		<div id="bgmp_settings-meta-boxes" class="metabox-holder">
 			<div class="postbox-container">
