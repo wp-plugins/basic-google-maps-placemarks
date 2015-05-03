@@ -99,28 +99,37 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 			fatalUserError( "couldn't build map." );
 			log( exception );
 		}
+
 		addPlacemarks( map );    // @todo not supposed to add them when clustering is enabled? http://www.youtube.com/watch?v=Z2VF9uKbQjI
+		clusterMarkers();
+	}
 
+	/**
+	 * Activate marker clustering
+	 */
+	function clusterMarkers() {
+		var markersArray = [];
 
-		// Activate marker clustering
-		// todo modularize this
-		if ( options.clustering.enabled ) {
-			// BGMP stores markers in an object for direct access (e.g., markers[ 15 ] for ID 15), but MarkerCluster requires an array instead, so we convert them 
-			var markersArray = [];
-			for ( var m in markers ) {
+		if ( ! options.clustering.enabled ) {
+			return;
+		}
+
+		// BGMP stores markers in an object for direct access (e.g., markers[ 15 ] for ID 15), but MarkerCluster requires an array instead, so we convert them
+		for ( var m in markers ) {
+			if ( markers.hasOwnProperty( m ) ) {
 				markersArray.push( markers[ m ] );
 			}
-
-			markerClusterer = new MarkerClusterer(
-				map,
-				markersArray,
-				{
-					maxZoom  : options.clustering.maxZoom,
-					gridSize : options.clustering.gridSize,
-					styles   : options.clustering.styles[ options.clustering.style ]
-				}
-			);
 		}
+
+		markerClusterer = new MarkerClusterer(
+			map,
+			markersArray,
+			{
+				maxZoom  : options.clustering.maxZoom,
+				gridSize : options.clustering.gridSize,
+				styles   : options.clustering.styles[ options.clustering.style ]
+			}
+		);
 	}
 
 	/**
