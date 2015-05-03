@@ -3,8 +3,10 @@
  * @link    http://wordpress.org/extend/plugins/basic-google-maps-placemarks/
  */
 
+'use strict';
+
 var BasicGoogleMapsPlacemarks = ( function( $ ) {
-	var name, canvas, map, markerClusterer, options, markerData, markers, infoWindowContent, templateOptions;
+	var name, canvas, map, markerClusterer, options, markerData, markers, infoWindow, infoWindowContent, templateOptions;
 	
 	/**
 	 * Constructor
