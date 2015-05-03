@@ -31,7 +31,7 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 
 			options    = bgmpData.options;
 			markerData = bgmpData.markers;
-			bgmpData = {};	// It can't be deleted because Core declares it with `var`, so this is the next best thing.
+			bgmpData   = null;	// It can't be deleted because Core declares it with `var`, so this is the next best thing.
 
 			// Initialize single info window to reuse for each placemark
 			infoWindow = new google.maps.InfoWindow( {
@@ -133,29 +133,25 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 	}
 
 	/**
-	 * Checks if the value is an integer
-	 *
-	 * @param {*} value
-	 *
-	 * @return {bool}
-	 */
-	function isInt( value ) {
-		return ! isNaN( value ) && parseFloat( value ) == parseInt( value );
-
-		// todo extend Number prototype instead of adding as part of this class
-	}
-
-	/**
 	 * Pull the placemark posts from WordPress' database and add them to the map
 	 *
 	 * @param {object} map Google Maps map
 	 */
 	function addPlacemarks( map ) {
+		var zIndex;
 		// @todo - should probably refactor this since you pulled out the ajax. update phpdoc too
 
 		if ( markerData.length > 0 ) {
 			for ( var m in markerData ) {
-				if ( markerData.hasOwnProperty( m ) ) {
+				if ( ! markerData.hasOwnProperty( m ) ) {
+					continue;
+				}
+
+				zIndex = parseInt( markerData[ m ][ 'z_index' ] );
+				if ( ! Number.isInteger( zIndex ) ) {
+					zIndex = 0;
+				}
+
 					createMarker(
 						map,
 						markerData[ m ][ 'id' ],
@@ -164,9 +160,9 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 						markerData[ m ][ 'longitude' ],
 						markerData[ m ][ 'details' ],
 						markerData[ m ][ 'icon' ],
-						parseInt( markerData[ m ][ 'zIndex' ] )
+						zIndex
 					);
-				}
+				// todo fix indentation
 			}
 		}
 	}
@@ -201,12 +197,6 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 			log( title + " icon wasn't passed in." );
 
 			return false;
-		}
-
-		if ( ! isInt( zIndex ) ) {
-			//log( prefix + "createMarker():  "+ title +" z-index wasn't valid." );	// this would fire any time it's empty
-
-			zIndex = 0;
 		}
 
 		try {
@@ -308,5 +298,20 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 		init: init
 	};
 } )( jQuery );
+
+/**
+ * Polyfill for Number.isInteger
+ *
+ * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isInteger
+ *
+ * @param {*}
+ *
+ * @return {bool}
+ */
+Number.isInteger = Number.isInteger || function( value ) {
+	return typeof value === "number" &&
+		isFinite( value ) &&
+		Math.floor( value ) === value;
+};
 
 jQuery( document ).ready( BasicGoogleMapsPlacemarks.init( bgmpData ) );
