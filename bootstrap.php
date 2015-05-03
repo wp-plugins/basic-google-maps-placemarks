@@ -64,12 +64,14 @@ function bgmp_requirements_not_met() {
 
 	$class   = 'error';
 	$message = sprintf(
-		__( '%s <strong>requires PHP %s</strong> and <strong>WordPress %s</strong> in order to work. You\'re running PHP %s and WordPress %s. You\'ll need to upgrade in order to use this plugin. If you\'re not sure how to <a href="http://codex.wordpress.org/Switching_to_PHP5">upgrade to PHP 5</a> you can ask your hosting company for assistance, and if you need help upgrading WordPress you can refer to <a href="http://codex.wordpress.org/Upgrading_WordPress">the Codex</a>.', 'bgmp' ),
+		__( '%s <strong>requires PHP %s</strong> and <strong>WordPress %s</strong> in order to work. You\'re running PHP %s and WordPress %s. You\'ll need to upgrade in order to use this plugin. If you\'re not sure how to <a href="%s">upgrade to PHP 5</a> you can ask your hosting company for assistance, and if you need help upgrading WordPress you can refer to <a href="%s">the Codex</a>.', 'bgmp' ),
 		BGMP_NAME,
 		BGMP_REQUIRED_PHP_VERSION,
 		BGMP_REQUIRED_WP_VERSION,
 		PHP_VERSION,
-		esc_html( $wp_version )
+		esc_html( $wp_version ),
+		'http://codex.wordpress.org/Switching_to_PHP5',
+		'http://codex.wordpress.org/Upgrading_WordPress'
 	);
 
 	require( dirname( __FILE__ ) . '/views/core/message.php' );

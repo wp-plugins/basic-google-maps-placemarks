@@ -301,7 +301,7 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 } )( jQuery );
 
 /**
- * Polyfill for Number.isInteger
+ * Polyfill for Number.isInteger()
  *
  * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isInteger
  *

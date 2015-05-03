@@ -96,12 +96,16 @@
 			urlencode in geocode()
 			test geocode() for wp_remote_get() returning false?!?
 
-			views/settings.php nonce todo
+		move render_template into the bgmp_module class so settings can call it better
+
+		views/settings.php nonce todo
 
 		remove urls from strings, replace with %s
 
 		prefix render-template w/ bgmp to avoid false positives and other conflicts
 			update skeleton too
+
+		section-headers missing
 
 		js
 			pass options around instead of referencing class members?
@@ -118,6 +122,7 @@
 	maybe have upgrade notice mention ability to copmletely customize all views through render_template
 	if make responsive, have mention those two features, then mention the internal changes
 
+	globals[bgmp] to globals[basic_google_maps_placemarks] if wasn't doing that in 1.x, otherwise prob not worth backcompat issues
 
 	low priority
 		can move these to later if want to, but first make sure none are breaking changes. should do anything that'll affect customizations all at once.
