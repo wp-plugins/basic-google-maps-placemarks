@@ -154,17 +154,16 @@ var BasicGoogleMapsPlacemarks = ( function( $ ) {
 					zIndex = 0;
 				}
 
-					createMarker(
-						map,
-						markerData[ m ][ 'id' ],
-						markerData[ m ][ 'title' ],
-						markerData[ m ][ 'latitude' ],
-						markerData[ m ][ 'longitude' ],
-						markerData[ m ][ 'details' ],
-						markerData[ m ][ 'icon' ],
-						zIndex
-					);
-				// todo fix indentation
+				createMarker(
+					map,
+					markerData[ m ][ 'id' ],
+					markerData[ m ][ 'title' ],
+					markerData[ m ][ 'latitude' ],
+					markerData[ m ][ 'longitude' ],
+					markerData[ m ][ 'details' ],
+					markerData[ m ][ 'icon' ],
+					zIndex
+				);
 			}
 		}
 	}
