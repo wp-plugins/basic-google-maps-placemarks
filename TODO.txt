@@ -105,8 +105,6 @@
 		prefix render-template w/ bgmp to avoid false positives and other conflicts
 			update skeleton too
 
-		section-headers missing
-
 		js
 			pass options around instead of referencing class members?
 			lessons from wordcamp central theme?
