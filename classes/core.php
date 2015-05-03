@@ -763,7 +763,13 @@ if ( ! class_exists( 'Basic_Google_Maps_Placemarks' ) ) {
 		 * @param string $longitude
 		 */
 		protected function reverse_geocode( $latitude, $longitude ) {
-			$geocode_response = wp_remote_get( 'http://maps.googleapis.com/maps/api/geocode/json?latlng=' . $latitude . ',' . $longitude . '&sensor=false' );
+			$request_url = add_query_arg(
+				array(
+					'latlng' => rawurlencode( $latitude . ',' . $longitude ),
+					'sensor' => 'false',
+				),
+				'http://maps.googleapis.com/maps/api/geocode/json' );
+			$geocode_response = wp_remote_get( $request_url );
 			$address          = json_decode( $geocode_response['body'] );
 
 			if ( is_wp_error( $geocode_response ) || empty( $address->results ) ) {
