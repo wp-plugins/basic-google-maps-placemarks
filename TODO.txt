@@ -115,6 +115,7 @@
 	make responsive? maybe save that for 2.1 if it's a lot of work or backcompat issues
 		several forum posts about it
 		responsive icons like central
+		add as feature to readme? or should just be assumed
 
 	add faq entry about overriding templates with render_view()
 	maybe have upgrade notice mention ability to copmletely customize all views through render_template
@@ -143,6 +144,7 @@
 			possibly maintain backcompat with upgrade()
 		remame js and css files to be meaningful?
 		use jsdoc
+		remove "extend" from wporg urls
 
 		update phpdoc and jsdoc to align whitespace, space between groups, etc
 

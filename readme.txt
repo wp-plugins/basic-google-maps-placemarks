@@ -13,18 +13,24 @@ Embeds a Google Map into your site and lets you add map markers with custom icon
 == Description ==
 BGMP creates a [custom post type](http://www.youtube.com/watch?v=FWkLBPpGOmo#!) for placemarks (markers) on a Google Map. The map is embedded into pages or posts using a shortcode, and there are settings to affect how it's displayed. You can create markers that will show up on the map, and set their icons using the Featured Image meta box. When a marker is clicked on, a box will appear and show the marker's title and description.
 
-**Features**
+**User Features**
 
-* Each map marker can have a unique custom Installation icon, share a common custom icon, or use the default icon.
+* Each map marker can have a unique custom icon, share a common custom icon, or use the default icon.
 * Options to set the map type (street, satellite, etc), center location, size, zoom level, navigation controls, etc.
 * Setup unique maps on different pages with their own placemarks, map types, center locations, etc.
 * Placemarks can be assigned to categories, and you can control which categories are displayed on a individual map.
 * Marker clustering for large numbers of placemarks
 * Extra shortcode to output a text-based list of markers for mobile devices, search engines, etc.
-* Lots of filters so that developers can customize and extend the plugin.
 * Use HTML, images, etc inside the information window.
 * Compatible with WordPress MultiSite.
 * Internationalized (see [Other Notes](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/other_notes/) for a list of supported languages)
+
+**Developer Features**
+
+* Override any PHP or JavaScript template, with access to all the variables used to create it (see the [FAQ](http://wordpress.org/plugins/basic-google-maps-placemarks/faq/) for details).
+* Lots of filters so that developers can customize and extend the plugin.
+* More hooks can be added on request.
+
 
 **Live Examples**
 
