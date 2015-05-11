@@ -13,6 +13,12 @@ Embeds a Google Map into your site and lets you add map markers with custom icon
 == Description ==
 BGMP creates a [custom post type](http://www.youtube.com/watch?v=FWkLBPpGOmo#!) for placemarks (markers) on a Google Map. The map is embedded into pages or posts using a shortcode, and there are settings to affect how it's displayed. You can create markers that will show up on the map, and set their icons using the Featured Image meta box. When a marker is clicked on, a box will appear and show the marker's title and description.
 
+**Developer Features**
+
+* Override any PHP or JavaScript template, with access to all the variables used to create it (see the [FAQ](http://wordpress.org/plugins/basic-google-maps-placemarks/faq/) for details).
+* Lots of filters so that developers can customize and extend the plugin.
+* More hooks can be added on request.
+
 **User Features**
 
 * Each map marker can have a unique custom icon, share a common custom icon, or use the default icon.
@@ -25,13 +31,6 @@ BGMP creates a [custom post type](http://www.youtube.com/watch?v=FWkLBPpGOmo#!) 
 * Compatible with WordPress MultiSite.
 * Internationalized (see [Other Notes](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/other_notes/) for a list of supported languages)
 
-**Developer Features**
-
-* Override any PHP or JavaScript template, with access to all the variables used to create it (see the [FAQ](http://wordpress.org/plugins/basic-google-maps-placemarks/faq/) for details).
-* Lots of filters so that developers can customize and extend the plugin.
-* More hooks can be added on request.
-
-
 **Live Examples**
 
 * [The Australian Polio Register](http://www.polioaustralia.org.au/?page_id=6098)
@@ -40,7 +39,7 @@ BGMP creates a [custom post type](http://www.youtube.com/watch?v=FWkLBPpGOmo#!) 
 
 **Support**
 
-I'm happy to fix reproducible bugs, but don't have time to help you customize the plugin to fit your needs. There's also plenty of documentation and community support available. Check out the 'How can I get help when I'm having a problem?' question in [the FAQ](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/faq/) for details.
+I'm happy to fix reproducible bugs, but don't have time to help you customize the plugin to fit your needs. There's lots of documentation and answered forum posts, though. Check out the 'How can I get help when I'm having a problem?' question in [the FAQ](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/faq/) for details.
 
 
 == Installation ==
@@ -134,6 +133,13 @@ Before version 1.9, you needed to use the `bgmp_map-shortcode-arguments` filter 
 do_shortcode( '[bgmp-map center="Boston" zoom="5"]' );
 `
 
+If you have trouble getting either of those working, try using this version:
+
+`
+add_filter( 'bgmp_map-shortcode-called', '__return_true' );
+`
+
+That's not ideal -- because it will load the JavaScript and CSS on every page of the site, which makes them slightly slower -- but it's good enough if you can't get the more specific versions working.
 
 If you have any questions, please read [the FAQ](http://wordpress.org/extend/plugins/basic-google-maps-placemarks/faq/) and search [the support forums](http://wordpress.org/support/plugin/basic-google-maps-placemarks).
 
