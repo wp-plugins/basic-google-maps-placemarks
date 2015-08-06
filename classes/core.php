@@ -476,7 +476,7 @@ if ( ! class_exists( 'Basic_Google_Maps_Placemarks' ) ) {
 					'capability_type' => 'post',
 					'rewrite'         => array( 'slug' => 'placemarks', 'with_front' => false ),
 					'query_var'       => true,
-					'supports'        => array( 'title', 'editor', 'author', 'thumbnail', 'comments', 'revisions' )
+					'supports'        => array( 'title', 'editor', 'author', 'thumbnail', 'comments', 'revisions' ),
 				);
 
 				register_post_type(
