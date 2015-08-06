@@ -2,7 +2,7 @@
 	<?php // todo maybe rename this so it doesn't match settings.php in the root dir ?>
 
 	<div id="icon-options-general" class="icon32"><br /></div>
-	<h2><?php printf( __( '%s Settings', 'bgmp' ), BGMP_NAME ); ?></h2>
+	<h1><?php printf( __( '%s Settings', 'bgmp' ), BGMP_NAME ); ?></h1>
 
 	<form method="post" action="options.php">
 		<?php do_action( 'bgmp_settings-before' ); ?>
