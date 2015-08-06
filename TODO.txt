@@ -123,6 +123,14 @@
 
 	globals[bgmp] to globals[basic_google_maps_placemarks] if wasn't doing that in 1.x, otherwise prob not worth backcompat issues
 
+	remove the conditional js/css loading b/c causes too many problems?
+
+	start a new pinned support request?
+		current one is old and support expectations have been lessened since then
+		maybe add "don't be a jerk", where jerk links to https://wordpress.org/support/topic/basic-google-maps-placemarks-error-after-changing-order-of-posts
+
+	add <?php defined( 'WPINC' ) or die; ?> to views
+
 	low priority
 		can move these to later if want to, but first make sure none are breaking changes. should do anything that'll affect customizations all at once.
 
@@ -147,6 +155,16 @@
 		remove "extend" from wporg urls
 
 		update phpdoc and jsdoc to align whitespace, space between groups, etc
+
+		only show if has_shorcode(bgmp-map)
+        add faq entry why doesn't show up? because don't have bgmp-map
+        https://wordpress.org/support/topic/viewonmaptrue-not-working-for-list-shortcode?replies=2
+
+        enable scrolltomap by default?
+        	backcompat? maybe use upgrade routine to set db flag for existing installs
+			why was it initially not on by default?
+			or at least add to faq
+			https://wordpress.org/support/topic/view-on-map-doesnt-move-to-map?replies=3#post-7051604
 
 
 	test all functionality across browsers and devices
